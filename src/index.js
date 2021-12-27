@@ -17,6 +17,7 @@ const {
   lightRed,
   red,
 } = require('kolorist')
+const { version } = require('../package.json')
 
 const cwd = process.cwd()
 
@@ -43,6 +44,11 @@ const renameFiles = {
 }
 
 async function init() {
+  if (argv.v || argv.version) {
+    console.log(version)
+    return
+  }
+
   let targetDir = argv._[0]
   let template = argv.template || argv.t
 
