@@ -8,47 +8,22 @@
     "jsx": "preserve",
     "sourceMap": true,
     "baseUrl": "./",
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "suppressImplicitAnyIndexErrors": true,
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@img/*": [
-        "src/assets/img/*"
-      ],
-      "@less/*": [
-        "src/assets/less/*"
-      ],
-      "@css/*": [
-        "src/assets/css/*"
-      ],
-      "@fonts/*": [
-        "src/assets/fonts/*"
-      ],
-      "@libs/*": [
-        "src/libs/*"
-      ],
-      "@cp/*": [
-        "src/components/*"
-      ],
-      "@views/*": [
-        "src/views/*"
-      ],
-      "@plugins/*": [
-        "src/plugins/*"
-      ]
+      "@/*": ["src/*"],
+      "@img/*": ["src/assets/img/*"],
+      "@less/*": ["src/assets/less/*"],
+      "@css/*": ["src/assets/css/*"],
+      "@fonts/*": ["src/assets/fonts/*"],
+      "@libs/*": ["src/libs/*"],
+      "@cp/*": ["src/components/*"],
+      "@views/*": ["src/views/*"],
+      "@plugins/*": ["src/plugins/*"]
     },
     "lib": ["esnext", "dom", "dom.iterable"]
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 }
