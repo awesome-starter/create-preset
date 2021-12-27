@@ -1,0 +1,34 @@
+{
+  "name": "create-preset",
+  "version": "0.1.0",
+  "description": "Provides the ability to quickly create preset projects.",
+  "license": "MIT",
+  "author": "chengpeiquan",
+  "bin": {
+    "create-preset": "src/index.js",
+    "preset": "src/index.js"
+  },
+  "files": [
+    "src/*"
+  ],
+  "main": "src/index.js",
+  "scripts": {
+    "backup": "git add . && git commit -m \"chore: save the coding progress\" && git push"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awesome-starter/create-preset.git"
+  },
+  "bugs": {
+    "url": "https://github.com/awesome-starter/create-preset/issues"
+  },
+  "homepage": "https://github.com/awesome-starter/create-preset",
+  "dependencies": {
+    "kolorist": "^1.5.1",
+    "minimist": "^1.2.5",
+    "prompts": "^2.4.2"
+  }
+}

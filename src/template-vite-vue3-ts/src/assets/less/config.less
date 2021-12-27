@@ -1,0 +1,58 @@
+// https://ant.design/docs/spec/colors-cn
+// https://github.com/vueComponent/ant-design-vue/blob/next/components/style/themes/default.less
+
+// 常用尺寸
+@margin: 24px;
+@radius: 4px;
+
+// 常用元素色
+@color-bg: @color-white;
+@color-text: lighten(@color-black, 15%);
+@color-tips: @color-gray;
+@color-border: lighten(@color-black, 94%);
+@color-panel: #091f3d;
+@color-sub-panel: #042e58;
+@color-input: darken(@color-white, 1.2%);
+@color-mask: rgba(0, 0, 0, 0.6);
+@color-shadow: #f0f1f2;
+@color-hover: lighten(@color-blue, 10%);
+@color-cricle: linear-gradient(270deg, #009fef 0%, #00e6ff 100%);
+
+// 常用配色
+@color-white: #fff;
+@color-black: #000;
+@color-blue: #1890ff;
+@color-red: #ff5757;
+@color-yellow: #faad14;
+@color-green: #52c41a;
+@color-gray: lighten(@color-black, 55%);
+@color-disable: rgba(0, 0, 0, 0.25);
+
+// 满背景效果
+.mixin-bg() {
+  display: flex;
+  flex-shrink: 0;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+// 图片自适应避免拉伸
+.mixin-img() {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// 多行省略
+.mixin-line-clamp(@count) {
+  display: -webkit-box;
+  -webkit-line-clamp: @count;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  text-align: center;
+  max-width: 400px;
+  margin: 0 auto;
+}
