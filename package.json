@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/awesome-starter/create-preset",
   "dependencies": {
+    "commander": "^8.3.0",
     "kolorist": "^1.5.1",
     "minimist": "^1.2.5",
     "prompts": "^2.4.2"
