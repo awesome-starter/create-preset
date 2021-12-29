@@ -1,7 +1,10 @@
 {
   "name": "create-preset",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "Provides the ability to quickly create preset projects.",
+  "keywords": [
+    "preset"
+  ],
   "license": "MIT",
   "author": "chengpeiquan",
   "bin": {
@@ -13,6 +16,7 @@
   ],
   "main": "src/index.js",
   "scripts": {
+    "format": "prettier --write .",
     "backup": "git add . && git commit -m \"chore: save the coding progress\" && git push"
   },
   "engines": {
@@ -27,8 +31,30 @@
   },
   "homepage": "https://github.com/awesome-starter/create-preset",
   "dependencies": {
+    "commander": "^8.3.0",
     "kolorist": "^1.5.1",
     "minimist": "^1.2.5",
     "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.5.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "lint-staged": "^12.1.4",
+    "prettier": "^2.5.1",
+    "yorkie": "^2.0.0"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged",
+    "commit-msg": "node scripts/verifyCommit.js"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "eslint",
+      "prettier --parser=typescript --write"
+    ]
   }
 }

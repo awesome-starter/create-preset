@@ -4,6 +4,25 @@ This template should help you quickly create a Vue 3 project based on Vite, usin
 
 这个模板应该能帮你快速创建一个基于 Vite 的 Vue 3 项目，默认使用 TypeScript 作为开发语言。
 
+## Usage
+
+You can use a tool like [degit](https://github.com/Rich-Harris/degit) to scaffold your project with this template.
+
+你可以使用 [degit](https://github.com/Rich-Harris/degit) 之类的工具通过此模板来搭建你的项目。
+
+```bash
+npx degit awesome-starter/vite-vue3-ts-starter my-project
+
+cd my-project
+
+npm install
+npm run dev
+```
+
+if use `npx` install `degit` fail, you can try to run `npm i -g degit` to install it globally.
+
+如果使用 `npx` 安装 `degit` 失败, 可以尝试运行 `npm i -g degit` 将它安装到全局。
+
 ## Why Use This Template
 
 Why not use [create vite](https://github.com/vitejs/vite/tree/main/packages/create-vite) to generate the basic template of the project?

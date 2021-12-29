@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { ref } from 'vue'
-
-defineProps<{ msg: string }>()
-
-const count = ref(0)
-</script>
-
 <template>
   <h1>{{ msg }}</h1>
 
@@ -16,7 +8,15 @@ const count = ref(0)
     <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
   </p>
 
-  <p>See <code>README.md</code> for more information.</p>
+  <p>
+    See
+    <a href="https://vue3.chengpeiquan.com/" target="_blank"> Learning Vue3 </a>
+    for more information.
+  </p>
+
+  <p>
+    Click <router-link to="/foo">Here</router-link> to see a children router.
+  </p>
 
   <p>
     <a href="https://vitejs.dev/guide/features.html" target="_blank">
@@ -33,7 +33,13 @@ const count = ref(0)
   </p>
 </template>
 
-<style scoped>
+<script setup lang="ts">
+import { ref } from 'vue'
+defineProps<{ msg: string }>()
+const count = ref(0)
+</script>
+
+<style lang="less" scoped>
 a {
   color: #42b983;
 }
