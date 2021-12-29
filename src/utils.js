@@ -55,7 +55,7 @@ function toValidPackageName(projectName) {
 }
 
 /**
- * @param {string | undefined} userAgent process.env.npm_config_user_agent
+ * @param {string | undefined} userAgent - process.env.npm_config_user_agent
  * @returns object | undefined
  */
 function pkgFromUserAgent(userAgent) {

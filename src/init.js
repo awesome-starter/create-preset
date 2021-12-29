@@ -19,11 +19,11 @@ const {
 const { frameworks, templates, renameFiles } = require('./config')
 const cwd = process.cwd()
 
-async function init() {
-  let targetDir = argv._[0]
+async function init(targetDirFromCMD) {
+  let targetDir = targetDirFromCMD || argv._[1]
   let template = argv.template || argv.t
 
-  const defaultProjectName = !targetDir ? 'vite-project' : targetDir
+  const defaultProjectName = !targetDir ? 'preset-project' : targetDir
 
   let result = {}
 

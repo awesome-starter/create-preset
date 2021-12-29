@@ -1,13 +1,4 @@
-const {
-  yellow,
-  green,
-  cyan,
-  blue,
-  lightBlue,
-  magenta,
-  lightRed,
-  red,
-} = require('kolorist')
+const { green, blueBright } = require('kolorist')
 
 const frameworks = [
   {
@@ -17,7 +8,7 @@ const frameworks = [
       {
         name: 'vite-vue3-ts',
         display: 'TypeScript',
-        color: lightBlue,
+        color: blueBright,
       },
     ],
   },
