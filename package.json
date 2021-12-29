@@ -1,6 +1,6 @@
 {
   "name": "create-preset",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Provides the ability to quickly create preset projects.",
   "keywords": [
     "preset"
@@ -16,7 +16,6 @@
   ],
   "main": "src/index.js",
   "scripts": {
-    "preinstall": "node ./scripts/preinstall.js",
     "format": "prettier --write .",
     "backup": "git add . && git commit -m \"chore: save the coding progress\" && git push"
   },
