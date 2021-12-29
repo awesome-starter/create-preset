@@ -19,8 +19,6 @@ function start() {
   program
     .command('init [app-name]')
     .description('generate a project from a preset template')
-    .option('-c, --clone', 'Use git clone when fetching remote template')
-    .option('--offline', 'Use cached template')
     .action((source) => {
       if (argv._.length > 2) {
         console.log(

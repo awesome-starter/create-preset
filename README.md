@@ -7,22 +7,24 @@
 
 ## Usage
 
+When you first use:
+
 With NPM:
 
 ```bash
-npm init preset@latest
+npm init preset@latest init
 ```
 
 With Yarn:
 
 ```bash
-yarn create preset
+yarn create preset init
 ```
 
 With PNPM:
 
 ```bash
-pnpm create preset
+pnpm create preset init
 ```
 
 Then follow the prompts!
