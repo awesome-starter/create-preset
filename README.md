@@ -1,6 +1,6 @@
 # create-preset
 
-## Scaffolding Your First Vite Project
+Provides the ability to quickly create preset projects.
 
 > **Compatibility Note:**
 > Some preset project requires [Node.js](https://nodejs.org/en/) version >=12.2.0 (e.g. Vite). However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
