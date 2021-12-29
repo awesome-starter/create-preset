@@ -7,30 +7,48 @@
 
 ## Usage
 
-```sh
-npm install -g create-preset
-# OR
-yarn global add create-preset
-```
-
-When you first use:
+You can simply create it directly through the package management command:
 
 With NPM:
 
 ```bash
 npm init preset@latest init
-```
-
-With Yarn:
-
-```bash
+# OR
 yarn create preset init
 ```
 
-With PNPM:
+Then follow the prompts!
+
+This usage allows you to use the latest version of scaffolding every time.
+
+## Global Usage
+
+You can also install globally for easier usage, Please install it globally first:
 
 ```bash
-pnpm create preset init
+npm install -g create-preset
+# OR
+yarn global add create-preset
 ```
 
-Then follow the prompts!
+You can use this command to check whether the installation is successful:
+
+```bash
+preset -v
+```
+
+Then you can use the following command to create your preset project:
+
+```bash
+preset init
+```
+
+If you want to update the version later, you can use the following command to operate:
+
+```bash
+npm update -g create-preset
+# OR
+yarn global upgrade --latest create-preset
+```
+
+Or reinstall it globally, haha!
