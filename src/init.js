@@ -23,7 +23,7 @@ async function init(targetDirFromCMD) {
   let targetDir = targetDirFromCMD || argv._[1]
   let template = argv.template || argv.t
 
-  const defaultProjectName = !targetDir ? 'preset-project' : targetDir
+  const defaultProjectName = !targetDir ? 'my-preset-app' : targetDir
 
   let result = {}
 

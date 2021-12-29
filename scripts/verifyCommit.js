@@ -1,6 +1,6 @@
 // Invoked on the commit-msg git hook by yorkie.
 
-const { bgRed, red, green, white, cyan } = require('kolorist')
+const { bgRed, red, green, white } = require('kolorist')
 const msgPath = process.env.GIT_PARAMS
 const msg = require('fs').readFileSync(msgPath, 'utf-8').trim()
 
@@ -8,8 +8,6 @@ const commitRE =
   /^(revert: )?(feat|fix|docs|dx|style|refactor|perf|test|workflow|build|ci|chore|types|wip|release)(\(.+\))?: .{1,50}/
 
 if (!commitRE.test(msg)) {
-  console.log()
-  console.log(cyan('aaa'))
   console.error(
     `  ${bgRed(white(' ERROR '))} ${red(
       `invalid commit message format.`
