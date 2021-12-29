@@ -20,6 +20,7 @@ const templates = frameworks
 
 const renameFiles = {
   _gitignore: '.gitignore',
+  _eslintrc: '.eslintrc.js',
 }
 
 module.exports = {
