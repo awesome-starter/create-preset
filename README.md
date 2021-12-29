@@ -9,8 +9,6 @@ Provides the ability to quickly create preset projects.
 
 You can simply create it directly through the package management command:
 
-With NPM:
-
 ```bash
 npm init preset@latest init
 # OR
