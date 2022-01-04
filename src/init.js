@@ -7,7 +7,7 @@ const path = require('path')
 // non associated with an option ( _ ) needs to be parsed as a string. See #4606
 const argv = require('minimist')(process.argv.slice(2), { string: ['_'] })
 const prompts = require('prompts')
-const { red } = require('kolorist')
+const chalk = require('chalk')
 const {
   copy,
   emptyDir,
@@ -52,7 +52,7 @@ async function init(targetDirFromCMD) {
           // @ts-ignore
           type: (_, { overwrite } = {}) => {
             if (overwrite === false) {
-              throw new Error(red('✖') + ' Operation cancelled')
+              throw new Error(chalk.red('✖') + ' Operation cancelled')
             }
             return null
           },
@@ -100,7 +100,7 @@ async function init(targetDirFromCMD) {
       ],
       {
         onCancel: () => {
-          throw new Error(red('✖') + ' Operation cancelled')
+          throw new Error(chalk.red('✖') + ' Operation cancelled')
         },
       }
     )

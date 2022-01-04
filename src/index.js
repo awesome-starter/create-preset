@@ -2,7 +2,7 @@
 
 // @ts-check
 const argv = require('minimist')(process.argv.slice(2), { string: ['_'] })
-const { cyan, yellow } = require('kolorist')
+const chalk = require('chalk')
 const { Command } = require('commander')
 const { version } = require('../package.json')
 const init = require('./init')
@@ -22,7 +22,7 @@ function start() {
     .action((source) => {
       if (argv._.length > 2) {
         console.log(
-          yellow(
+          chalk.yellow(
             "\nInfo: You provided more than one argument. The first one will be used as the app's name, the rest are ignored."
           )
         )
@@ -36,7 +36,9 @@ function start() {
   program.on('--help', () => {
     console.log()
     console.log(
-      `  Run ${cyan(`preset init <app-name>`)} to initialize your project.`
+      `  Run ${chalk.cyan(
+        `preset init <app-name>`
+      )} to initialize your project.`
     )
     console.log()
   })

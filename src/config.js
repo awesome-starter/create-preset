@@ -1,25 +1,25 @@
-const { green, lightGreen, cyan } = require('kolorist')
+const chalk = require('chalk')
 
 const frameworks = [
   {
     name: 'vue',
-    color: green,
+    color: chalk.green,
     variants: [
       {
         name: 'vite-vue3-ts',
         display: 'Vite + Vue 3.0 + TypeScript',
-        color: cyan,
+        color: chalk.cyan,
       },
     ],
   },
   {
     name: 'node',
-    color: green,
+    color: chalk.green,
     variants: [
       {
         name: 'node-basic',
         display: 'A basic Node.js project template.',
-        color: lightGreen,
+        color: chalk.green,
       },
     ],
   },
