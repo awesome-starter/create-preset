@@ -30,20 +30,18 @@
     "url": "https://github.com/awesome-starter/create-preset/issues"
   },
   "homepage": "https://github.com/awesome-starter/create-preset",
-  "dependencies": {
+  "devDependencies": {
     "chalk": "4.1.2",
     "commander": "^8.3.0",
     "download-git-repo": "^3.0.2",
-    "minimist": "^1.2.5",
-    "ora": "5.4.1",
-    "prompts": "^2.4.2"
-  },
-  "devDependencies": {
     "eslint": "^8.5.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "lint-staged": "11.1.4",
+    "minimist": "^1.2.5",
+    "ora": "5.4.1",
     "prettier": "^2.5.1",
+    "prompts": "^2.4.2",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {
