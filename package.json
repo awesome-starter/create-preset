@@ -33,7 +33,6 @@
   },
   "homepage": "https://github.com/awesome-starter/create-preset",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.9.0",
     "chalk": "4.1.2",
     "commander": "^8.3.0",
     "download-git-repo": "^3.0.2",
