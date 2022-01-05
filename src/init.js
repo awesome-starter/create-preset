@@ -136,7 +136,7 @@ async function init(targetDirFromCMD) {
   // Download template
   const isDownloadSuccess = await download({
     repo: downloadUrl,
-    folder: template,
+    folder: targetDir,
   })
   console.log('isDownloadSuccess', isDownloadSuccess)
 

@@ -13,6 +13,7 @@ const downloadGitRepo = require('download-git-repo')
  *  false: error
  */
 module.exports = function download({ repo, folder }) {
+  console.log({ repo, folder })
   return new Promise((resolve) => {
     console.log()
     const spinner = ora('Downloading…').start()
