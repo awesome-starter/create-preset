@@ -7,7 +7,6 @@ module.exports = {
     jest: true,
   },
   extends: ['eslint:recommended', 'prettier'],
-  // parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 13,
     sourceType: 'module',
@@ -16,7 +15,6 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    // 'no-unused-vars': 'warn',
     'prettier/prettier': 'warn',
   },
 }
