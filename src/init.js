@@ -16,8 +16,7 @@ const {
   toValidPackageName,
   pkgFromUserAgent,
 } = require('./utils')
-const getDownloadUrl = require('./libs/getDownloadUrl')
-const download = require('./libs/download')
+const { getDownloadUrl, download } = require('./libs/download')
 const { frameworks, templates, renameFiles } = require('./config')
 const cwd = process.cwd()
 

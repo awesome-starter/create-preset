@@ -3,6 +3,32 @@ const chalk = require('chalk')
 const downloadGitRepo = require('download-git-repo')
 
 /**
+ * Get Download URL
+ *
+ * @typedef { import('../types').VariantItem } VariantItem
+ * @param {{ template: string; variants: VariantItem[] }} options - The result from CMD
+ *  - template: The selected template name from CMD
+ *  - variants: The `variants` in `framework` from config
+ * @returns {string} The repo url about selected template starter
+ */
+function getDownloadUrl({ template, variants }) {
+  if (!Array.isArray(variants)) return ''
+
+  const target = variants.find((v) => v.name === template)
+  if (!target) return ''
+
+  const repo = target.repo ? String(target.repo) : ''
+  if (!repo.startsWith('http')) return ''
+
+  // Use speed up service for GitHub
+  const url = repo.includes('github.com/')
+    ? repo.replace(/https:\/\/github.com\//, 'hub.fastgit.org:')
+    : repo
+
+  return url
+}
+
+/**
  * Download GitHub Repo
  *
  * @param {{ repo: string; folder: string }} options - the download options.
@@ -12,7 +38,7 @@ const downloadGitRepo = require('download-git-repo')
  *  true: success
  *  false: error
  */
-module.exports = function download({ repo, folder }) {
+function download({ repo, folder }) {
   return new Promise((resolve) => {
     console.log()
     const spinner = ora('Downloading…').start()
@@ -31,4 +57,9 @@ module.exports = function download({ repo, folder }) {
       resolve(true)
     })
   })
+}
+
+module.exports = {
+  getDownloadUrl,
+  download,
 }
