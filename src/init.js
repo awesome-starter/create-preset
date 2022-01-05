@@ -29,7 +29,16 @@ async function init(targetDirFromCMD) {
 
   const defaultProjectName = !targetDir ? 'my-preset-app' : targetDir
 
-  let result = {}
+  /**
+   * @typedef { import('./types').UserInputFromCMD } UserInputFromCMD
+   * @type {UserInputFromCMD}
+   */
+  let result = {
+    projectName: '',
+    overwrite: false,
+    framework: [],
+    variant: '',
+  }
 
   try {
     result = await prompts(
@@ -109,6 +118,7 @@ async function init(targetDirFromCMD) {
       }
     )
   } catch (cancelled) {
+    // @ts-ignore
     console.log(cancelled.message)
     return
   }
