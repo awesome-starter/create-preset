@@ -4,6 +4,7 @@ const downloadGitRepo = require('download-git-repo')
 
 /**
  * Download GitHub Repo
+ *
  * @param {{ repo: string; folder: string }} options - the download options.
  *  - repo: The repo url to download
  *  - folder: The project folder name

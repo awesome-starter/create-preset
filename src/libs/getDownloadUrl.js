@@ -1,7 +1,8 @@
 /**
  * Get Download URL
+ *
  * @typedef { import('../types').VariantItem } VariantItem
- * @param {{ template: string; variants: VariantItem[] }} - The result from CMD
+ * @param {{ template: string; variants: VariantItem[] }} options - The result from CMD
  *  - template: The selected template name from CMD
  *  - variants: The `variants` in `framework` from config
  * @returns {string} The repo url about selected template starter
