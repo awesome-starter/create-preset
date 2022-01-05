@@ -1,7 +1,25 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "allowSyntheticDefaultImports": false
+    "module": "esnext",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "incremental": false,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "types": [
+      "node"
+    ],
+    "lib": ["esnext", "dom", "dom.iterable"]
   },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.js"],
   "exclude": ["node_modules"]
 }
