@@ -7,12 +7,12 @@ module.exports = {
     jest: true,
   },
   extends: ['eslint:recommended', 'prettier'],
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 13,
+    parser: '@typescript-eslint/parser',
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ['prettier'],
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
