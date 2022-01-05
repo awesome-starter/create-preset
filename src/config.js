@@ -2,6 +2,7 @@ const chalk = require('chalk')
 
 /**
  * Framework Config
+ *
  * @typedef { import('./types').FrameworkItem } FrameworkItem
  * @type {FrameworkItem[]}
  */
@@ -32,17 +33,14 @@ const frameworks = [
   },
 ]
 
+/**
+ * Get template names from frameworks list
+ */
 const templates = frameworks
   .map((f) => (f.variants && f.variants.map((v) => v.name)) || [f.name])
   .reduce((a, b) => a.concat(b), [])
 
-const renameFiles = {
-  _gitignore: '.gitignore',
-  _eslintrc: '.eslintrc.js',
-}
-
 module.exports = {
   frameworks,
   templates,
-  renameFiles,
 }

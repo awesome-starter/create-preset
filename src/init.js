@@ -9,18 +9,19 @@ const argv = require('minimist')(process.argv.slice(2), { string: ['_'] })
 const prompts = require('prompts')
 const chalk = require('chalk')
 const {
-  copy,
   isValidPackageName,
   toValidPackageName,
   pkgFromUserAgent,
-} = require('./utils')
+} = require('./libs/pkg')
 const { emptyDir, isEmpty } = require('./libs/dir')
 const { getDownloadUrl, download } = require('./libs/download')
-const { frameworks, templates, renameFiles } = require('./config')
+const { frameworks, templates } = require('./config')
 const cwd = process.cwd()
 
 /**
- * @param targetDirFromCMD
+ * The action for `init` command
+ *
+ * @param {string | undefined} targetDirFromCMD - The dir name from CMD, if there is input
  */
 async function init(targetDirFromCMD) {
   let targetDir = targetDirFromCMD || argv._[1]
