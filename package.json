@@ -16,6 +16,7 @@
   ],
   "main": "src/index.js",
   "scripts": {
+    "test": "jest --no-cache",
     "format": "prettier --write .",
     "backup": "git add . && git commit -m \"chore: save the coding progress\" && git push"
   },
@@ -37,6 +38,7 @@
     "eslint": "^8.5.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.4.6",
     "lint-staged": "11.1.4",
     "minimist": "^1.2.5",
     "ora": "5.4.1",
