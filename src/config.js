@@ -26,7 +26,7 @@ const frameworks = [
         name: 'node-basic',
         description: 'A basic Node.js project template.',
         color: chalk.green,
-        repo: '',
+        repo: 'https://github.com/awesome-starter/node-basic-starter',
       },
     ],
   },
