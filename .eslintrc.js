@@ -8,10 +8,10 @@ module.exports = {
   },
   extends: ['eslint:recommended', 'prettier'],
   parser: '@typescript-eslint/parser',
-  // parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaVersion: 13,
     sourceType: 'module',
+    parser: '@babel/eslint-parser',
     requireConfigFile: false,
     allowImportExportEverywhere: true,
   },

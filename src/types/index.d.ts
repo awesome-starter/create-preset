@@ -1,12 +1,14 @@
+import type { Chalk } from 'chalk'
+
 export interface VariantItem {
   name: string
   description: string
-  color: any
+  color: Chalk
   repo: string
 }
 
 export interface FrameworkItem {
   name: string
-  color: any
+  color: Chalk
   variants: VariantItem[]
 }
