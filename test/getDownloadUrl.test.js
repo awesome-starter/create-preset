@@ -4,7 +4,7 @@ describe('getDownloadUrl.js', () => {
   test('GitHub', async () => {
     expect(
       getDownloadUrl({
-        variant: 'test',
+        template: 'test',
         variants: [
           {
             name: 'test',
@@ -20,7 +20,7 @@ describe('getDownloadUrl.js', () => {
   test('GitLab', async () => {
     expect(
       getDownloadUrl({
-        variant: 'test',
+        template: 'test',
         variants: [
           {
             name: 'test',
@@ -36,7 +36,7 @@ describe('getDownloadUrl.js', () => {
   test('Gitee', async () => {
     expect(
       getDownloadUrl({
-        variant: 'test',
+        template: 'test',
         variants: [
           {
             name: 'test',
@@ -52,7 +52,7 @@ describe('getDownloadUrl.js', () => {
   test('Unknown', async () => {
     expect(
       getDownloadUrl({
-        variant: 'test',
+        template: 'test',
         variants: [
           {
             name: 'test',
@@ -67,7 +67,7 @@ describe('getDownloadUrl.js', () => {
   test('Empty', async () => {
     expect(
       getDownloadUrl({
-        variant: 'test',
+        template: 'test',
         variants: [
           {
             name: 'test',
@@ -83,7 +83,7 @@ describe('getDownloadUrl.js', () => {
   test('SSH', async () => {
     expect(
       getDownloadUrl({
-        variant: 'test',
+        template: 'test',
         variants: [
           {
             name: 'test',

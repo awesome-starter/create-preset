@@ -16,6 +16,8 @@ const {
   toValidPackageName,
   pkgFromUserAgent,
 } = require('./utils')
+const getDownloadUrl = require('./libs/getDownloadUrl')
+const download = require('./libs/download')
 const { frameworks, templates, renameFiles } = require('./config')
 const cwd = process.cwd()
 
@@ -125,29 +127,42 @@ async function init(targetDirFromCMD) {
 
   console.log(`\nScaffolding project in ${root}...`)
 
-  const templateDir = path.join(__dirname, `templates/${template}`)
+  // Get download URL from CMD
+  const downloadUrl = getDownloadUrl({
+    template,
+    variants: framework.variants,
+  })
 
-  const write = (file, content) => {
-    const targetPath = renameFiles[file]
-      ? path.join(root, renameFiles[file])
-      : path.join(root, file)
-    if (content) {
-      fs.writeFileSync(targetPath, content)
-    } else {
-      copy(path.join(templateDir, file), targetPath)
-    }
-  }
+  // Download template
+  const isDownloadSuccess = await download({
+    repo: downloadUrl,
+    folder: template,
+  })
+  console.log('isDownloadSuccess', isDownloadSuccess)
 
-  const files = fs.readdirSync(templateDir)
-  for (const file of files.filter((f) => f !== 'package.json')) {
-    write(file)
-  }
+  // const templateDir = path.join(__dirname, `templates/${template}`)
 
-  const pkg = require(path.join(templateDir, `package.json`))
+  // const write = (file, content) => {
+  //   const targetPath = renameFiles[file]
+  //     ? path.join(root, renameFiles[file])
+  //     : path.join(root, file)
+  //   if (content) {
+  //     fs.writeFileSync(targetPath, content)
+  //   } else {
+  //     copy(path.join(templateDir, file), targetPath)
+  //   }
+  // }
 
-  pkg.name = packageName || targetDir
+  // const files = fs.readdirSync(templateDir)
+  // for (const file of files.filter((f) => f !== 'package.json')) {
+  //   write(file)
+  // }
 
-  write('package.json', JSON.stringify(pkg, null, 2))
+  // const pkg = require(path.join(templateDir, `package.json`))
+
+  // pkg.name = packageName || targetDir
+
+  // write('package.json', JSON.stringify(pkg, null, 2))
 
   const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent)
   const pkgManager = pkgInfo ? pkgInfo.name : 'npm'

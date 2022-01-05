@@ -1,13 +1,15 @@
 /**
  * Get Download URL
- * @param {string} variant - The selected variant's name from CMD
- * @param {array} variants - The `variants` in `framework` from config
- * @returns The repo url about selected template starter
+ * @typedef { import('../types').VariantItem } VariantItem
+ * @param {{ template: string; variants: VariantItem[] }} - The result from CMD
+ *  - template: The selected template name from CMD
+ *  - variants: The `variants` in `framework` from config
+ * @returns {string} The repo url about selected template starter
  */
-module.exports = function ({ variant, variants }) {
+module.exports = function ({ template, variants }) {
   if (!Array.isArray(variants)) return ''
 
-  const target = variants.find((v) => v.name === variant)
+  const target = variants.find((v) => v.name === template)
   if (!target) return ''
 
   const repo = target.repo ? String(target.repo) : ''

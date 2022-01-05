@@ -4,25 +4,30 @@ const downloadGitRepo = require('download-git-repo')
 
 /**
  * Download GitHub Repo
- * @param {string} url - The URL to download.
- * @param {string} name - The project folder name.
- * @returns Promise<boolean>, the download status:
+ *
+ * @param {{ repo: string; folder: string }} options - the download options.
+ *  - repo: The repo url to download
+ *  - folder: The project folder name
+ * @returns {Promise<boolean>} - the download status:
  *  true: success
  *  false: error
  */
-module.exports = function download({ url, name }) {
+module.exports = function download({ repo, folder }) {
   return new Promise((resolve) => {
+    console.log()
     const spinner = ora('Downloading…').start()
-    downloadGitRepo(url, name, { clone: false }, (err) => {
+    downloadGitRepo(repo, folder, { clone: false }, (err) => {
       if (err) {
+        console.log()
+        console.log()
         console.log(err)
-        spinner.fail(chalk.red('✖') + 'Download error.')
-        console.log(chalk.red(err))
+        console.log()
+        spinner.fail(chalk.red('Download failed.'))
         resolve(false)
         process.exit()
       }
       console.log()
-      spinner.succeed(chalk.green('Done.'))
+      spinner.succeed(chalk.green('Download successful.'))
       resolve(true)
     })
   })

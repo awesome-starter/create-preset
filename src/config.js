@@ -1,5 +1,10 @@
 const chalk = require('chalk')
 
+/**
+ * Framework Config
+ * @typedef { import('./types').FrameworkItem } FrameworkItem
+ * @type {FrameworkItem[]}
+ */
 const frameworks = [
   {
     name: 'vue',
@@ -7,7 +12,7 @@ const frameworks = [
     variants: [
       {
         name: 'vite-vue3-ts',
-        display: 'Vite + Vue 3.0 + TypeScript',
+        description: 'Vite + Vue 3.0 + TypeScript',
         color: chalk.cyan,
         repo: 'https://github.com/awesome-starter/vite-vue3-ts-starter',
       },
@@ -19,8 +24,9 @@ const frameworks = [
     variants: [
       {
         name: 'node-basic',
-        display: 'A basic Node.js project template.',
+        description: 'A basic Node.js project template.',
         color: chalk.green,
+        repo: '',
       },
     ],
   },

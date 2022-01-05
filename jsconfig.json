@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "resolveJsonModule": true
+    "target": "esnext",
+    "allowSyntheticDefaultImports": false
   },
   "exclude": ["node_modules"]
 }
