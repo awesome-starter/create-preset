@@ -11,9 +11,6 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 13,
     sourceType: 'module',
-    // parser: '@babel/eslint-parser',
-    requireConfigFile: false,
-    allowImportExportEverywhere: true,
   },
   plugins: ['@typescript-eslint', 'prettier'],
   rules: {

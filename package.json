@@ -33,7 +33,6 @@
   },
   "homepage": "https://github.com/awesome-starter/create-preset",
   "devDependencies": {
-    "@babel/eslint-parser": "^7.16.5",
     "@typescript-eslint/eslint-plugin": "^5.9.0",
     "@typescript-eslint/parser": "^5.9.0",
     "chalk": "4.1.2",
