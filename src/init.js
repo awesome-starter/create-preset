@@ -10,16 +10,18 @@ const prompts = require('prompts')
 const chalk = require('chalk')
 const {
   copy,
-  emptyDir,
-  isEmpty,
   isValidPackageName,
   toValidPackageName,
   pkgFromUserAgent,
 } = require('./utils')
+const { emptyDir, isEmpty } = require('./libs/dir')
 const { getDownloadUrl, download } = require('./libs/download')
 const { frameworks, templates, renameFiles } = require('./config')
 const cwd = process.cwd()
 
+/**
+ * @param targetDirFromCMD
+ */
 async function init(targetDirFromCMD) {
   let targetDir = targetDirFromCMD || argv._[1]
   let template = argv.template || argv.t
