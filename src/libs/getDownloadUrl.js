@@ -10,8 +10,10 @@ module.exports = function ({ variant, variants }) {
   const target = variants.find((v) => v.name === variant)
   if (!target) return ''
 
-  // Use speed up service for GitHub
   const repo = target.repo ? String(target.repo) : ''
+  if (!repo.startsWith('http')) return ''
+
+  // Use speed up service for GitHub
   const url = repo.includes('github.com/')
     ? repo.replace(/https:\/\/github.com\//, 'hub.fastgit.org:')
     : repo

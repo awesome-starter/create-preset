@@ -9,6 +9,7 @@ const frameworks = [
         name: 'vite-vue3-ts',
         display: 'Vite + Vue 3.0 + TypeScript',
         color: chalk.cyan,
+        repo: 'https://github.com/awesome-starter/vite-vue3-ts-starter',
       },
     ],
   },
