@@ -108,7 +108,6 @@ async function init(targetDirFromCMD) {
     console.log(cancelled.message)
     return
   }
-  console.log(result)
 
   // user choice associated with prompts
   const { framework, overwrite, packageName, variant } = result
