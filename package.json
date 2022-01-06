@@ -1,6 +1,6 @@
 {
   "name": "create-preset",
-  "version": "0.2.1",
+  "version": "0.3.0-alpha.0",
   "description": "Provides the ability to quickly create preset projects.",
   "keywords": [
     "preset"
@@ -16,6 +16,8 @@
   ],
   "main": "src/index.js",
   "scripts": {
+    "test": "jest --no-cache",
+    "lint": "eslint src --ext .js,.ts",
     "format": "prettier --write .",
     "backup": "git add . && git commit -m \"chore: save the coding progress\" && git push"
   },
@@ -30,18 +32,20 @@
     "url": "https://github.com/awesome-starter/create-preset/issues"
   },
   "homepage": "https://github.com/awesome-starter/create-preset",
-  "dependencies": {
-    "commander": "^8.3.0",
-    "kolorist": "^1.5.1",
-    "minimist": "^1.2.5",
-    "prompts": "^2.4.2"
-  },
   "devDependencies": {
-    "eslint": "^8.5.0",
+    "chalk": "4.1.2",
+    "commander": "^8.3.0",
+    "download-git-repo": "^3.0.2",
+    "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-jsdoc": "^37.5.1",
     "eslint-plugin-prettier": "^4.0.0",
-    "lint-staged": "^12.1.4",
+    "jest": "^27.4.6",
+    "lint-staged": "11.1.4",
+    "minimist": "^1.2.5",
+    "ora": "5.4.1",
     "prettier": "^2.5.1",
+    "prompts": "^2.4.2",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {
@@ -53,7 +57,6 @@
       "prettier --write"
     ],
     "*.ts?(x)": [
-      "eslint",
       "prettier --parser=typescript --write"
     ]
   }

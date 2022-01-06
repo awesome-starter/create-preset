@@ -7,25 +7,40 @@ const path = require('path')
 // non associated with an option ( _ ) needs to be parsed as a string. See #4606
 const argv = require('minimist')(process.argv.slice(2), { string: ['_'] })
 const prompts = require('prompts')
-const { red } = require('kolorist')
+const chalk = require('chalk')
 const {
-  copy,
-  emptyDir,
-  isEmpty,
   isValidPackageName,
   toValidPackageName,
   pkgFromUserAgent,
-} = require('./utils')
-const { frameworks, templates, renameFiles } = require('./config')
+} = require('../libs/pkg')
+const { write, remove, emptyDir, isEmpty } = require('../libs/dir')
+const { getDownloadUrl, download } = require('../libs/download')
+const { frameworks, templates } = require('../config')
 const cwd = process.cwd()
 
+/**
+ * The action for `init` command
+ *
+ * @param {string | undefined} targetDirFromCMD - The dir name from CMD, if there is input
+ */
 async function init(targetDirFromCMD) {
   let targetDir = targetDirFromCMD || argv._[1]
   let template = argv.template || argv.t
 
   const defaultProjectName = !targetDir ? 'my-preset-app' : targetDir
 
-  let result = {}
+  /**
+   * @typedef { import('../types').UserInputFromCMD } UserInputFromCMD
+   * @type {UserInputFromCMD}
+   */
+  let result = {
+    projectName: '',
+    packageName: '',
+    overwrite: false,
+    // @ts-ignore
+    framework: undefined,
+    variant: '',
+  }
 
   try {
     result = await prompts(
@@ -52,7 +67,7 @@ async function init(targetDirFromCMD) {
           // @ts-ignore
           type: (_, { overwrite } = {}) => {
             if (overwrite === false) {
-              throw new Error(red('✖') + ' Operation cancelled')
+              throw new Error(chalk.red('✖') + ' Operation cancelled')
             }
             return null
           },
@@ -89,6 +104,7 @@ async function init(targetDirFromCMD) {
           message: 'Select a variant:',
           // @ts-ignore
           choices: (framework) =>
+            // @ts-ignore
             framework.variants.map((variant) => {
               const variantColor = variant.color
               return {
@@ -100,11 +116,12 @@ async function init(targetDirFromCMD) {
       ],
       {
         onCancel: () => {
-          throw new Error(red('✖') + ' Operation cancelled')
+          throw new Error(chalk.red('✖') + ' Operation cancelled')
         },
       }
     )
   } catch (cancelled) {
+    // @ts-ignore
     console.log(cancelled.message)
     return
   }
@@ -125,30 +142,35 @@ async function init(targetDirFromCMD) {
 
   console.log(`\nScaffolding project in ${root}...`)
 
-  const templateDir = path.join(__dirname, `templates/${template}`)
+  // Get download URL from CMD
+  const downloadUrl = getDownloadUrl({
+    template,
+    variants: framework.variants,
+  })
 
-  const write = (file, content) => {
-    const targetPath = renameFiles[file]
-      ? path.join(root, renameFiles[file])
-      : path.join(root, file)
-    if (content) {
-      fs.writeFileSync(targetPath, content)
-    } else {
-      copy(path.join(templateDir, file), targetPath)
-    }
-  }
+  // Download template
+  await download({
+    repo: downloadUrl,
+    folder: targetDir,
+  })
 
-  const files = fs.readdirSync(templateDir)
-  for (const file of files.filter((f) => f !== 'package.json')) {
-    write(file)
-  }
+  // Remove lock files
+  remove('file', path.join(root, `package-lock.json`))
+  remove('file', path.join(root, `yarn.lock`))
+  remove('file', path.join(root, `pnpm-lock.yaml`))
 
-  const pkg = require(path.join(templateDir, `package.json`))
+  // Get package info
+  const pkg = path.join(root, `package.json`)
+  const pkgContent = require(pkg)
 
-  pkg.name = packageName || targetDir
+  // Reset project info
+  pkgContent['name'] = packageName || targetDir
+  pkgContent['version'] = '0.0.0'
+  pkgContent['description'] = ''
+  pkgContent['author'] = ''
+  write(pkg, JSON.stringify(pkgContent, null, 2))
 
-  write('package.json', JSON.stringify(pkg, null, 2))
-
+  // Notification result
   const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent)
   const pkgManager = pkgInfo ? pkgInfo.name : 'npm'
 
