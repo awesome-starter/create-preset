@@ -12,10 +12,10 @@ const {
   isValidPackageName,
   toValidPackageName,
   pkgFromUserAgent,
-} = require('./libs/pkg')
-const { emptyDir, isEmpty } = require('./libs/dir')
-const { getDownloadUrl, download } = require('./libs/download')
-const { frameworks, templates } = require('./config')
+} = require('../libs/pkg')
+const { emptyDir, isEmpty } = require('../libs/dir')
+const { getDownloadUrl, download } = require('../libs/download')
+const { frameworks, templates } = require('../config')
 const cwd = process.cwd()
 
 /**
@@ -30,7 +30,7 @@ async function init(targetDirFromCMD) {
   const defaultProjectName = !targetDir ? 'my-preset-app' : targetDir
 
   /**
-   * @typedef { import('./types').UserInputFromCMD } UserInputFromCMD
+   * @typedef { import('../types').UserInputFromCMD } UserInputFromCMD
    * @type {UserInputFromCMD}
    */
   let result = {

@@ -5,7 +5,7 @@ const argv = require('minimist')(process.argv.slice(2), { string: ['_'] })
 const chalk = require('chalk')
 const { Command } = require('commander')
 const { version } = require('../package.json')
-const init = require('./init')
+const init = require('./core/init')
 
 function start() {
   const program = new Command()
