@@ -35,8 +35,9 @@ async function init(targetDirFromCMD) {
    */
   let result = {
     projectName: '',
+    packageName: '',
     overwrite: false,
-    framework: [],
+    framework: '',
     variant: '',
   }
 
@@ -122,6 +123,7 @@ async function init(targetDirFromCMD) {
     console.log(cancelled.message)
     return
   }
+  console.log(result)
 
   // user choice associated with prompts
   const { framework, overwrite, packageName, variant } = result
@@ -150,6 +152,11 @@ async function init(targetDirFromCMD) {
     repo: downloadUrl,
     folder: targetDir,
   })
+
+  // Remove lock files
+  remove('file', path.join(root, `package-lock.json`))
+  remove('file', path.join(root, `yarn.lock`))
+  remove('file', path.join(root, `pnpm-lock.yaml`))
 
   // Get package info
   const pkg = path.join(root, `package.json`)

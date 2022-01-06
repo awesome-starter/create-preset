@@ -2,8 +2,9 @@ import type { Chalk } from 'chalk'
 
 export interface UserInputFromCMD {
   projectName: string
+  packageName: string
   overwrite: boolean
-  framework: FrameworkItem[]
+  framework: FrameworkItem
   variant: string
 }
 
