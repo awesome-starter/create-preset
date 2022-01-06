@@ -13,7 +13,7 @@ const {
   toValidPackageName,
   pkgFromUserAgent,
 } = require('../libs/pkg')
-const { emptyDir, isEmpty } = require('../libs/dir')
+const { write, emptyDir, isEmpty } = require('../libs/dir')
 const { getDownloadUrl, download } = require('../libs/download')
 const { frameworks, templates } = require('../config')
 const cwd = process.cwd()
@@ -151,12 +151,15 @@ async function init(targetDirFromCMD) {
     folder: targetDir,
   })
 
-  // const pkg = require(path.join(templateDir, `package.json`))
+  // Get package info
+  const pkg = path.join(root, `package.json`)
+  const pkgContent = require(pkg)
 
-  // pkg.name = packageName || targetDir
+  // Rename project
+  pkgContent.name = packageName || targetDir
+  write(pkg, JSON.stringify(pkgContent, null, 2))
 
-  // write('package.json', JSON.stringify(pkg, null, 2))
-
+  // Notification result
   const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent)
   const pkgManager = pkgInfo ? pkgInfo.name : 'npm'
 

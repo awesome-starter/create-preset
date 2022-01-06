@@ -2,6 +2,18 @@ const fs = require('fs')
 const { resolve } = require('path')
 
 /**
+ * Write file content
+ *
+ * @param {string} file - The full path of the target file
+ * @param {string} content - The content of the file to be written
+ */
+function write(file, content) {
+  if (content) {
+    fs.writeFileSync(file, content)
+  }
+}
+
+/**
  * Copy a file or a directory
  *
  * @param {string} src - The source file or directory
@@ -65,6 +77,7 @@ function emptyDir(dir) {
 }
 
 module.exports = {
+  write,
   copy,
   copyDir,
   emptyDir,
