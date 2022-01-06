@@ -1,6 +1,6 @@
 {
   "name": "create-preset",
-  "version": "0.3.0-alpha.0",
+  "version": "0.3.0",
   "description": "Provides the ability to quickly create preset projects.",
   "keywords": [
     "preset"
