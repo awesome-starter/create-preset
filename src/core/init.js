@@ -37,7 +37,8 @@ async function init(targetDirFromCMD) {
     projectName: '',
     packageName: '',
     overwrite: false,
-    framework: '',
+    // @ts-ignore
+    framework: undefined,
     variant: '',
   }
 
@@ -103,6 +104,7 @@ async function init(targetDirFromCMD) {
           message: 'Select a variant:',
           // @ts-ignore
           choices: (framework) =>
+            // @ts-ignore
             framework.variants.map((variant) => {
               const variantColor = variant.color
               return {
@@ -123,7 +125,6 @@ async function init(targetDirFromCMD) {
     console.log(cancelled.message)
     return
   }
-  console.log(result)
 
   // user choice associated with prompts
   const { framework, overwrite, packageName, variant } = result

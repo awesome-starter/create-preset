@@ -9,12 +9,12 @@ const chalk = require('chalk')
 const frameworks = [
   {
     name: 'vue',
-    color: chalk.green,
+    color: chalk.blue,
     variants: [
       {
         name: 'vite-vue3-ts',
         description: 'Vite + Vue 3.0 + TypeScript',
-        color: chalk.cyan,
+        color: chalk.yellow,
         repo: 'https://github.com/awesome-starter/vite-vue3-ts-starter',
       },
     ],
@@ -26,8 +26,14 @@ const frameworks = [
       {
         name: 'node-basic',
         description: 'A basic Node.js project template.',
-        color: chalk.green,
+        color: chalk.yellow,
         repo: 'https://github.com/awesome-starter/node-basic-starter',
+      },
+      {
+        name: 'node-express',
+        description: 'A express template for Node.js project.',
+        color: chalk.yellow,
+        repo: 'https://github.com/awesome-starter/node-express-starter',
       },
     ],
   },
