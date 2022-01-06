@@ -151,24 +151,6 @@ async function init(targetDirFromCMD) {
     folder: targetDir,
   })
 
-  // const templateDir = path.join(__dirname, `templates/${template}`)
-
-  // const write = (file, content) => {
-  //   const targetPath = renameFiles[file]
-  //     ? path.join(root, renameFiles[file])
-  //     : path.join(root, file)
-  //   if (content) {
-  //     fs.writeFileSync(targetPath, content)
-  //   } else {
-  //     copy(path.join(templateDir, file), targetPath)
-  //   }
-  // }
-
-  // const files = fs.readdirSync(templateDir)
-  // for (const file of files.filter((f) => f !== 'package.json')) {
-  //   write(file)
-  // }
-
   // const pkg = require(path.join(templateDir, `package.json`))
 
   // pkg.name = packageName || targetDir
