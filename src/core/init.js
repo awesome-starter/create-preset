@@ -155,8 +155,11 @@ async function init(targetDirFromCMD) {
   const pkg = path.join(root, `package.json`)
   const pkgContent = require(pkg)
 
-  // Rename project
-  pkgContent.name = packageName || targetDir
+  // Reset project info
+  pkgContent['name'] = packageName || targetDir
+  pkgContent['version'] = '0.0.0'
+  pkgContent['description'] = ''
+  pkgContent['author'] = ''
   write(pkg, JSON.stringify(pkgContent, null, 2))
 
   // Notification result
