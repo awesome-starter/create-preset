@@ -14,6 +14,23 @@ function write(file, content) {
 }
 
 /**
+ * Remove file or directory
+ *
+ * @param {string} type - Remove type, support `file` and `dir`
+ * @param {string} target - The target to be remove, a file or a directory
+ */
+function remove(type, target) {
+  switch (type) {
+    case 'file':
+      fs.unlinkSync(target)
+      break
+    case 'dir':
+      fs.rmdirSync(target)
+      break
+  }
+}
+
+/**
  * Copy a file or a directory
  *
  * @param {string} src - The source file or directory
@@ -78,6 +95,7 @@ function emptyDir(dir) {
 
 module.exports = {
   write,
+  remove,
   copy,
   copyDir,
   emptyDir,
