@@ -13,7 +13,7 @@ const {
   toValidPackageName,
   pkgFromUserAgent,
 } = require('../libs/pkg')
-const { write, emptyDir, isEmpty } = require('../libs/dir')
+const { write, remove, emptyDir, isEmpty } = require('../libs/dir')
 const { getDownloadUrl, download } = require('../libs/download')
 const { frameworks, templates } = require('../config')
 const cwd = process.cwd()

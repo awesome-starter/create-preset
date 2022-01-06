@@ -20,13 +20,17 @@ function write(file, content) {
  * @param {string} target - The target to be remove, a file or a directory
  */
 function remove(type, target) {
-  switch (type) {
-    case 'file':
-      fs.unlinkSync(target)
-      break
-    case 'dir':
-      fs.rmdirSync(target)
-      break
+  try {
+    switch (type) {
+      case 'file':
+        fs.unlinkSync(target)
+        break
+      case 'dir':
+        fs.rmdirSync(target)
+        break
+    }
+  } catch (e) {
+    // console.log(e)
   }
 }
 
