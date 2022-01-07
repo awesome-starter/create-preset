@@ -35,6 +35,13 @@ const techStacks = [
         color: chalk.yellow,
         repo: 'https://github.com/awesome-starter/node-express-starter',
       },
+      {
+        name: 'node-program-pkg',
+        description:
+          'A program template for Node.js project, use pkg to packaged.',
+        color: chalk.yellow,
+        repo: 'https://github.com/awesome-starter/node-pkg-starter',
+      },
     ],
   },
   {
