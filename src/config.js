@@ -13,7 +13,7 @@ const techStacks = [
     variants: [
       {
         name: 'vite-vue3-ts',
-        description: 'Vite + Vue 3.0 + TypeScript',
+        description: 'A template for Vue 3.0 with TypeScript, base on Vite.',
         color: chalk.yellow,
         repo: 'https://github.com/awesome-starter/vite-vue3-ts-starter',
       },
@@ -50,7 +50,8 @@ const techStacks = [
     variants: [
       {
         name: 'electron-vue3-ts',
-        description: 'Electron + Vue 3.0 + TypeScript',
+        description:
+          'An electron template with Vue 3.0 and TypeScript for client project.',
         color: chalk.yellow,
         repo: 'https://github.com/awesome-starter/electron-vue3-ts-starter',
       },
