@@ -2,10 +2,13 @@
 
 Provides the ability to quickly create preset projects.
 
-> **Compatibility Note:**<br>
-> Some preset project requires [Node.js](https://nodejs.org/en/) version >=12.2.0 (e.g. Vite). However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
+![create-preset](https://cdn.jsdelivr.net/gh/chengpeiquan/assets-storage/img/2021/11/20211229183022.gif)
 
-![](https://cdn.jsdelivr.net/gh/chengpeiquan/assets-storage/img/2021/11/20211229183022.gif)
+>It is still in the early stage of development, and the version update will be more frequent, please try to use [Usage](#usage) instead of [Global Usage](#global-usage)
+
+## Compatibility Note:
+
+Some preset project requires [Node.js](https://nodejs.org/en/) version >=12.2.0 (e.g. Vite). However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
 
 ## Usage
 
@@ -52,3 +55,13 @@ yarn global upgrade --latest create-preset
 ```
 
 Or reinstall it globally, haha!
+
+## Starters
+
+Tech Stack|Name|Description
+:-:|:-:|:--
+vue|vue3-ts-vite|A template for Vue 3.0 with TypeScript, base on Vite.
+node|node-basic|A basic Node.js project template.
+node|node-server-express|A express template for Node.js project.
+node|node-program-pkg|A program template for Node.js project, use pkg to packaged.
+electron|electron-vue3-ts|An electron template with Vue 3.0 and TypeScript for client project.

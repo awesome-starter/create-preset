@@ -4,7 +4,7 @@ export interface UserInputFromCMD {
   projectName: string
   packageName: string
   overwrite: boolean
-  framework: FrameworkItem
+  techStack: TechStackItem
   variant: string
 }
 
@@ -15,7 +15,7 @@ export interface VariantItem {
   repo: string
 }
 
-export interface FrameworkItem {
+export interface TechStackItem {
   name: string
   color: Chalk
   variants: VariantItem[]
