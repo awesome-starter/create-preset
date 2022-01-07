@@ -30,7 +30,7 @@ const techStacks = [
         repo: 'https://github.com/awesome-starter/node-basic-starter',
       },
       {
-        name: 'node-express',
+        name: 'node-server-express',
         description: 'A express template for Node.js project.',
         color: chalk.yellow,
         repo: 'https://github.com/awesome-starter/node-express-starter',
