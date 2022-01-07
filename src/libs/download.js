@@ -8,7 +8,7 @@ const downloadGitRepo = require('download-git-repo')
  * @typedef { import('../types').VariantItem } VariantItem
  * @param {{ template: string; variants: VariantItem[] }} options - The result from CMD
  *  - template: The selected template name from CMD
- *  - variants: The `variants` in `framework` from config
+ *  - variants: The `variants` in `techStack` from config
  * @returns {string} The repo url about selected template starter
  */
 function getDownloadUrl({ template, variants }) {

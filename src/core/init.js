@@ -15,7 +15,7 @@ const {
 } = require('../libs/pkg')
 const { write, remove, emptyDir, isEmpty } = require('../libs/dir')
 const { getDownloadUrl, download } = require('../libs/download')
-const { frameworks, templates } = require('../config')
+const { techStacks, templates } = require('../config')
 const cwd = process.cwd()
 
 /**
@@ -38,7 +38,7 @@ async function init(targetDirFromCMD) {
     packageName: '',
     overwrite: false,
     // @ts-ignore
-    framework: undefined,
+    techStack: undefined,
     variant: '',
   }
 
@@ -83,29 +83,29 @@ async function init(targetDirFromCMD) {
         },
         {
           type: template && templates.includes(template) ? null : 'select',
-          name: 'framework',
+          name: 'techStack',
           message:
             typeof template === 'string' && !templates.includes(template)
               ? `"${template}" isn't a valid template. Please choose from below: `
-              : 'Select a framework:',
+              : 'Select a tech stack:',
           initial: 0,
-          choices: frameworks.map((framework) => {
-            const frameworkColor = framework.color
+          choices: techStacks.map((techStack) => {
+            const techStackColor = techStack.color
             return {
-              title: frameworkColor(framework.name),
-              value: framework,
+              title: techStackColor(techStack.name),
+              value: techStack,
             }
           }),
         },
         {
-          type: (framework) =>
-            framework && framework.variants ? 'select' : null,
+          type: (techStack) =>
+            techStack && techStack.variants ? 'select' : null,
           name: 'variant',
           message: 'Select a variant:',
           // @ts-ignore
-          choices: (framework) =>
+          choices: (techStack) =>
             // @ts-ignore
-            framework.variants.map((variant) => {
+            techStack.variants.map((variant) => {
               const variantColor = variant.color
               return {
                 title: variantColor(variant.name),
@@ -127,7 +127,7 @@ async function init(targetDirFromCMD) {
   }
 
   // user choice associated with prompts
-  const { framework, overwrite, packageName, variant } = result
+  const { techStack, overwrite, packageName, variant } = result
 
   const root = path.join(cwd, targetDir)
 
@@ -138,14 +138,14 @@ async function init(targetDirFromCMD) {
   }
 
   // determine template
-  template = variant || framework || template
+  template = variant || techStack || template
 
   console.log(`\nScaffolding project in ${root}...`)
 
   // Get download URL from CMD
   const downloadUrl = getDownloadUrl({
     template,
-    variants: framework.variants,
+    variants: techStack.variants,
   })
 
   // Download template

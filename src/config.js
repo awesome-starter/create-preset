@@ -1,12 +1,12 @@
 const chalk = require('chalk')
 
 /**
- * Framework Config
+ * Tech Stack Config
  *
- * @typedef { import('./types').FrameworkItem } FrameworkItem
- * @type {FrameworkItem[]}
+ * @typedef { import('./types').TechStackItem } TechStackItem
+ * @type {TechStackItem[]}
  */
-const frameworks = [
+const techStacks = [
   {
     name: 'vue',
     color: chalk.blue,
@@ -40,13 +40,13 @@ const frameworks = [
 ]
 
 /**
- * Get template names from frameworks list
+ * Get template names from tech stack list
  */
-const templates = frameworks
+const templates = techStacks
   .map((f) => (f.variants && f.variants.map((v) => v.name)) || [f.name])
   .reduce((a, b) => a.concat(b), [])
 
 module.exports = {
-  frameworks,
+  techStacks,
   templates,
 }
