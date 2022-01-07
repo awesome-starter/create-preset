@@ -9,7 +9,8 @@
   "author": "chengpeiquan",
   "bin": {
     "create-preset": "src/index.js",
-    "preset": "src/index.js"
+    "preset": "src/index.js",
+    "p": "src/index.js"
   },
   "main": "src/index.js",
   "scripts": {
