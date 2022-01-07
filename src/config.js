@@ -12,10 +12,10 @@ const techStacks = [
     color: chalk.cyan,
     variants: [
       {
-        name: 'vite-vue3-ts',
+        name: 'vue3-ts-vite',
         description: 'A template for Vue 3.0 with TypeScript, base on Vite.',
         color: chalk.yellow,
-        repo: 'https://github.com/awesome-starter/vite-vue3-ts-starter',
+        repo: 'https://github.com/awesome-starter/vue3-ts-vite-starter',
       },
     ],
   },

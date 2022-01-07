@@ -60,7 +60,7 @@ Or reinstall it globally, haha!
 
 Tech Stack|Name|Description
 :-:|:-:|:--
-vue|vite-vue3-ts|A template for Vue 3.0 with TypeScript, base on Vite.
+vue|vue3-ts-vite|A template for Vue 3.0 with TypeScript, base on Vite.
 node|node-basic|A basic Node.js project template.
 node|node-server-express|A express template for Node.js project.
 node|node-program-pkg|A program template for Node.js project, use pkg to packaged.
