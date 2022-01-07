@@ -4,8 +4,11 @@ Provides the ability to quickly create preset projects.
 
 ![create-preset](https://cdn.jsdelivr.net/gh/chengpeiquan/assets-storage/img/2021/11/20211229183022.gif)
 
-> **Compatibility Note:**<br>
-> Some preset project requires [Node.js](https://nodejs.org/en/) version >=12.2.0 (e.g. Vite). However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
+>It is still in the early stage of development, and the version update will be more frequent, please try to use [Usage](#usage) instead of [Global Usage](#global-usage)
+
+## Compatibility Note:
+
+Some preset project requires [Node.js](https://nodejs.org/en/) version >=12.2.0 (e.g. Vite). However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
 
 ## Usage
 
