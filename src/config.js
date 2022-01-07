@@ -9,7 +9,7 @@ const chalk = require('chalk')
 const techStacks = [
   {
     name: 'vue',
-    color: chalk.blue,
+    color: chalk.cyan,
     variants: [
       {
         name: 'vite-vue3-ts',
@@ -34,6 +34,18 @@ const techStacks = [
         description: 'A express template for Node.js project.',
         color: chalk.yellow,
         repo: 'https://github.com/awesome-starter/node-express-starter',
+      },
+    ],
+  },
+  {
+    name: 'electron',
+    color: chalk.blue,
+    variants: [
+      {
+        name: 'electron-vue3-ts',
+        description: 'Electron + Vue 3.0 + TypeScript',
+        color: chalk.yellow,
+        repo: 'https://github.com/awesome-starter/electron-vue3-ts-starter',
       },
     ],
   },
