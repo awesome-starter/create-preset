@@ -18,6 +18,7 @@ function start() {
 
   program
     .command('init [app-name]')
+    .alias('i')
     .description('generate a project from a preset template')
     .action((source) => {
       if (argv._.length > 2) {
