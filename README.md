@@ -12,10 +12,6 @@
 
 Provides the ability to quickly create preset projects.
 
-## Documentation
-
-See: [preset.js.org](https://preset.js.org/)
-
 ## Usage
 
 With NPM:
@@ -37,6 +33,10 @@ pnpm create preset init
 ```
 
 Then follow the prompts!
+
+## Documentation
+
+See: [preset.js.org](https://preset.js.org/)
 
 ## License
 
