@@ -28,7 +28,7 @@
   "bugs": {
     "url": "https://github.com/awesome-starter/create-preset/issues"
   },
-  "homepage": "https://github.com/awesome-starter/create-preset",
+  "homepage": "https://preset.js.org",
   "dependencies": {
     "chalk": "4.1.2",
     "commander": "^8.3.0",
