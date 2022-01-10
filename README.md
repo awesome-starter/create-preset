@@ -38,6 +38,10 @@ Then follow the prompts!
 
 See: [preset.js.org](https://preset.js.org/)
 
+## Preview
+
+![create-preset](https://cdn.jsdelivr.net/gh/chengpeiquan/assets-storage/img/2021/11/20220110155037.gif)
+
 ## License
 
 MIT License © 2022 [chengpeiquan](https://github.com/chengpeiquan)
