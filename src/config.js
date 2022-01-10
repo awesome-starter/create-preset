@@ -9,7 +9,7 @@ const chalk = require('chalk')
 const techStacks = [
   {
     name: 'vue',
-    color: chalk.cyan,
+    color: chalk.hex('#42b983'),
     variants: [
       {
         name: 'vue3-ts-vite',
@@ -21,7 +21,7 @@ const techStacks = [
   },
   {
     name: 'node',
-    color: chalk.green,
+    color: chalk.hex('#6bbf47'),
     variants: [
       {
         name: 'node-basic',
@@ -46,7 +46,7 @@ const techStacks = [
   },
   {
     name: 'electron',
-    color: chalk.blue,
+    color: chalk.hex('#9ee9f8'),
     variants: [
       {
         name: 'electron-vue3-ts',
@@ -54,6 +54,19 @@ const techStacks = [
           'An electron template with Vue 3.0 and TypeScript for client project.',
         color: chalk.yellow,
         repo: 'https://github.com/awesome-starter/electron-vue3-ts-starter',
+      },
+    ],
+  },
+  {
+    name: 'rollup',
+    color: chalk.hex('#ff6533'),
+    variants: [
+      {
+        name: 'rollup-library-ts',
+        description:
+          'A template for JS Library with TypeScript, base on Rollup.',
+        color: chalk.yellow,
+        repo: 'https://github.com/awesome-starter/rollup-library-ts-starter',
       },
     ],
   },
