@@ -1,4 +1,4 @@
-const getDownloadUrl = require('../src/libs/getDownloadUrl')
+const { getDownloadUrl } = require('../src/libs/download')
 
 describe('getDownloadUrl.js', () => {
   test('GitHub', async () => {
