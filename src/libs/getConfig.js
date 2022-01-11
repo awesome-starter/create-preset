@@ -1,5 +1,6 @@
 const fs = require('fs')
 const { resolve } = require('path')
+const homedir = require('os').homedir()
 const chalk = require('chalk')
 
 /**
@@ -28,9 +29,9 @@ const techConfig = [
  * Template name's color
  */
 const colorConfig = {
-  official: chalk.yellow,
+  official: chalk.hex('#f97316'),
   community: chalk.white,
-  local: chalk.magenta,
+  local: chalk.cyan,
 }
 
 /**
@@ -52,6 +53,23 @@ function getTechStacks() {
 }
 
 /**
+ * Get local preset file path from user config
+ *
+ * @returns {string} The local preset file path
+ */
+function getLocalConfigFilePath() {
+  try {
+    const rcFile = resolve(homedir, '.presetrc')
+    const data = fs.readFileSync(rcFile, 'utf-8')
+    const rcConfig = JSON.parse(data)
+    const { localPreset } = rcConfig
+    return resolve(localPreset)
+  } catch (e) {
+    return ''
+  }
+}
+
+/**
  * Read config file
  *
  * @typedef { import('./types').ConfigItem } ConfigItem
@@ -60,7 +78,11 @@ function getTechStacks() {
  */
 function readConfigFile(fileName) {
   try {
-    const filePath = resolve(__dirname, `../../config/${fileName}.json`)
+    const filePath =
+      fileName === 'local'
+        ? getLocalConfigFilePath()
+        : resolve(__dirname, `../../config/${fileName}.json`)
+    console.log({ fileName, filePath })
     const data = fs.readFileSync(filePath, 'utf-8')
     const originConfig = JSON.parse(data)
     if (!Array.isArray(originConfig)) {
@@ -120,6 +142,7 @@ module.exports = {
   techConfig,
   colorConfig,
   getTechStacks,
+  getLocalConfigFilePath,
   readConfigFile,
   getConfig,
 }
