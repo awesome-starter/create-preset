@@ -6,6 +6,7 @@ const chalk = require('chalk')
 const { Command } = require('commander')
 const { version } = require('../package.json')
 const init = require('./core/init')
+const configure = require('./core/configure')
 
 function start() {
   const program = new Command()
@@ -29,6 +30,21 @@ function start() {
         )
       }
       init(source).catch((e) => {
+        console.error(e)
+      })
+    })
+
+  program
+    .command('config')
+    .alias('c')
+    .description('use the local preset config')
+    .option('-g, --get', 'output the local preset config file path')
+    .option('-s, --set', 'save the local preset config file path')
+    .action((source) => {
+      configure({
+        get: source.get || false,
+        set: source.set || false,
+      }).catch((e) => {
         console.error(e)
       })
     })

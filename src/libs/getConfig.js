@@ -82,7 +82,6 @@ function readConfigFile(fileName) {
       fileName === 'local'
         ? getLocalConfigFilePath()
         : resolve(__dirname, `../../config/${fileName}.json`)
-    console.log({ fileName, filePath })
     const data = fs.readFileSync(filePath, 'utf-8')
     const originConfig = JSON.parse(data)
     if (!Array.isArray(originConfig)) {
