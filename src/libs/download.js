@@ -31,18 +31,18 @@ function getDownloadUrl({ template, variants }) {
 /**
  * Download GitHub Repo
  *
- * @param {{ repo: string; folder: string }} options - the download options.
+ * @param {{ repo: string; folder: string; clone?: boolean }} options - the download options.
  *  - repo: The repo url to download
  *  - folder: The project folder name
  * @returns {Promise<boolean>} - the download status:
  *  true: success
  *  false: error
  */
-function download({ repo, folder }) {
+function download({ repo, folder, clone }) {
   return new Promise((resolve) => {
     console.log()
     const spinner = ora('Downloading…').start()
-    downloadGitRepo(repo, folder, { clone: false }, (err) => {
+    downloadGitRepo(repo, folder, { clone: clone || false }, (err) => {
       if (err) {
         console.log()
         console.log()
