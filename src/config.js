@@ -70,6 +70,18 @@ const techStacks = [
       },
     ],
   },
+  // {
+  //   name: 'test',
+  //   color: chalk.hex('#ff6533'),
+  //   variants: [
+  //     {
+  //       name: 'test',
+  //       description: 'A test template.',
+  //       color: chalk.yellow,
+  //       repo: 'git@github.com:awesome-starter/node-basic-starter.git',
+  //     },
+  //   ],
+  // },
 ]
 
 /**

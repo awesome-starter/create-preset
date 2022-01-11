@@ -18,12 +18,19 @@ function getDownloadUrl({ template, variants }) {
   if (!target) return ''
 
   const repo = target.repo ? String(target.repo) : ''
-  if (!repo.startsWith('http')) return ''
+  if (!repo.startsWith('https') && !repo.startsWith('git')) return ''
+
+  let url = repo
 
   // Use speed up service for GitHub
-  const url = repo.includes('github.com/')
-    ? repo.replace(/https:\/\/github.com\//, 'hub.fastgit.org:')
-    : repo
+  if (repo.startsWith('https://github.com/')) {
+    url = repo.replace(/https:\/\/github.com\//, 'hub.fastgit.org:')
+  }
+
+  // Use direct to clone private repo
+  if (repo.startsWith('git@')) {
+    url = `direct:${repo}`
+  }
 
   return url
 }

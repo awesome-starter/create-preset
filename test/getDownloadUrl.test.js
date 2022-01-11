@@ -86,11 +86,27 @@ describe('getDownloadUrl.js', () => {
         template: 'test',
         variants: [
           {
-            name: 'test',
+            name: 'test1',
             repo: 'git@github.com:bcherny/json-schema-to-typescript.git',
           },
         ],
       })
     ).toBe('')
+  })
+})
+
+describe('getDownloadUrl.js', () => {
+  test('Private', async () => {
+    expect(
+      getDownloadUrl({
+        template: 'test',
+        variants: [
+          {
+            name: 'test',
+            repo: 'git@gitee.com:somemore/git-branch-test.git',
+          },
+        ],
+      })
+    ).toBe('direct:git@gitee.com:somemore/git-branch-test.git')
   })
 })
