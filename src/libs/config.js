@@ -1,7 +1,7 @@
 const fs = require('fs')
 const { resolve } = require('path')
-const homedir = require('os').homedir()
 const chalk = require('chalk')
+const { get: getLocalConfigFilePath } = require('./local')
 
 /**
  * List of supported tech stacks
@@ -50,23 +50,6 @@ function getTechStacks() {
   })
 
   return techStack
-}
-
-/**
- * Get local preset file path from user config
- *
- * @returns {string} The local preset file path
- */
-function getLocalConfigFilePath() {
-  try {
-    const rcFile = resolve(homedir, '.presetrc')
-    const data = fs.readFileSync(rcFile, 'utf-8')
-    const rcConfig = JSON.parse(data)
-    const { localPreset } = rcConfig
-    return resolve(localPreset)
-  } catch (e) {
-    return ''
-  }
 }
 
 /**
@@ -141,7 +124,6 @@ module.exports = {
   techConfig,
   colorConfig,
   getTechStacks,
-  getLocalConfigFilePath,
   readConfigFile,
   getConfig,
 }

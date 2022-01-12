@@ -1,33 +1,61 @@
 const chalk = require('chalk')
-const { getLocalConfigFilePath } = require('../libs/getConfig')
+const { rcFile, get, set, remove } = require('../libs/local')
 
 /**
  * The action for `configure` command
  *
- * @param {{ get: boolean; set: boolean }} action - The action to operate local preset
+ * @param {{ cmd: string; filePath?: string }} action - The action to operate local preset
  */
-async function configure({ get, set }) {
-  if (!get && !set) {
-    console.log(
-      chalk.yellow(
-        `Info: Please use --get or --set option to operate your local config.`
-      )
-    )
-    return
-  }
+async function configure({ cmd, filePath }) {
+  if (!['get', 'set', 'remove'].includes(cmd)) return
 
-  if (get) {
-    const filePath = getLocalConfigFilePath()
-    console.log()
-    console.log('  The local configuration is stored in:')
-    console.log(`  Here → ${chalk.cyan(filePath)}`)
-    console.log()
-    console.log(
-      `  Run ${chalk.cyan(
-        `preset config --set <filePath>`
-      )} to update your local preset.`
-    )
-    console.log()
+  const tips = `  Run ${chalk.cyan(
+    `preset config set <filePath>`
+  )} to bind your local preset.`
+
+  switch (cmd) {
+    // Get the local config file path in .presetrc
+    case 'get': {
+      const filePath = get()
+      console.log()
+      if (filePath) {
+        console.log('  The local configuration is stored in:')
+        console.log(`  Here → ${chalk.cyan(filePath)}`)
+        console.log()
+      } else {
+        console.log('  There is currently no local configuration.')
+      }
+      console.log(tips)
+      console.log()
+      break
+    }
+
+    // Set the local config file path into .presetrc
+    case 'set': {
+      set(filePath)
+      console.log()
+      console.log('  ' + chalk.green('Saved successfully.'))
+      console.log()
+      break
+    }
+
+    // Set the local config file path into .presetrc
+    case 'remove': {
+      const filePath = get()
+      if (!filePath) {
+        configure({
+          cmd: 'get',
+        })
+        return
+      }
+      remove()
+      console.log()
+      console.log('  ' + chalk.green('Removed successfully.'))
+      console.log()
+      console.log(tips)
+      console.log()
+      break
+    }
   }
 }
 

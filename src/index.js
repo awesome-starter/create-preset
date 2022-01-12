@@ -9,6 +9,9 @@ const init = require('./core/init')
 const configure = require('./core/configure')
 const { version } = require('../package.json')
 
+/**
+ *
+ */
 function start() {
   const program = new Command()
 
@@ -35,16 +38,36 @@ function start() {
       })
     })
 
-  program
-    .command('config')
-    .alias('c')
-    .description('use the local preset config')
-    .option('-g, --get', 'output the local preset config file path')
-    .option('-s, --set', 'save the local preset config file path')
-    .action((source) => {
+  // The `config` command has sub commands
+  const configCMD = program.command('config')
+  configCMD.alias('c').description('use the local preset config')
+  configCMD
+    .command('get')
+    .description('output the local config file path')
+    .action(() => {
       configure({
-        get: source.get || false,
-        set: source.set || false,
+        cmd: 'get',
+      }).catch((e) => {
+        console.error(e)
+      })
+    })
+  configCMD
+    .command('set <file-path>')
+    .description('save the local config file path')
+    .action((filePath) => {
+      configure({
+        cmd: 'set',
+        filePath,
+      }).catch((e) => {
+        console.error(e)
+      })
+    })
+  configCMD
+    .command('remove')
+    .description('remove the local config file path')
+    .action(() => {
+      configure({
+        cmd: 'remove',
       }).catch((e) => {
         console.error(e)
       })
