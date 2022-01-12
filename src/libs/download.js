@@ -60,7 +60,7 @@ function download({ repo, folder, clone }) {
         process.exit()
       }
       console.log()
-      spinner.succeed(chalk.green('Download successful.'))
+      spinner.succeed(chalk.green('Download successfully.'))
       resolve(true)
     })
   })
