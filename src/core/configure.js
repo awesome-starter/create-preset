@@ -1,5 +1,5 @@
 const chalk = require('chalk')
-const { rcFile, get, set, remove } = require('../libs/local')
+const { get, set, remove } = require('../libs/local')
 
 /**
  * The action for `configure` command
