@@ -6,11 +6,11 @@ const { name: packageName, version } = require('../../package.json')
  * Check if the current version needs to be upgraded
  *
  * @param {string} curVersion - The current version number
- * @returns {boolean} mustUpgrade
+ * @returns {boolean} isOld
  *  true: need to upgrade
  *  false: no need to upgrade
  */
-async function mustUpgrade(curVersion = '') {
+async function isOld(curVersion = '') {
   try {
     const curV = curVersion || version || '0.0.0'
     const latestV = await latestVersion(packageName)
@@ -67,7 +67,7 @@ function pkgFromUserAgent(userAgent) {
 }
 
 module.exports = {
-  mustUpgrade,
+  isOld,
   isValidPackageName,
   toValidPackageName,
   pkgFromUserAgent,
