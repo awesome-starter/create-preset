@@ -4,9 +4,10 @@
 const argv = require('minimist')(process.argv.slice(2), { string: ['_'] })
 const chalk = require('chalk')
 const { Command } = require('commander')
-const { version } = require('../package.json')
+const { suggestCommands } = require('./libs/cmd')
 const init = require('./core/init')
 const configure = require('./core/configure')
+const { version } = require('../package.json')
 
 function start() {
   const program = new Command()
@@ -48,6 +49,15 @@ function start() {
         console.error(e)
       })
     })
+
+  // output help information on unknown commands
+  program.on('command:*', ([cmd]) => {
+    program.outputHelp()
+    console.log(`  ` + chalk.red(`Unknown command ${chalk.yellow(cmd)}.`))
+    suggestCommands(program, cmd)
+    console.log()
+    process.exitCode = 1
+  })
 
   // add some useful info on help
   program.on('--help', () => {

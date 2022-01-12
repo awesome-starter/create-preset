@@ -7,6 +7,15 @@ const { getLocalConfigFilePath } = require('../libs/getConfig')
  * @param {{ get: boolean; set: boolean }} action - The action to operate local preset
  */
 async function configure({ get, set }) {
+  if (!get && !set) {
+    console.log(
+      chalk.yellow(
+        `Info: Please use --get or --set option to operate your local config.`
+      )
+    )
+    return
+  }
+
   if (get) {
     const filePath = getLocalConfigFilePath()
     console.log()

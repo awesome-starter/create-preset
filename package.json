@@ -33,6 +33,7 @@
     "chalk": "4.1.2",
     "commander": "^8.3.0",
     "download-git-repo": "^3.0.2",
+    "leven": "3.1.0",
     "minimist": "^1.2.5",
     "ora": "5.4.1",
     "prompts": "^2.4.2"
