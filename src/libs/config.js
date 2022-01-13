@@ -113,9 +113,7 @@ async function fetchConfigFile(fileName) {
   let config
 
   try {
-    const res = await fetch(
-      `https://cdn.jsdelivr.net/gh/awesome-starter/create-preset@main/config/${fileName}.json`
-    )
+    const res = await fetch(`https://preset.js.org/config/${fileName}.json`)
     const originConfig = await res.json()
     config = handleOriginConfig(fileName, originConfig)
   } catch (e) {
