@@ -4,28 +4,6 @@ const chalk = require('chalk')
 const { get: getLocalConfigFilePath } = require('./local')
 
 /**
- * List of supported tech stacks
- */
-const techConfig = [
-  {
-    name: 'vue',
-    color: '#42b983',
-  },
-  {
-    name: 'node',
-    color: '#6bbf47',
-  },
-  {
-    name: 'electron',
-    color: '#9ee9f8',
-  },
-  {
-    name: 'rollup',
-    color: '#ff6533',
-  },
-]
-
-/**
  * Template name's color
  */
 const colorConfig = {
@@ -35,12 +13,32 @@ const colorConfig = {
 }
 
 /**
+ * Get the list of supported tech stacks
+ *
+ * @returns {{ name: string; color: string}[]} Tech list
+ */
+function getTechConfig() {
+  try {
+    const filePath = resolve(__dirname, `../../config/tech.json`)
+    const data = fs.readFileSync(filePath, 'utf-8')
+    const config = JSON.parse(data)
+    if (!Array.isArray(config)) {
+      return []
+    }
+    return config
+  } catch (e) {
+    return []
+  }
+}
+
+/**
  * Get the basic tech stack config, without variants
  *
  * @typedef { import('../types').TechStackItem } TechStackItem
  * @returns {TechStackItem[]} The tech stack config without variants
  */
 function getTechStacks() {
+  const techConfig = getTechConfig()
   const techStack = techConfig.map((tech) => {
     return {
       name: tech.name,
@@ -71,6 +69,7 @@ function readConfigFile(fileName) {
       return []
     }
 
+    const techConfig = getTechConfig()
     const techNames = techConfig.map((t) => t.name)
     const config = originConfig
       .filter((item) => techNames.includes(item.tech))
@@ -121,8 +120,8 @@ function getConfig() {
 }
 
 module.exports = {
-  techConfig,
   colorConfig,
+  getTechConfig,
   getTechStacks,
   readConfigFile,
   getConfig,
