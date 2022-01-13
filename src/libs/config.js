@@ -1,6 +1,7 @@
 const fs = require('fs')
 const { resolve } = require('path')
 const chalk = require('chalk')
+const ora = require('ora')
 const fetch = require('node-fetch')
 const { get: getLocalConfigFilePath } = require('./local')
 
@@ -123,7 +124,6 @@ async function fetchConfigFile(fileName) {
 
   return config
 }
-fetchConfigFile('official')
 
 /**
  * Get config
@@ -131,11 +131,14 @@ fetchConfigFile('official')
  * @typedef { import('./types').TechStackItem } TechStackItem
  * @returns {{ techStacks: TechStackItem[]; templates: string[]}} Config
  */
-function getConfig() {
+async function getConfig() {
+  console.log()
+  const spinner = ora('Fetching the latest config…').start()
+
   // Get template data from root config files
-  const official = fetchConfigFile('official')
-  const community = fetchConfigFile('community')
-  const local = fetchConfigFile('local')
+  const official = (await fetchConfigFile('official')) || []
+  const community = (await fetchConfigFile('community')) || []
+  const local = readConfigFile('local') || []
 
   // Fill tech stack variants
   const techStacks = getTechStacks()
@@ -151,6 +154,9 @@ function getConfig() {
   const templates = techStacks
     .map((f) => (f.variants && f.variants.map((v) => v.name)) || [f.name])
     .reduce((a, b) => a.concat(b), [])
+
+  spinner.succeed(chalk.green('Get the latest config successfully.'))
+  console.log()
 
   return {
     techStacks,

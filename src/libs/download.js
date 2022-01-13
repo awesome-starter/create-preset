@@ -23,9 +23,9 @@ function getDownloadUrl({ template, variants }) {
   let url = repo
 
   // Use speed up service for GitHub
-  // if (repo.startsWith('https://github.com/')) {
-  //   url = repo.replace(/https:\/\/github.com\//, 'hub.fastgit.org:')
-  // }
+  if (repo.startsWith('https://github.com/')) {
+    url = repo.replace(/https:\/\/github.com\//, 'hub.fastgit.org:')
+  }
 
   // Use direct to clone private repo
   if (repo.startsWith('git@')) {
