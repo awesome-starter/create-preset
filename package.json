@@ -1,6 +1,6 @@
 {
   "name": "create-preset",
-  "version": "0.6.8",
+  "version": "0.6.9",
   "description": "Provides the ability to quickly create preset projects.",
   "keywords": [
     "preset"
@@ -12,6 +12,9 @@
     "preset": "src/index.js"
   },
   "main": "src/index.js",
+  "files": [
+    "src/*"
+  ],
   "scripts": {
     "test": "jest --no-cache",
     "lint": "eslint src --ext .js,.ts",
