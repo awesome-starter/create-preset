@@ -64,11 +64,13 @@ function download({ repo, folder, clone }) {
         console.log(err)
         console.log()
         spinner.fail(chalk.red('Download failed.'))
+        console.log()
         resolve(false)
         process.exit()
       }
       console.log()
       spinner.succeed(chalk.green('Download successfully.'))
+      console.log()
       resolve(true)
     })
   })

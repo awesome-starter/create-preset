@@ -1,3 +1,5 @@
+const ora = require('ora')
+const chalk = require('chalk')
 const latestVersion = require('latest-version')
 const compareVersions = require('compare-versions')
 const { name: packageName, version } = require('../../package.json')
@@ -9,6 +11,8 @@ const { name: packageName, version } = require('../../package.json')
  * @returns {{packageName: string; currentVersion: string; latestVersion: string; needToUpgrade: boolean}} - The package info
  */
 async function packageInfo(curVersion = '') {
+  console.log()
+  const spinner = ora('Detecting upgrade information…').start()
   // The current version
   let cv = curVersion || version || '0.0.0'
 
@@ -24,6 +28,9 @@ async function packageInfo(curVersion = '') {
   } catch (e) {
     // console.log(e)
   }
+
+  console.log()
+  spinner.succeed(chalk.green('Detected successfully.'))
 
   return {
     packageName,
