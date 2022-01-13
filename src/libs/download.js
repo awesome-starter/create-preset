@@ -22,9 +22,17 @@ function getDownloadUrl({ template, variants }) {
 
   let url = repo
 
-  // Use speed up service for GitHub
+  // Use shorthand repository string
   if (repo.startsWith('https://github.com/')) {
-    url = repo.replace(/https:\/\/github.com\//, 'hub.fastgit.org:')
+    url = repo.replace(/https:\/\/github.com\//, 'github:')
+  }
+
+  if (repo.startsWith('https://gitlab.com/')) {
+    url = repo.replace(/https:\/\/gitlab.com\//, 'gitlab:')
+  }
+
+  if (repo.startsWith('https://bitbucket.com/')) {
+    url = repo.replace(/https:\/\/bitbucket.com\//, 'bitbucket:')
   }
 
   // Use direct to clone private repo
