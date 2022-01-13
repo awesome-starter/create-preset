@@ -3,21 +3,33 @@ const compareVersions = require('compare-versions')
 const { name: packageName, version } = require('../../package.json')
 
 /**
- * Check if the current version needs to be upgraded
+ * Get the package info
  *
  * @param {string} curVersion - The current version number
- * @returns {boolean} isOld
- *  true: need to upgrade
- *  false: no need to upgrade
+ * @returns {{packageName: string; currentVersion: string; latestVersion: string; needToUpgrade: boolean}} - The package info
  */
-async function isOld(curVersion = '') {
+async function packageInfo(curVersion = '') {
+  // The current version
+  let cv = curVersion || version || '0.0.0'
+
+  // The latest version
+  let lv = '0.0.0'
+
+  // Check the current version is need to upgrade
+  let needToUpgrade = false
+
   try {
-    const curV = curVersion || version || '0.0.0'
-    const latestV = await latestVersion(packageName)
-    const isOld = compareVersions(curV, latestV) === -1
-    return isOld
-  } catch {
-    return false
+    lv = await latestVersion(packageName)
+    needToUpgrade = compareVersions(cv, lv) === -1
+  } catch (e) {
+    // console.log(e)
+  }
+
+  return {
+    packageName,
+    currentVersion: cv,
+    latestVersion: lv,
+    needToUpgrade,
   }
 }
 
@@ -67,7 +79,7 @@ function pkgFromUserAgent(userAgent) {
 }
 
 module.exports = {
-  isOld,
+  packageInfo,
   isValidPackageName,
   toValidPackageName,
   pkgFromUserAgent,

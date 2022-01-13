@@ -7,6 +7,7 @@ const { Command } = require('commander')
 const { suggestCommands } = require('./libs/cmd')
 const init = require('./core/init')
 const configure = require('./core/configure')
+const upgrade = require('./core/upgrade')
 const { version } = require('../package.json')
 
 /**
@@ -69,6 +70,16 @@ function start() {
       configure({
         cmd: 'remove',
       }).catch((e) => {
+        console.error(e)
+      })
+    })
+
+  program
+    .command('upgrade')
+    .alias('u')
+    .description('updated version')
+    .action(() => {
+      upgrade().catch((e) => {
         console.error(e)
       })
     })
