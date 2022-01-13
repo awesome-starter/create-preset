@@ -19,11 +19,10 @@ const colorConfig = {
  *
  * @returns {{ name: string; color: string}[]} Tech list
  */
-function getTechConfig() {
+async function fetchTechConfig() {
   try {
-    const filePath = resolve(__dirname, `../../config/tech.json`)
-    const data = fs.readFileSync(filePath, 'utf-8')
-    const config = JSON.parse(data)
+    const res = await fetch(`https://preset.js.org/config/tech.json`)
+    const config = await res.json()
     if (!Array.isArray(config)) {
       return []
     }
@@ -39,8 +38,8 @@ function getTechConfig() {
  * @typedef { import('../types').TechStackItem } TechStackItem
  * @returns {TechStackItem[]} The tech stack config without variants
  */
-function getTechStacks() {
-  const techConfig = getTechConfig()
+async function getTechStacks() {
+  const techConfig = await fetchTechConfig()
   const techStack = techConfig.map((tech) => {
     return {
       name: tech.name,
@@ -61,12 +60,12 @@ function getTechStacks() {
  * @param {OriginConfigItem[]} originConfig - The origin config
  * @returns {ConfigItem[]} The config array from root config file
  */
-function handleOriginConfig(fileName, originConfig) {
+async function handleOriginConfig(fileName, originConfig) {
   if (!Array.isArray(originConfig)) {
     return []
   }
 
-  const techConfig = getTechConfig()
+  const techConfig = await fetchTechConfig()
   const techNames = techConfig.map((t) => t.name)
   const config = originConfig
     .filter((item) => techNames.includes(item.tech))
@@ -87,7 +86,7 @@ function handleOriginConfig(fileName, originConfig) {
  * @param {string} fileName - The config file name
  * @returns {ConfigItem[]} The config array from root config file
  */
-function readConfigFile(fileName) {
+async function readConfigFile(fileName) {
   try {
     const filePath =
       fileName === 'local'
@@ -95,7 +94,7 @@ function readConfigFile(fileName) {
         : resolve(__dirname, `../../config/${fileName}.json`)
     const data = fs.readFileSync(filePath, 'utf-8')
     const originConfig = JSON.parse(data)
-    const config = handleOriginConfig(fileName, originConfig)
+    const config = await handleOriginConfig(fileName, originConfig)
     return config
   } catch (e) {
     return []
@@ -115,7 +114,7 @@ async function fetchConfigFile(fileName) {
   try {
     const res = await fetch(`https://preset.js.org/config/${fileName}.json`)
     const originConfig = await res.json()
-    config = handleOriginConfig(fileName, originConfig)
+    config = await handleOriginConfig(fileName, originConfig)
   } catch (e) {
     config = []
   }
@@ -134,12 +133,12 @@ async function getConfig() {
   const spinner = ora('Fetching the latest config…').start()
 
   // Get template data from root config files
-  const official = (await fetchConfigFile('official')) || []
-  const community = (await fetchConfigFile('community')) || []
-  const local = readConfigFile('local') || []
+  const official = await fetchConfigFile('official')
+  const community = await fetchConfigFile('community')
+  const local = await readConfigFile('local')
 
   // Fill tech stack variants
-  const techStacks = getTechStacks()
+  const techStacks = await getTechStacks()
   const templateList = [...local, ...official, ...community]
   templateList.forEach((template) => {
     const { tech, name, desc, repo, color } = template
@@ -164,7 +163,7 @@ async function getConfig() {
 
 module.exports = {
   colorConfig,
-  getTechConfig,
+  fetchTechConfig,
   getTechStacks,
   handleOriginConfig,
   readConfigFile,
