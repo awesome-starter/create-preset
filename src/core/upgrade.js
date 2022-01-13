@@ -14,11 +14,11 @@ async function upgrade() {
 
   // No upgrade required, process terminated
   if (!needToUpgrade) {
-    // console.log(
-    //   `  The current version is already the latest version, no need to upgrade.`
-    // )
-    // console.log()
-    // return
+    console.log(
+      `  The current version is already the latest version, no need to upgrade.`
+    )
+    console.log()
+    return
   }
 
   // Display version information and confirm with users whether they want to upgrade
