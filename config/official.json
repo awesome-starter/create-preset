@@ -1,0 +1,38 @@
+[
+  {
+    "tech": "vue",
+    "name": "vue3-ts-vite",
+    "desc": "A template for Vue 3.0 with TypeScript, base on Vite.",
+    "repo": "https://github.com/awesome-starter/vue3-ts-vite-starter"
+  },
+  {
+    "tech": "node",
+    "name": "node-basic",
+    "desc": "A basic Node.js project template.",
+    "repo": "https://github.com/awesome-starter/node-basic-starter"
+  },
+  {
+    "tech": "node",
+    "name": "node-server-express",
+    "desc": "A express template for Node.js project.",
+    "repo": "https://github.com/awesome-starter/node-express-starter"
+  },
+  {
+    "tech": "node",
+    "name": "node-program-pkg",
+    "desc": "A program template for Node.js project, use pkg to packaged.",
+    "repo": "https://github.com/awesome-starter/node-pkg-starter"
+  },
+  {
+    "tech": "electron",
+    "name": "electron-vue3-ts",
+    "desc": "An electron template with Vue 3.0 and TypeScript for client project.",
+    "repo": "https://github.com/awesome-starter/electron-vue3-ts-starter"
+  },
+  {
+    "tech": "rollup",
+    "name": "rollup-library-ts",
+    "desc": "A template for JS Library with TypeScript, base on Rollup.",
+    "repo": "https://github.com/awesome-starter/rollup-library-ts-starter"
+  }
+]

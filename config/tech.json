@@ -1,0 +1,26 @@
+[
+  {
+    "name": "vue",
+    "color": "#42b983"
+  },
+  {
+    "name": "react",
+    "color": "#61dafb"
+  },
+  {
+    "name": "node",
+    "color": "#6bbf47"
+  },
+  {
+    "name": "electron",
+    "color": "#9ee9f8"
+  },
+  {
+    "name": "vite",
+    "color": "#787ffd"
+  },
+  {
+    "name": "rollup",
+    "color": "#ff6533"
+  }
+]

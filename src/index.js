@@ -4,9 +4,15 @@
 const argv = require('minimist')(process.argv.slice(2), { string: ['_'] })
 const chalk = require('chalk')
 const { Command } = require('commander')
-const { version } = require('../package.json')
+const { suggestCommands } = require('./libs/cmd')
 const init = require('./core/init')
+const configure = require('./core/configure')
+const upgrade = require('./core/upgrade')
+const { version } = require('../package.json')
 
+/**
+ *
+ */
 function start() {
   const program = new Command()
 
@@ -16,6 +22,9 @@ function start() {
     .usage('<command> [options]')
     .option('-h, --help', 'output usage information')
 
+  /**
+   * The `init` command
+   */
   program
     .command('init [app-name]')
     .alias('i')
@@ -33,7 +42,66 @@ function start() {
       })
     })
 
-  // add some useful info on help
+  /**
+   * The `config` command
+   */
+  const configCMD = program.command('config')
+  configCMD.alias('c').description('use the local preset config')
+  configCMD
+    .command('get')
+    .description('output the local config file path')
+    .action(() => {
+      configure({
+        cmd: 'get',
+      }).catch((e) => {
+        console.error(e)
+      })
+    })
+  configCMD
+    .command('set <file-path>')
+    .description('save the local config file path')
+    .action((filePath) => {
+      configure({
+        cmd: 'set',
+        filePath,
+      }).catch((e) => {
+        console.error(e)
+      })
+    })
+  configCMD
+    .command('remove')
+    .description('remove the local config file path')
+    .action(() => {
+      configure({
+        cmd: 'remove',
+      }).catch((e) => {
+        console.error(e)
+      })
+    })
+
+  /**
+   * The `upgrade` command
+   */
+  program
+    .command('upgrade')
+    .alias('u')
+    .description('updated version')
+    .action(() => {
+      upgrade().catch((e) => {
+        console.error(e)
+      })
+    })
+
+  // Output help information on unknown commands
+  program.on('command:*', ([cmd]) => {
+    program.outputHelp()
+    console.log(`  ` + chalk.red(`Unknown command ${chalk.yellow(cmd)}.`))
+    suggestCommands(program, cmd)
+    console.log()
+    process.exitCode = 1
+  })
+
+  // Add some useful info on help
   program.on('--help', () => {
     console.log()
     console.log(

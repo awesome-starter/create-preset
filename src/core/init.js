@@ -15,7 +15,8 @@ const {
 } = require('../libs/pkg')
 const { write, remove, emptyDir, isEmpty } = require('../libs/dir')
 const { getDownloadUrl, download } = require('../libs/download')
-const { techStacks, templates } = require('../config')
+const { getConfig } = require('../libs/config')
+const { techStacks, templates } = getConfig()
 const cwd = process.cwd()
 
 /**

@@ -1,10 +1,45 @@
+const latestVersion = require('latest-version')
+const compareVersions = require('compare-versions')
+const { name: packageName, version } = require('../../package.json')
+
+/**
+ * Get the package info
+ *
+ * @param {string} curVersion - The current version number
+ * @returns {{packageName: string; currentVersion: string; latestVersion: string; needToUpgrade: boolean}} - The package info
+ */
+async function packageInfo(curVersion = '') {
+  // The current version
+  let cv = curVersion || version || '0.0.0'
+
+  // The latest version
+  let lv = '0.0.0'
+
+  // Check the current version is need to upgrade
+  let needToUpgrade = false
+
+  try {
+    lv = await latestVersion(packageName)
+    needToUpgrade = compareVersions(cv, lv) === -1
+  } catch (e) {
+    // console.log(e)
+  }
+
+  return {
+    packageName,
+    currentVersion: cv,
+    latestVersion: lv,
+    needToUpgrade,
+  }
+}
+
 /**
  * Check the package name is valid
  *
  * @param {string} projectName - The project folder name
  * @returns {boolean} isValid
- *  true - valid
- *  false - invalid
+ *  true: valid
+ *  false: invalid
  */
 function isValidPackageName(projectName) {
   return /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.test(
@@ -44,6 +79,7 @@ function pkgFromUserAgent(userAgent) {
 }
 
 module.exports = {
+  packageInfo,
   isValidPackageName,
   toValidPackageName,
   pkgFromUserAgent,
