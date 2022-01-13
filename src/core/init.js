@@ -16,7 +16,6 @@ const {
 const { write, remove, emptyDir, isEmpty } = require('../libs/dir')
 const { getDownloadUrl, download } = require('../libs/download')
 const { getConfig } = require('../libs/config')
-const { techStacks, templates } = getConfig()
 const cwd = process.cwd()
 
 /**
@@ -25,6 +24,7 @@ const cwd = process.cwd()
  * @param {string | undefined} targetDirFromCMD - The dir name from CMD, if there is input
  */
 async function init(targetDirFromCMD) {
+  const { techStacks, templates } = await getConfig()
   let targetDir = targetDirFromCMD || argv._[1]
   let template = argv.template || argv.t
 
