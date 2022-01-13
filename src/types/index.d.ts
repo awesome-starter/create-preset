@@ -3,11 +3,17 @@ import type { Chalk } from 'chalk'
 /**
  * The item type of root config file
  */
-export interface ConfigItem {
+export interface OriginConfigItem {
   tech: string
   name: string
   desc: string
   repo: string
+}
+
+/**
+ * The item type of config
+ */
+export interface ConfigItem extends OriginConfigItem {
   color: Chalk
 }
 

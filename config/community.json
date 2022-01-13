@@ -2,7 +2,25 @@
   {
     "tech": "vite",
     "name": "vitesse",
-    "desc": "🏕 Opinionated Vite Starter Template",
+    "desc": "Opinionated Vite Starter Template",
     "repo": "https://github.com/antfu/vitesse"
+  },
+  {
+    "tech": "vite",
+    "name": "vitesse-nuxt3",
+    "desc": "Vitesse for Nuxt 3",
+    "repo": "https://github.com/antfu/vitesse-nuxt3"
+  },
+  {
+    "tech": "vite",
+    "name": "vitesse-lite",
+    "desc": "Lightweight version of Vitesse",
+    "repo": "https://github.com/antfu/vitesse-lite"
+  },
+  {
+    "tech": "vite",
+    "name": "vitesse-webext",
+    "desc": "WebExtension Vite Starter Template",
+    "repo": "https://github.com/antfu/vitesse-webext"
   }
 ]
