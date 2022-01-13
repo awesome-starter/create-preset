@@ -117,7 +117,7 @@ async function fetchConfigFile(fileName) {
     const originConfig = await res.json()
     config = handleOriginConfig(fileName, originConfig)
   } catch (e) {
-    config = readConfigFile(fileName)
+    config = []
   }
 
   return config
