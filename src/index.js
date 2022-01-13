@@ -22,6 +22,9 @@ function start() {
     .usage('<command> [options]')
     .option('-h, --help', 'output usage information')
 
+  /**
+   * The `init` command
+   */
   program
     .command('init [app-name]')
     .alias('i')
@@ -39,7 +42,9 @@ function start() {
       })
     })
 
-  // The `config` command has sub commands
+  /**
+   * The `config` command
+   */
   const configCMD = program.command('config')
   configCMD.alias('c').description('use the local preset config')
   configCMD
@@ -74,6 +79,9 @@ function start() {
       })
     })
 
+  /**
+   * The `upgrade` command
+   */
   program
     .command('upgrade')
     .alias('u')
