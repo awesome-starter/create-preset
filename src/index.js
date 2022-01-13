@@ -92,7 +92,7 @@ function start() {
       })
     })
 
-  // output help information on unknown commands
+  // Output help information on unknown commands
   program.on('command:*', ([cmd]) => {
     program.outputHelp()
     console.log(`  ` + chalk.red(`Unknown command ${chalk.yellow(cmd)}.`))
@@ -101,7 +101,7 @@ function start() {
     process.exitCode = 1
   })
 
-  // add some useful info on help
+  // Add some useful info on help
   program.on('--help', () => {
     console.log()
     console.log(
