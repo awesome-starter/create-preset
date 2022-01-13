@@ -2,7 +2,7 @@
   {
     "tech": "vite",
     "name": "vitesse",
-    "desc": "🏕 Opinionated Vite Starter Template",
+    "desc": "Opinionated Vite Starter Template",
     "repo": "https://github.com/antfu/vitesse"
   }
 ]
