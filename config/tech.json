@@ -16,6 +16,10 @@
     "color": "#9ee9f8"
   },
   {
+    "name": "vite",
+    "color": "#787ffd"
+  },
+  {
     "name": "rollup",
     "color": "#ff6533"
   }
