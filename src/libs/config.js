@@ -1,6 +1,7 @@
 const fs = require('fs')
 const { resolve } = require('path')
 const chalk = require('chalk')
+const fetch = require('node-fetch')
 const { get: getLocalConfigFilePath } = require('./local')
 
 /**
@@ -51,9 +52,37 @@ function getTechStacks() {
 }
 
 /**
+ * Handle origin config item to be config item
+ *
+ * @typedef { import('../types').OriginConfigItem } OriginConfigItem
+ * @typedef { import('../types').ConfigItem } ConfigItem
+ * @param {string} fileName - The config file name
+ * @param {OriginConfigItem[]} originConfig - The origin config
+ * @returns {ConfigItem[]} The config array from root config file
+ */
+function handleOriginConfig(fileName, originConfig) {
+  if (!Array.isArray(originConfig)) {
+    return []
+  }
+
+  const techConfig = getTechConfig()
+  const techNames = techConfig.map((t) => t.name)
+  const config = originConfig
+    .filter((item) => techNames.includes(item.tech))
+    .map((item) => {
+      return {
+        ...item,
+        color: colorConfig[fileName],
+      }
+    })
+
+  return config
+}
+
+/**
  * Read config file
  *
- * @typedef { import('./types').ConfigItem } ConfigItem
+ * @typedef { import('../types').ConfigItem } ConfigItem
  * @param {string} fileName - The config file name
  * @returns {ConfigItem[]} The config array from root config file
  */
@@ -65,26 +94,36 @@ function readConfigFile(fileName) {
         : resolve(__dirname, `../../config/${fileName}.json`)
     const data = fs.readFileSync(filePath, 'utf-8')
     const originConfig = JSON.parse(data)
-    if (!Array.isArray(originConfig)) {
-      return []
-    }
-
-    const techConfig = getTechConfig()
-    const techNames = techConfig.map((t) => t.name)
-    const config = originConfig
-      .filter((item) => techNames.includes(item.tech))
-      .map((item) => {
-        return {
-          ...item,
-          color: colorConfig[fileName],
-        }
-      })
-
+    const config = handleOriginConfig(fileName, originConfig)
     return config
   } catch (e) {
     return []
   }
 }
+
+/**
+ * Fetch config file from CDN
+ *
+ * @typedef { import('../types').ConfigItem } ConfigItem
+ * @param {string} fileName - The config file name
+ * @returns {ConfigItem[]} The config array from root config file
+ */
+async function fetchConfigFile(fileName) {
+  let config
+
+  try {
+    const res = await fetch(
+      `https://cdn.jsdelivr.net/gh/awesome-starter/create-preset@main/config/${fileName}.json`
+    )
+    const originConfig = await res.json()
+    config = handleOriginConfig(fileName, originConfig)
+  } catch (e) {
+    config = readConfigFile(fileName)
+  }
+
+  return config
+}
+fetchConfigFile('official')
 
 /**
  * Get config
@@ -94,9 +133,9 @@ function readConfigFile(fileName) {
  */
 function getConfig() {
   // Get template data from root config files
-  const official = readConfigFile('official')
-  const community = readConfigFile('community')
-  const local = readConfigFile('local')
+  const official = fetchConfigFile('official')
+  const community = fetchConfigFile('community')
+  const local = fetchConfigFile('local')
 
   // Fill tech stack variants
   const techStacks = getTechStacks()
@@ -123,6 +162,8 @@ module.exports = {
   colorConfig,
   getTechConfig,
   getTechStacks,
+  handleOriginConfig,
   readConfigFile,
+  fetchConfigFile,
   getConfig,
 }
