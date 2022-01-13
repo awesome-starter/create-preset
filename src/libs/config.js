@@ -7,7 +7,7 @@ const { get: getLocalConfigFilePath } = require('./local')
  * Template name's color
  */
 const colorConfig = {
-  official: chalk.hex('#f97316'),
+  official: chalk.yellow,
   community: chalk.white,
   local: chalk.cyan,
 }

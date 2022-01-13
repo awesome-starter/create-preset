@@ -109,7 +109,9 @@ async function init(targetDirFromCMD) {
             techStack.variants.map((variant) => {
               const variantColor = variant.color
               return {
-                title: variantColor(variant.name),
+                title: `${variantColor(variant.name)} ${chalk.grey(
+                  variant.desc
+                )}`,
                 value: variant.name,
               }
             }),
