@@ -5,7 +5,7 @@ const chalk = require('chalk')
 const { packageInfo } = require('../libs/pkg')
 
 /**
- * Upgrade the CLi
+ * The action for `upgrade` command
  */
 async function upgrade() {
   const { packageName, currentVersion, latestVersion, needToUpgrade } =

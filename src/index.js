@@ -11,7 +11,7 @@ const upgrade = require('./core/upgrade')
 const { version } = require('../package.json')
 
 /**
- *
+ * Main entry of the program
  */
 function start() {
   const program = new Command()
