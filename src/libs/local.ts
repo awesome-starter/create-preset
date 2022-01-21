@@ -1,15 +1,17 @@
-const chalk = require('chalk')
-const fs = require('fs')
-const { resolve } = require('path')
-const homedir = require('os').homedir()
+import chalk from 'chalk'
+import fs from 'fs'
+import os from 'os'
+import { resolve } from 'path'
+
+const homedir = os.homedir()
 const rcFile = resolve(homedir, '.presetrc')
 
 /**
  * Get local preset file path from user config
  *
- * @returns {string} The local preset file path
+ * @returns The local preset file path
  */
-function get() {
+export function get(): string {
   try {
     const data = fs.readFileSync(rcFile, 'utf-8')
     const rcConfig = JSON.parse(data)
@@ -23,9 +25,9 @@ function get() {
 /**
  * Set local preset file path into user config
  *
- * @param {string} filePath - The local config file path
+ * @param filePath - The local config file path
  */
-function set(filePath) {
+export function set(filePath: string): void {
   if (!filePath.endsWith('.json')) {
     console.log()
     console.log(`  ` + chalk.red('The file path must be a ".json" file.'))
@@ -55,12 +57,15 @@ function set(filePath) {
       )
     )
   }
+  console.log()
+  console.log('  ' + chalk.green('Saved successfully.'))
+  console.log()
 }
 
 /**
  * Remove local preset file path from user config
  */
-function remove() {
+export function remove(): void {
   try {
     let rcConfig = {}
     try {
@@ -83,11 +88,4 @@ function remove() {
       )
     )
   }
-}
-
-module.exports = {
-  rcFile,
-  get,
-  set,
-  remove,
 }

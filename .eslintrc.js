@@ -6,20 +6,15 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: ['plugin:jsdoc/recommended', 'eslint:recommended', 'prettier'],
+  extends: ['eslint:recommended', 'prettier'],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 13,
-    sourceType: 'module',
   },
-  plugins: ['jsdoc', 'prettier'],
+  plugins: ['@typescript-eslint', 'prettier'],
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'prettier/prettier': 'warn',
-  },
-  settings: {
-    jsdoc: {
-      mode: 'typescript',
-    },
   },
 }

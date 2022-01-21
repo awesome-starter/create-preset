@@ -1,4 +1,5 @@
 import type { Chalk } from 'chalk'
+
 /**
  * Current package info
  */
@@ -8,6 +9,7 @@ export interface PKGFromProgram {
   latestVersion: string
   needToUpgrade: boolean
 }
+
 /**
  * The package info from user agent
  */
@@ -15,6 +17,7 @@ export interface PKGFromUserAgent {
   name: string
   version: string
 }
+
 /**
  * The starter item type of root config file
  */
@@ -24,12 +27,14 @@ export interface OriginConfigItem {
   desc: string
   repo: string
 }
+
 /**
  * The item type of config
  */
 export interface ConfigItem extends OriginConfigItem {
   color: Chalk
 }
+
 /**
  * The type for CMD from user input
  */
@@ -40,6 +45,7 @@ export interface UserInputFromCMD {
   techStack: TechStackItem | undefined
   variant: string
 }
+
 /**
  * The item type of `variants` in tech stack
  */
@@ -49,6 +55,7 @@ export interface VariantItem {
   color: Chalk
   repo: string
 }
+
 /**
  * The type of color about the source of starters
  */
@@ -57,6 +64,7 @@ export interface ColorConfig {
   community: Chalk
   local: Chalk
 }
+
 /**
  * The type of tech stack from fetch
  */
@@ -64,6 +72,7 @@ export interface TechConfig {
   name: string
   color: string
 }
+
 /**
  * The item type of tech stack in config
  */

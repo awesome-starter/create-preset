@@ -1,12 +1,18 @@
-const chalk = require('chalk')
-const { get, set, remove } = require('../libs/local')
+import chalk from 'chalk'
+import { get, set, remove } from '../libs/local'
 
 /**
  * The action for `configure` command
  *
- * @param {{ cmd: string; filePath?: string }} action - The action to operate local preset
+ * @param action - The action to operate local preset
  */
-async function configure({ cmd, filePath }) {
+export default async function configure({
+  cmd,
+  filePath,
+}: {
+  cmd: string
+  filePath?: string
+}) {
   if (!['get', 'set', 'remove'].includes(cmd)) return
 
   const tips = `  Run ${chalk.cyan(
@@ -32,10 +38,9 @@ async function configure({ cmd, filePath }) {
 
     // Set the local config file path into .presetrc
     case 'set': {
-      set(filePath)
-      console.log()
-      console.log('  ' + chalk.green('Saved successfully.'))
-      console.log()
+      const localConfigFilePath: string =
+        typeof filePath === 'string' ? filePath : ''
+      set(localConfigFilePath)
       break
     }
 
@@ -58,5 +63,3 @@ async function configure({ cmd, filePath }) {
     }
   }
 }
-
-module.exports = configure

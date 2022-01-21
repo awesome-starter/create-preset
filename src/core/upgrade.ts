@@ -1,13 +1,13 @@
-const { exec } = require('child_process')
-const prompts = require('prompts')
-const ora = require('ora')
-const chalk = require('chalk')
-const { packageInfo } = require('../libs/pkg')
+import { exec } from 'child_process'
+import prompts from 'prompts'
+import ora from 'ora'
+import chalk from 'chalk'
+import { packageInfo } from '../libs/pkg'
 
 /**
  * The action for `upgrade` command
  */
-async function upgrade() {
+export default async function upgrade() {
   const { packageName, currentVersion, latestVersion, needToUpgrade } =
     await packageInfo()
   console.log()
@@ -126,5 +126,3 @@ async function upgrade() {
     spinner.succeed(chalk.green('Upgraded successfully.'))
   })
 }
-
-module.exports = upgrade

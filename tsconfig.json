@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
+    "module": "commonjs",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
-    "resolveJsonModule": true,
+    "resolveJsonModule": false,
     "suppressImplicitAnyIndexErrors": true,
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
@@ -15,9 +15,19 @@
     "incremental": false,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "types": ["node"],
-    "lib": ["esnext", "dom", "dom.iterable"]
+    "baseUrl": "./",
+    "types": ["vite/client", "node"],
+    "paths": {
+      "@/*": ["src/*"],
+      "@libs/*": ["src/libs/*"],
+      "@core/*": ["src/core/*"]
+    },
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationDir": "./dist/types"
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.js"],
+  "include": ["./src"],
   "exclude": ["node_modules"]
 }

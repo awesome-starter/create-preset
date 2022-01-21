@@ -1,30 +1,26 @@
-#!/usr/bin/env node
-
-// @ts-check
-const fs = require('fs')
-const path = require('path')
-// Avoids autoconversion to number of the project name by defining that the args
-// non associated with an option ( _ ) needs to be parsed as a string. See #4606
-const argv = require('minimist')(process.argv.slice(2), { string: ['_'] })
-const prompts = require('prompts')
-const chalk = require('chalk')
-const {
+import fs from 'fs'
+import path from 'path'
+import prompts from 'prompts'
+import chalk from 'chalk'
+import {
   isValidPackageName,
   toValidPackageName,
   pkgFromUserAgent,
-} = require('../libs/pkg')
-const { write, remove, emptyDir, isEmpty } = require('../libs/dir')
-const { getDownloadUrl, download } = require('../libs/download')
-const { getConfig } = require('../libs/config')
+} from '../libs/pkg'
+import { write, remove, emptyDir, isEmpty } from '../libs/dir'
+import { getDownloadUrl, download } from '../libs/download'
+import { getConfig } from '../libs/config'
+import argv from '../libs/argv'
+import type { UserInputFromCMD } from '@/types'
 const cwd = process.cwd()
 
 /**
  * The action for `init` command
- *
- * @param {string | undefined} targetDirFromCMD - The dir name from CMD, if there is input
+ * @param targetDirFromCMD - The dir name from CMD, if there is input
  */
-async function init(targetDirFromCMD) {
+export default async function init(targetDirFromCMD: string | undefined) {
   const { techStacks, templates } = await getConfig()
+
   let targetDir = targetDirFromCMD || argv._[1]
   let template = argv.template || argv.t
 
@@ -34,11 +30,10 @@ async function init(targetDirFromCMD) {
    * @typedef { import('../types').UserInputFromCMD } UserInputFromCMD
    * @type {UserInputFromCMD}
    */
-  let result = {
+  let result: UserInputFromCMD = {
     projectName: '',
     packageName: '',
     overwrite: false,
-    // @ts-ignore
     techStack: undefined,
     variant: '',
   }
@@ -148,7 +143,7 @@ async function init(targetDirFromCMD) {
   // Get download URL from CMD
   const downloadUrl = getDownloadUrl({
     template,
-    variants: techStack.variants,
+    variants: techStack ? techStack.variants : [],
   })
 
   // Download template
@@ -193,5 +188,3 @@ async function init(targetDirFromCMD) {
   }
   console.log()
 }
-
-module.exports = init
