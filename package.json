@@ -16,8 +16,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build && npm run dts",
-    "dts": "tsc --emitDeclarationOnly && npm run replace",
+    "build": "tsc --noEmit && vite build && npm run dts && npm run replace",
+    "dts": "tsc --emitDeclarationOnly --declaration --declarationDir ./dist/types",
     "replace": "tscpaths -p tsconfig.json -s ./src -o ./dist/types",
     "format": "prettier --write .",
     "backup": "git add . && git commit -m \"chore: save the coding progress\" && git push"
