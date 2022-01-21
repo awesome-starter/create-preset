@@ -1,17 +1,22 @@
-const ora = require('ora')
-const chalk = require('chalk')
-const downloadGitRepo = require('download-git-repo')
+import ora from 'ora'
+import chalk from 'chalk'
+import downloadGitRepo from 'download-git-repo'
+import type { VariantItem } from '@/types'
 
 /**
  * Get Download URL
- *
- * @typedef { import('../types').VariantItem } VariantItem
- * @param {{ template: string; variants: VariantItem[] }} options - The result from CMD
+ * @param options - The result from CMD
  *  - template: The selected template name from CMD
  *  - variants: The `variants` in `techStack` from config
  * @returns {string} The repo url about selected template starter
  */
-function getDownloadUrl({ template, variants }) {
+export function getDownloadUrl({
+  template,
+  variants,
+}: {
+  template: string
+  variants: VariantItem[]
+}): string {
   if (!Array.isArray(variants)) return ''
 
   const target = variants.find((v) => v.name === template)
@@ -46,18 +51,27 @@ function getDownloadUrl({ template, variants }) {
 /**
  * Download GitHub Repo
  *
- * @param {{ repo: string; folder: string; clone?: boolean }} options - the download options.
+ * @param options - the download options.
  *  - repo: The repo url to download
  *  - folder: The project folder name
- * @returns {Promise<boolean>} - the download status:
+ *  - clone: If true, use `git clone` to download repo
+ * @returns The download status:
  *  true: success
  *  false: error
  */
-function download({ repo, folder, clone }) {
+export function download({
+  repo,
+  folder,
+  clone,
+}: {
+  repo: string
+  folder: string
+  clone?: boolean
+}): Promise<boolean> {
   return new Promise((resolve) => {
     console.log()
     const spinner = ora('Downloading…').start()
-    downloadGitRepo(repo, folder, { clone: clone || false }, (err) => {
+    downloadGitRepo(repo, folder, { clone: clone || false }, (err: any) => {
       if (err) {
         console.log()
         console.log()
@@ -74,9 +88,4 @@ function download({ repo, folder, clone }) {
       resolve(true)
     })
   })
-}
-
-module.exports = {
-  getDownloadUrl,
-  download,
 }

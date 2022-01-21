@@ -1,3 +1,6 @@
 node_modules
-package-lock.json
-test-download
+.DS_Store
+dist
+dist-ssr
+bin
+*.local

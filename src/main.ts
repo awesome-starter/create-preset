@@ -1,21 +1,17 @@
-#!/usr/bin/env node
-
-// @ts-check
-const argv = require('minimist')(process.argv.slice(2), { string: ['_'] })
-const chalk = require('chalk')
-const { Command } = require('commander')
-const { suggestCommands } = require('./libs/cmd')
-const init = require('./core/init')
-const configure = require('./core/configure')
-const upgrade = require('./core/upgrade')
-const { version } = require('../package.json')
+// import minimist from 'minimist'
+import chalk from 'chalk'
+import { program } from 'commander'
+import { version } from '../package.json'
+import argv from './libs/argv'
+import { suggestCommands } from './libs/cmd'
+import init from './core/init'
+import configure from './core/configure'
+import upgrade from './core/upgrade'
 
 /**
- *
+ * Main entry of the program
  */
 function start() {
-  const program = new Command()
-
   program
     .name('preset')
     .version(version, '-v, --version', 'output the version number')
@@ -53,7 +49,7 @@ function start() {
     .action(() => {
       configure({
         cmd: 'get',
-      }).catch((e) => {
+      }).catch((e: any) => {
         console.error(e)
       })
     })
@@ -64,7 +60,7 @@ function start() {
       configure({
         cmd: 'set',
         filePath,
-      }).catch((e) => {
+      }).catch((e: any) => {
         console.error(e)
       })
     })
@@ -74,7 +70,7 @@ function start() {
     .action(() => {
       configure({
         cmd: 'remove',
-      }).catch((e) => {
+      }).catch((e: any) => {
         console.error(e)
       })
     })
@@ -96,7 +92,7 @@ function start() {
   program.on('command:*', ([cmd]) => {
     program.outputHelp()
     console.log(`  ` + chalk.red(`Unknown command ${chalk.yellow(cmd)}.`))
-    suggestCommands(program, cmd)
+    suggestCommands(cmd)
     console.log()
     process.exitCode = 1
   })

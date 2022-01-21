@@ -1,13 +1,12 @@
-const fs = require('fs')
-const { resolve } = require('path')
+import fs from 'fs'
+import { resolve } from 'path'
 
 /**
  * Write file content
- *
- * @param {string} file - The full path of the target file
- * @param {string} content - The content of the file to be written
+ * @param file - The full path of the target file
+ * @param content - The content of the file to be written
  */
-function write(file, content) {
+export function write(file: string, content: string): void {
   if (content) {
     fs.writeFileSync(file, content)
   }
@@ -15,11 +14,10 @@ function write(file, content) {
 
 /**
  * Remove file or directory
- *
- * @param {string} type - Remove type, support `file` and `dir`
- * @param {string} target - The target to be remove, a file or a directory
+ * @param type - Remove type, support `file` and `dir`
+ * @param target - The target to be remove, a file or a directory
  */
-function remove(type, target) {
+export function remove(type: string, target: string): void {
   try {
     switch (type) {
       case 'file':
@@ -36,11 +34,10 @@ function remove(type, target) {
 
 /**
  * Copy a file or a directory
- *
- * @param {string} src - The source file or directory
- * @param {string} dest - The target file or directory
+ * @param src - The source file or directory
+ * @param dest - The target file or directory
  */
-function copy(src, dest) {
+export function copy(src: string, dest: string): void {
   const stat = fs.statSync(src)
   if (stat.isDirectory()) {
     copyDir(src, dest)
@@ -51,12 +48,14 @@ function copy(src, dest) {
 
 /**
  * Copy directory
- *
- * @param {string} srcDir - The source directory
- * @param {string} destDir - The target directory
+ * @param srcDir - The source directory
+ * @param destDir - The target directory
  */
-function copyDir(srcDir, destDir) {
-  fs.mkdirSync(destDir, { recursive: true })
+export function copyDir(srcDir: string, destDir: string): void {
+  fs.mkdirSync(destDir, {
+    recursive: true,
+  })
+
   for (const file of fs.readdirSync(srcDir)) {
     const srcFile = resolve(srcDir, file)
     const destFile = resolve(destDir, file)
@@ -66,25 +65,21 @@ function copyDir(srcDir, destDir) {
 
 /**
  * Check the directory is empty
- *
- * @param {string} path - The target directory full path
- * @returns {boolean} result:
+ * @param path - The target directory full path
+ * @returns result:
  *  true: empty
  *  false: not empty
  */
-function isEmpty(path) {
+export function isEmpty(path: string): boolean {
   return fs.readdirSync(path).length === 0
 }
 
 /**
  * Empty the target directory
- *
- * @param {string} dir - The target directory full path
+ * @param dir - The target directory full path
  */
-function emptyDir(dir) {
-  if (!fs.existsSync(dir)) {
-    return
-  }
+export function emptyDir(dir: string): void {
+  if (!fs.existsSync(dir)) return
   for (const file of fs.readdirSync(dir)) {
     const abs = resolve(dir, file)
     // baseline is Node 12 so can't use rmSync :(
@@ -95,13 +90,4 @@ function emptyDir(dir) {
       fs.unlinkSync(abs)
     }
   }
-}
-
-module.exports = {
-  write,
-  remove,
-  copy,
-  copyDir,
-  emptyDir,
-  isEmpty,
 }

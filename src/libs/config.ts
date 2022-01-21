@@ -1,14 +1,21 @@
-const fs = require('fs')
-const { resolve } = require('path')
-const chalk = require('chalk')
-const ora = require('ora')
-const fetch = require('node-fetch')
-const { get: getLocalConfigFilePath } = require('./local')
+import fs from 'fs'
+import { resolve } from 'path'
+import chalk from 'chalk'
+import ora from 'ora'
+import fetch from 'node-fetch'
+import { get as getLocalConfigFilePath } from './local'
+import {
+  ColorConfig,
+  TechConfig,
+  TechStackItem,
+  OriginConfigItem,
+  ConfigItem,
+} from '@/types'
 
 /**
  * Template name's color
  */
-const colorConfig = {
+const colorConfig: ColorConfig = {
   official: chalk.yellow,
   community: chalk.white,
   local: chalk.cyan,
@@ -16,10 +23,9 @@ const colorConfig = {
 
 /**
  * Get the list of supported tech stacks
- *
- * @returns {{ name: string; color: string}[]} Tech list
+ * @returns Tech list
  */
-async function fetchTechConfig() {
+export async function fetchTechConfig(): Promise<TechConfig[]> {
   try {
     const res = await fetch(`https://preset.js.org/config/tech.json`)
     const config = await res.json()
@@ -34,11 +40,9 @@ async function fetchTechConfig() {
 
 /**
  * Get the basic tech stack config, without variants
- *
- * @typedef { import('../types').TechStackItem } TechStackItem
- * @returns {TechStackItem[]} The tech stack config without variants
+ * @returns The tech stack config without variants
  */
-async function getTechStacks() {
+export async function getTechStacks(): Promise<TechStackItem[]> {
   const techConfig = await fetchTechConfig()
   const techStack = techConfig.map((tech) => {
     return {
@@ -54,13 +58,14 @@ async function getTechStacks() {
 /**
  * Handle origin config item to be config item
  *
- * @typedef { import('../types').OriginConfigItem } OriginConfigItem
- * @typedef { import('../types').ConfigItem } ConfigItem
- * @param {string} fileName - The config file name
- * @param {OriginConfigItem[]} originConfig - The origin config
- * @returns {ConfigItem[]} The config array from root config file
+ * @param fileName - The config file name
+ * @param originConfig - The origin config
+ * @returns The config array from root config file
  */
-async function handleOriginConfig(fileName, originConfig) {
+export async function handleOriginConfig(
+  fileName: string,
+  originConfig: OriginConfigItem[]
+): Promise<ConfigItem[]> {
   if (!Array.isArray(originConfig)) {
     return []
   }
@@ -82,11 +87,10 @@ async function handleOriginConfig(fileName, originConfig) {
 /**
  * Read config file
  *
- * @typedef { import('../types').ConfigItem } ConfigItem
- * @param {string} fileName - The config file name
- * @returns {ConfigItem[]} The config array from root config file
+ * @param fileName - The config file name
+ * @returns The config array from root config file
  */
-async function readConfigFile(fileName) {
+export async function readConfigFile(fileName: string): Promise<ConfigItem[]> {
   try {
     const filePath =
       fileName === 'local'
@@ -103,18 +107,19 @@ async function readConfigFile(fileName) {
 
 /**
  * Fetch config file from CDN
- *
- * @typedef { import('../types').ConfigItem } ConfigItem
- * @param {string} fileName - The config file name
- * @returns {ConfigItem[]} The config array from root config file
+ * @param fileName - The config file name
+ * @returns The config array from root config file
  */
-async function fetchConfigFile(fileName) {
-  let config
+export async function fetchConfigFile(fileName: string): Promise<ConfigItem[]> {
+  let config: ConfigItem[] = []
 
   try {
     const res = await fetch(`https://preset.js.org/config/${fileName}.json`)
     const originConfig = await res.json()
-    config = await handleOriginConfig(fileName, originConfig)
+    config = await handleOriginConfig(
+      fileName,
+      originConfig as OriginConfigItem[]
+    )
   } catch (e) {
     config = []
   }
@@ -124,11 +129,12 @@ async function fetchConfigFile(fileName) {
 
 /**
  * Get config
- *
- * @typedef { import('./types').TechStackItem } TechStackItem
- * @returns {{ techStacks: TechStackItem[]; templates: string[]}} Config
+ * @returns Config
  */
-async function getConfig() {
+export async function getConfig(): Promise<{
+  techStacks: TechStackItem[]
+  templates: string[]
+}> {
   console.log()
   const spinner = ora('Fetching the latest config…').start()
 
@@ -159,14 +165,4 @@ async function getConfig() {
     techStacks,
     templates,
   }
-}
-
-module.exports = {
-  colorConfig,
-  fetchTechConfig,
-  getTechStacks,
-  handleOriginConfig,
-  readConfigFile,
-  fetchConfigFile,
-  getConfig,
 }

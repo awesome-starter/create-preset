@@ -1,16 +1,17 @@
-const ora = require('ora')
-const chalk = require('chalk')
-const latestVersion = require('latest-version')
-const compareVersions = require('compare-versions')
-const { name: packageName, version } = require('../../package.json')
+import ora from 'ora'
+import chalk from 'chalk'
+import latestVersion from 'latest-version'
+import compareVersions from 'compare-versions'
+import { name as packageName, version } from '../../package.json'
+import { PKGFromProgram, PKGFromUserAgent } from '@/types'
 
 /**
  * Get the package info
  *
- * @param {string} curVersion - The current version number
- * @returns {{packageName: string; currentVersion: string; latestVersion: string; needToUpgrade: boolean}} - The package info
+ * @param curVersion - The current version number
+ * @returns The package info
  */
-async function packageInfo(curVersion = '') {
+export async function packageInfo(curVersion = ''): Promise<PKGFromProgram> {
   console.log()
   const spinner = ora('Detecting upgrade information…').start()
   // The current version
@@ -43,12 +44,12 @@ async function packageInfo(curVersion = '') {
 /**
  * Check the package name is valid
  *
- * @param {string} projectName - The project folder name
- * @returns {boolean} isValid
+ * @param projectName - The project folder name
+ * @returns isValid
  *  true: valid
  *  false: invalid
  */
-function isValidPackageName(projectName) {
+export function isValidPackageName(projectName: string): boolean {
   return /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.test(
     projectName
   )
@@ -57,10 +58,10 @@ function isValidPackageName(projectName) {
 /**
  * Format the package name to valid
  *
- * @param {string} projectName - The project folder name
- * @returns {string} a valid package name
+ * @param projectName - The project folder name
+ * @returns a valid package name
  */
-function toValidPackageName(projectName) {
+export function toValidPackageName(projectName: string): string {
   return projectName
     .trim()
     .toLowerCase()
@@ -72,22 +73,17 @@ function toValidPackageName(projectName) {
 /**
  * Get the package infor from userAgent
  *
- * @param {string | undefined} userAgent - process.env.npm_config_user_agent
- * @returns {{ name: string; version: string } | undefined} package info
+ * @param userAgent - process.env.npm_config_user_agent
+ * @returns package info
  */
-function pkgFromUserAgent(userAgent) {
+export function pkgFromUserAgent(
+  userAgent: string | undefined
+): PKGFromUserAgent | undefined {
   if (!userAgent) return undefined
   const pkgSpec = userAgent.split(' ')[0]
   const pkgSpecArr = pkgSpec.split('/')
   return {
-    name: pkgSpecArr[0],
-    version: pkgSpecArr[1],
+    name: pkgSpecArr[0] || '',
+    version: pkgSpecArr[1] || '',
   }
-}
-
-module.exports = {
-  packageInfo,
-  isValidPackageName,
-  toValidPackageName,
-  pkgFromUserAgent,
 }

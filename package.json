@@ -1,23 +1,24 @@
 {
   "name": "create-preset",
-  "version": "0.6.9",
   "description": "Provides the ability to quickly create preset projects.",
-  "keywords": [
-    "preset"
-  ],
-  "license": "MIT",
+  "version": "0.7.0",
   "author": "chengpeiquan",
-  "bin": {
-    "create-preset": "src/index.js",
-    "preset": "src/index.js"
-  },
-  "main": "src/index.js",
+  "license": "MIT",
+  "homepage": "https://preset.js.org",
   "files": [
-    "src/*"
+    "dist"
   ],
+  "types": "./dist/types/main.d.ts",
+  "main": "./dist/create-preset.js",
+  "bin": {
+    "create-preset": "./dist/create-preset.js",
+    "preset": "./dist/create-preset.js"
+  },
   "scripts": {
-    "test": "jest --no-cache",
-    "lint": "eslint src --ext .js,.ts",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build && npm run dts",
+    "dts": "tsc --emitDeclarationOnly && npm run replace",
+    "replace": "tscpaths -p tsconfig.json -s ./src -o ./dist/types",
     "format": "prettier --write .",
     "backup": "git add . && git commit -m \"chore: save the coding progress\" && git push"
   },
@@ -31,32 +32,42 @@
   "bugs": {
     "url": "https://github.com/awesome-starter/create-preset/issues"
   },
-  "homepage": "https://preset.js.org",
   "dependencies": {
-    "chalk": "4.1.2",
+    "chalk": "^4.1.2",
     "commander": "^8.3.0",
-    "compare-versions": "3.6.0",
+    "compare-versions": "^3.6.0",
     "download-git-repo": "^3.0.2",
-    "latest-version": "5.1.0",
-    "leven": "3.1.0",
+    "latest-version": "^5.1.0",
+    "leven": "^3.1.0",
     "minimist": "^1.2.5",
-    "node-fetch": "2.6.6",
-    "ora": "5.4.1",
+    "node-fetch": "^2.6.7",
+    "ora": "^5.4.1",
     "prompts": "^2.4.2"
   },
   "devDependencies": {
-    "eslint": "^8.6.0",
+    "@types/lodash.escaperegexp": "^4.1.6",
+    "@types/minimist": "^1.2.2",
+    "@types/node": "^17.0.10",
+    "@types/prompts": "^2.0.14",
+    "@typescript-eslint/eslint-plugin": "^5.10.0",
+    "@typescript-eslint/parser": "^5.10.0",
+    "eslint": "^8.7.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-jsdoc": "^37.5.1",
     "eslint-plugin-prettier": "^4.0.0",
-    "jest": "^27.4.6",
-    "lint-staged": "11.1.4",
+    "jest": "^27.4.7",
+    "lint-staged": "^12.2.0",
+    "lodash.escaperegexp": "^4.1.2",
     "prettier": "^2.5.1",
+    "tscpaths": "^0.0.9",
+    "typescript": "^4.5.4",
+    "vite": "^2.7.13",
+    "vite-plugin-banner": "^0.2.0",
+    "vite-plugin-commonjs-externals": "^0.1.1",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {
     "pre-commit": "lint-staged",
-    "commit-msg": "node scripts/verifyCommit.js"
+    "commit-msg": "node ./scripts/verifyCommit.js"
   },
   "lint-staged": {
     "*.js": [
