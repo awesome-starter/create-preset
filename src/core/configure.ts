@@ -1,10 +1,30 @@
 import chalk from 'chalk'
 import { get, set, remove } from '../libs/local'
+import type { SubcommandItem } from '@/types'
+
+/**
+ * Subcommands
+ */
+export const CMDS: SubcommandItem[] = [
+  {
+    cmd: 'get',
+    desc: 'output the local config file path',
+  },
+  {
+    cmd: 'set <file-path>',
+    desc: 'save the local config file path',
+  },
+  {
+    cmd: 'remove',
+    desc: 'remove the local config file path',
+  },
+]
 
 /**
  * The action for `configure` command
- *
  * @param action - The action to operate local preset
+ *  cmd: Subcommand
+ *  filePath: The local config path when used for set
  */
 export default async function configure({
   cmd,
@@ -38,9 +58,7 @@ export default async function configure({
 
     // Set the local config file path into .presetrc
     case 'set': {
-      const localConfigFilePath: string =
-        typeof filePath === 'string' ? filePath : ''
-      set(localConfigFilePath)
+      set(String(filePath))
       break
     }
 

@@ -1,6 +1,14 @@
 import type { Chalk } from 'chalk'
 
 /**
+ * Subcommand type for core
+ */
+export interface SubcommandItem {
+  cmd: string
+  desc: string
+}
+
+/**
  * Current package info
  */
 export interface PKGFromProgram {
