@@ -33,7 +33,7 @@ export default async function configure({
   cmd: string
   filePath?: string
 }) {
-  if (!['get', 'set', 'remove'].includes(cmd)) return
+  if (!CMDS.map((c) => c.cmd).includes(cmd)) return
 
   const tips = `  Run ${chalk.cyan(
     `preset config set <filePath>`
@@ -57,7 +57,7 @@ export default async function configure({
     }
 
     // Set the local config file path into .presetrc
-    case 'set': {
+    case 'set <file-path>': {
       set(String(filePath))
       break
     }

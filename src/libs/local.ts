@@ -15,7 +15,7 @@ export function get(): string {
     const data = fs.readFileSync(rcFile, 'utf-8')
     const rcConfig = JSON.parse(data)
     const { localPreset } = rcConfig
-    return resolve(localPreset)
+    return localPreset ? resolve(localPreset) : ''
   } catch (e) {
     return ''
   }
