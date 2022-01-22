@@ -43,7 +43,10 @@ function start() {
    * The `config` command
    */
   const configCMD = program.command('config')
-  configCMD.alias('c').description('use the local preset config')
+  configCMD
+    .alias('c')
+    .description('use the local preset config')
+    .option('-t, --tech', 'configure the local technology stack')
   CONFIG_SUB_CMDS.forEach((item: SubcommandItem) => {
     const { cmd, desc } = item
     configCMD
