@@ -7,7 +7,6 @@ import { PKGFromProgram, PKGFromUserAgent } from '@/types'
 
 /**
  * Get the package info
- *
  * @param curVersion - The current version number
  * @returns The package info
  */
@@ -43,7 +42,6 @@ export async function packageInfo(curVersion = ''): Promise<PKGFromProgram> {
 
 /**
  * Check the package name is valid
- *
  * @param projectName - The project folder name
  * @returns isValid
  *  true: valid
@@ -57,7 +55,6 @@ export function isValidPackageName(projectName: string): boolean {
 
 /**
  * Format the package name to valid
- *
  * @param projectName - The project folder name
  * @returns a valid package name
  */
@@ -72,7 +69,6 @@ export function toValidPackageName(projectName: string): string {
 
 /**
  * Get the package infor from userAgent
- *
  * @param userAgent - process.env.npm_config_user_agent
  * @returns package info
  */

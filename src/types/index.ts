@@ -49,12 +49,7 @@ export interface UserInputFromCMD {
 /**
  * The item type of `variants` in tech stack
  */
-export interface VariantItem {
-  name: string
-  desc: string
-  color: Chalk
-  repo: string
-}
+export interface VariantItem extends Omit<ConfigItem, 'tech'> {}
 
 /**
  * The type of color about the source of starters

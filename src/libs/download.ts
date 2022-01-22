@@ -50,7 +50,6 @@ export function getDownloadUrl({
 
 /**
  * Download GitHub Repo
- *
  * @param options - the download options.
  *  - repo: The repo url to download
  *  - folder: The project folder name
