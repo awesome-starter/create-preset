@@ -1,6 +1,14 @@
 import type { Chalk } from 'chalk'
 
 /**
+ * The `.presetrc` file content type
+ */
+export interface Presetrc {
+  localTech?: string
+  localPreset?: string
+}
+
+/**
  * Subcommand type for core
  */
 export interface SubcommandItem {

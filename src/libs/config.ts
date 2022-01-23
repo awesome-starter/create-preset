@@ -1,5 +1,4 @@
 import fs from 'fs'
-import { resolve } from 'path'
 import chalk from 'chalk'
 import ora from 'ora'
 import fetch from 'node-fetch'
@@ -19,6 +18,24 @@ const colorConfig: ColorConfig = {
   official: chalk.yellow,
   community: chalk.white,
   local: chalk.cyan,
+}
+
+/**
+ * Read tech stack config file from local
+ * @returns Tech list
+ */
+export function readTechConfig(): TechConfig[] {
+  try {
+    const filePath: string = getLocalConfigFilePath()
+    const data: string = fs.readFileSync(filePath, 'utf-8')
+    const config: TechConfig[] = JSON.parse(data)
+    if (!Array.isArray(config)) {
+      return []
+    }
+    return config
+  } catch (e) {
+    return []
+  }
 }
 
 /**
@@ -43,7 +60,10 @@ export async function fetchTechConfig(): Promise<TechConfig[]> {
  * @returns The tech stack config without variants
  */
 export async function getTechStacks(): Promise<TechStackItem[]> {
-  const techConfig: TechConfig[] = await fetchTechConfig()
+  const techConfig: TechConfig[] = [
+    ...(await fetchTechConfig()),
+    ...readTechConfig(),
+  ]
   const techStack: TechStackItem[] = techConfig.map((tech) => {
     return {
       name: tech.name,
@@ -70,7 +90,10 @@ export async function handleOriginConfig(
     return []
   }
 
-  const techConfig: TechConfig[] = await fetchTechConfig()
+  const techConfig: TechConfig[] = [
+    ...(await fetchTechConfig()),
+    ...readTechConfig(),
+  ]
   const techNames: string[] = techConfig.map((t) => t.name)
   const config: ConfigItem[] = originConfig
     .filter((item) => techNames.includes(item.tech))
@@ -91,10 +114,7 @@ export async function handleOriginConfig(
  */
 export async function readConfigFile(fileName: string): Promise<ConfigItem[]> {
   try {
-    const filePath: string =
-      fileName === 'local'
-        ? getLocalConfigFilePath()
-        : resolve(__dirname, `../../config/${fileName}.json`)
+    const filePath: string = getLocalConfigFilePath()
     const data: string = fs.readFileSync(filePath, 'utf-8')
     const originConfig: OriginConfigItem[] = JSON.parse(data)
     const config: ConfigItem[] = await handleOriginConfig(
