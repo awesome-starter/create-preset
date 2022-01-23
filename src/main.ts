@@ -6,6 +6,7 @@ import argv from './libs/argv'
 import { suggestCommands } from './libs/cmd'
 import init from './core/init'
 import configure, { CMDS as CONFIG_SUB_CMDS } from './core/configure'
+import proxy, { CMDS as PROXY_SUB_CMDS } from './core/proxy'
 import upgrade from './core/upgrade'
 import type { SubcommandItem } from '@/types'
 
@@ -56,6 +57,25 @@ function start() {
         configure({
           cmd,
           filePath,
+        }).catch((e: any) => {
+          console.error(e)
+        })
+      })
+  })
+
+  /**
+   * The `config` command
+   */
+  const proxyCMD = program.command('proxy')
+  proxyCMD.alias('p').description('use proxy to download template')
+  PROXY_SUB_CMDS.forEach((item: SubcommandItem) => {
+    const { cmd, desc } = item
+    proxyCMD
+      .command(cmd)
+      .description(desc)
+      .action(() => {
+        proxy({
+          cmd,
         }).catch((e: any) => {
           console.error(e)
         })

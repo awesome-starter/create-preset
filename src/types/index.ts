@@ -4,6 +4,7 @@ import type { Chalk } from 'chalk'
  * The `.presetrc` file content type
  */
 export interface Presetrc {
+  proxy?: string
   localTech?: string
   localPreset?: string
 }

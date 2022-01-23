@@ -18,17 +18,43 @@ const key: string = isTech ? 'localTech' : 'localPreset'
  * @returns JSON of `.presetrc`
  */
 export function readRC(): Presetrc {
-  const data = fs.readFileSync(rcFile, 'utf-8')
-  const rcConfig: Presetrc = JSON.parse(data)
+  let rcConfig: Presetrc = {}
 
-  const keys: string[] = ['localTech', 'localPreset']
-  keys.forEach((key) => {
-    if (!Object.prototype.hasOwnProperty.call(rcConfig, key)) {
-      rcConfig[key] = ''
+  try {
+    const data = fs.readFileSync(rcFile, 'utf-8')
+    rcConfig = JSON.parse(data)
+  } catch (e) {
+    // console.log(e)
+  }
+
+  const keys: string[] = ['proxy', 'localTech', 'localPreset']
+  keys.forEach((k) => {
+    if (!Object.prototype.hasOwnProperty.call(rcConfig, k)) {
+      rcConfig[k] = ''
     }
   })
 
   return rcConfig
+}
+
+/**
+ * Save `.presetrc` file content
+ * @param key - Key of `.presetrc` JSON
+ * @param value - Value of the key in `.presetrc` JSON
+ * @returns isSuccess
+ *  true: success
+ *  false: fail
+ */
+export function saveRC(key: string, value: string): boolean {
+  try {
+    const rcConfig: Presetrc = readRC()
+    rcConfig[key] = value
+    fs.writeFileSync(rcFile, JSON.stringify(rcConfig, null, 2))
+    return true
+  } catch (e) {
+    console.log(e)
+    return false
+  }
 }
 
 /**
@@ -60,29 +86,12 @@ export function set(filePath: string): boolean {
     console.log()
     return false
   }
-
-  try {
-    const rcConfig = readRC()
-    rcConfig[key] = resolve(filePath)
-    fs.writeFileSync(rcFile, JSON.stringify(rcConfig, null, 2))
-    return true
-  } catch (e) {
-    console.log(e)
-    return false
-  }
+  return saveRC(key, filePath)
 }
 
 /**
  * Remove local preset file path from user config
  */
 export function remove(): boolean {
-  try {
-    const rcConfig = readRC()
-    rcConfig[key] = ''
-    fs.writeFileSync(rcFile, JSON.stringify(rcConfig, null, 2))
-    return true
-  } catch (e) {
-    console.log(e)
-    return false
-  }
+  return saveRC(key, '')
 }

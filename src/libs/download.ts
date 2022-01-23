@@ -1,7 +1,8 @@
 import ora from 'ora'
 import chalk from 'chalk'
 import downloadGitRepo from 'download-git-repo'
-import type { VariantItem } from '@/types'
+import { readRC } from './local'
+import type { Presetrc, VariantItem } from '@/types'
 
 /**
  * Get Download URL
@@ -28,16 +29,23 @@ export function getDownloadUrl({
   let url = repo
 
   // Use shorthand repository string
-  if (repo.startsWith('https://github.com/')) {
-    url = repo.replace(/https:\/\/github.com\//, 'github:')
-  }
+  const whitelist: string[] = [
+    'https://github.com/',
+    'https://gitlab.com/',
+    'https://bitbucket.com/',
+  ]
+  whitelist.forEach((w) => {
+    if (repo.startsWith(w)) {
+      const short: string = w.replace(/https:\/\/(.*).com\//, '$1')
+      url = repo.replace(w, `${short}:`)
+    }
+  })
 
-  if (repo.startsWith('https://gitlab.com/')) {
-    url = repo.replace(/https:\/\/gitlab.com\//, 'gitlab:')
-  }
-
-  if (repo.startsWith('https://bitbucket.com/')) {
-    url = repo.replace(/https:\/\/bitbucket.com\//, 'bitbucket:')
+  // Use proxy to speed up GitHub download
+  const rcConfig: Presetrc = readRC()
+  const { proxy } = rcConfig
+  if (proxy && repo.startsWith('https://github.com/')) {
+    url = repo.replace(/https:\/\/github.com\//, `${proxy}:`)
   }
 
   // Use direct to clone private repo
