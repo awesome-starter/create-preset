@@ -33,12 +33,16 @@ export function readRC(): Presetrc {
 
 /**
  * Get local preset file path from user config
+ * @param isGetTech - If `true`, return tech stack
  * @returns The local preset file path
  */
-export function get(): string {
+export function get(isGetTech?: boolean): string {
   try {
     const rcConfig = readRC()
-    const filePath: string = rcConfig[key] ? resolve(rcConfig[key]) : ''
+    const targetKey: string = isGetTech ? 'localTech' : key
+    const filePath: string = rcConfig[targetKey]
+      ? resolve(rcConfig[targetKey])
+      : ''
     return filePath
   } catch (e) {
     return ''

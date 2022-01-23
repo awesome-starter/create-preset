@@ -26,7 +26,7 @@ const colorConfig: ColorConfig = {
  */
 export function readTechConfig(): TechConfig[] {
   try {
-    const filePath: string = getLocalConfigFilePath()
+    const filePath: string = getLocalConfigFilePath(true)
     const data: string = fs.readFileSync(filePath, 'utf-8')
     const config: TechConfig[] = JSON.parse(data)
     if (!Array.isArray(config)) {
