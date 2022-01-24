@@ -27,7 +27,7 @@ export default async function proxy({ cmd }: { cmd: string }) {
   switch (cmd) {
     case 'on':
     case 'off': {
-      const proxyTarget: string = cmd === 'on' ? 'hub.fastgit.org' : ''
+      const proxyTarget: string = cmd === 'on' ? 'github.com.cnpmjs.org' : ''
       const isSuccess = saveRC('proxy', proxyTarget)
       if (isSuccess) {
         console.log()
