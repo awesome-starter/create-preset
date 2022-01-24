@@ -1,10 +1,19 @@
-<p align='center'>
+<p align="center">
   <img src="https://cdn.jsdelivr.net/gh/awesome-starter/assets/img/logo.png" alt="create-preset" />
 </p>
 
-<p align='center'>
-  <a href='https://www.npmjs.com/package/create-preset'>
-    <img src="https://img.shields.io/npm/v/create-preset?color=f97316&label=npm" />
+<p align="center">
+  <a href="https://www.npmjs.com/package/create-preset" target="__blank">
+    <img src="https://img.shields.io/npm/v/create-preset?color=f97316&label=" />
+  </a>
+  <a href="https://www.npmjs.com/package/create-preset" target="__blank">
+    <img src="https://img.shields.io/npm/dm/create-preset?color=f97316&label=" />
+  </a>
+  <a href="https://preset.js.org/docs.html" target="__blank">
+    <img src="https://img.shields.io/static/v1?label=&message=docs%20%26%20demos&color=f97316" />
+  </a>
+  <a href="https://github.com/awesome-starter/create-preset" target="__blank">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/awesome-starter/create-preset?style=social">
   </a>
 </p>
 

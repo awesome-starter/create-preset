@@ -1,9 +1,9 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { getDownloadUrl } from '../src/libs/download'
 import { readRC } from '../src/libs/local'
 
 describe('getDownloadUrl', () => {
-  test('GitHub', () => {
+  it('GitHub', () => {
     const { proxy } = readRC()
     expect(
       getDownloadUrl({
@@ -24,7 +24,7 @@ describe('getDownloadUrl', () => {
 })
 
 describe('getDownloadUrl', () => {
-  test('GitLab', () => {
+  it('GitLab', () => {
     expect(
       getDownloadUrl({
         template: 'test',
@@ -40,7 +40,7 @@ describe('getDownloadUrl', () => {
 })
 
 describe('getDownloadUrl', () => {
-  test('Gitee', () => {
+  it('Gitee', () => {
     expect(
       getDownloadUrl({
         template: 'test',
@@ -56,7 +56,7 @@ describe('getDownloadUrl', () => {
 })
 
 describe('getDownloadUrl', () => {
-  test('Unknown', () => {
+  it('Unknown', () => {
     expect(
       getDownloadUrl({
         template: 'test',
@@ -71,7 +71,7 @@ describe('getDownloadUrl', () => {
 })
 
 describe('getDownloadUrl', () => {
-  test('Empty', () => {
+  it('Empty', () => {
     expect(
       getDownloadUrl({
         template: 'test',
@@ -87,7 +87,7 @@ describe('getDownloadUrl', () => {
 })
 
 describe('getDownloadUrl', () => {
-  test('SSH', () => {
+  it('SSH', () => {
     expect(
       getDownloadUrl({
         template: 'test',
@@ -103,7 +103,7 @@ describe('getDownloadUrl', () => {
 })
 
 describe('getDownloadUrl', () => {
-  test('Private', () => {
+  it('Private', () => {
     expect(
       getDownloadUrl({
         template: 'test',
