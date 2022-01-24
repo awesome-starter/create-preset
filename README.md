@@ -5,8 +5,12 @@
 <p align='center'>
   <a href='https://www.npmjs.com/package/create-preset'>
     <img src="https://img.shields.io/npm/v/create-preset?color=f97316&label=" />
-    <span style="margin: 0 5px;"></span> 
+  </a>
+  <a href='https://www.npmjs.com/package/create-preset'>
     <img src="https://img.shields.io/npm/dm/create-preset?color=f97316&label=" />
+  </a>
+  <a href='https://www.npmjs.com/package/create-preset'>
+    <img src="https://img.shields.io/static/v1?label=&message=docs%20%26%20demos&color=f97316" />
   </a>
 </p>
 
