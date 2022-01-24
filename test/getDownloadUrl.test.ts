@@ -1,7 +1,10 @@
-const { getDownloadUrl } = require('../src/libs/download')
+import { describe, expect, test } from 'vitest'
+import { getDownloadUrl } from '../src/libs/download'
+import { readRC } from '../src/libs/local'
 
-describe('getDownloadUrl.js', () => {
-  test('GitHub', async () => {
+describe('getDownloadUrl', () => {
+  test('GitHub', () => {
+    const { proxy } = readRC()
     expect(
       getDownloadUrl({
         template: 'test',
@@ -12,12 +15,16 @@ describe('getDownloadUrl.js', () => {
           },
         ],
       })
-    ).toBe('hub.fastgit.org:awesome-starter/vite-vue3-ts-starter')
+    ).toBe(
+      proxy
+        ? 'github.com.cnpmjs.org:awesome-starter/vite-vue3-ts-starter'
+        : 'github:awesome-starter/vite-vue3-ts-starter'
+    )
   })
 })
 
-describe('getDownloadUrl.js', () => {
-  test('GitLab', async () => {
+describe('getDownloadUrl', () => {
+  test('GitLab', () => {
     expect(
       getDownloadUrl({
         template: 'test',
@@ -28,12 +35,12 @@ describe('getDownloadUrl.js', () => {
           },
         ],
       })
-    ).toBe('https://gitlab.com/flippidippi/download-git-repo')
+    ).toBe('gitlab:flippidippi/download-git-repo')
   })
 })
 
-describe('getDownloadUrl.js', () => {
-  test('Gitee', async () => {
+describe('getDownloadUrl', () => {
+  test('Gitee', () => {
     expect(
       getDownloadUrl({
         template: 'test',
@@ -48,8 +55,8 @@ describe('getDownloadUrl.js', () => {
   })
 })
 
-describe('getDownloadUrl.js', () => {
-  test('Unknown', async () => {
+describe('getDownloadUrl', () => {
+  test('Unknown', () => {
     expect(
       getDownloadUrl({
         template: 'test',
@@ -63,8 +70,8 @@ describe('getDownloadUrl.js', () => {
   })
 })
 
-describe('getDownloadUrl.js', () => {
-  test('Empty', async () => {
+describe('getDownloadUrl', () => {
+  test('Empty', () => {
     expect(
       getDownloadUrl({
         template: 'test',
@@ -79,8 +86,8 @@ describe('getDownloadUrl.js', () => {
   })
 })
 
-describe('getDownloadUrl.js', () => {
-  test('SSH', async () => {
+describe('getDownloadUrl', () => {
+  test('SSH', () => {
     expect(
       getDownloadUrl({
         template: 'test',
@@ -95,8 +102,8 @@ describe('getDownloadUrl.js', () => {
   })
 })
 
-describe('getDownloadUrl.js', () => {
-  test('Private', async () => {
+describe('getDownloadUrl', () => {
+  test('Private', () => {
     expect(
       getDownloadUrl({
         template: 'test',

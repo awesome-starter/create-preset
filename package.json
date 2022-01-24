@@ -20,6 +20,8 @@
     "dts": "tsc --emitDeclarationOnly --declaration --declarationDir ./dist/types",
     "replace": "tscpaths -p tsconfig.json -s ./src -o ./dist/types",
     "lint": "eslint src --ext .js,.ts",
+    "test": "vitest",
+    "coverage": "vitest --coverage",
     "format": "prettier --write .",
     "backup": "git add . && git commit -m \"chore: save the coding progress\" && git push"
   },
@@ -55,7 +57,6 @@
     "eslint": "^8.7.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "jest": "^27.4.7",
     "lint-staged": "^12.2.0",
     "lodash.escaperegexp": "^4.1.2",
     "prettier": "^2.5.1",
@@ -64,6 +65,7 @@
     "vite": "^2.7.13",
     "vite-plugin-banner": "^0.2.0",
     "vite-plugin-commonjs-externals": "^0.1.1",
+    "vitest": "^0.2.0",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {
