@@ -7,7 +7,7 @@ import { program } from 'commander'
  *
  * @param unknownCMD - Unknown command
  */
-export function suggestCommands(unknownCMD: string) {
+export function suggestCommands(unknownCMD: string): void {
   // Find suggested commands
   let suggestion = ''
   const availableCommands: string[] = program.commands.map(

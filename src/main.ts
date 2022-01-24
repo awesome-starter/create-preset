@@ -5,8 +5,10 @@ import { version } from '../package.json'
 import argv from './libs/argv'
 import { suggestCommands } from './libs/cmd'
 import init from './core/init'
-import configure from './core/configure'
+import configure, { CMDS as CONFIG_SUB_CMDS } from './core/configure'
+import proxy, { CMDS as PROXY_SUB_CMDS } from './core/proxy'
 import upgrade from './core/upgrade'
+import type { SubcommandItem } from '@/types'
 
 /**
  * Main entry of the program
@@ -42,38 +44,43 @@ function start() {
    * The `config` command
    */
   const configCMD = program.command('config')
-  configCMD.alias('c').description('use the local preset config')
   configCMD
-    .command('get')
-    .description('output the local config file path')
-    .action(() => {
-      configure({
-        cmd: 'get',
-      }).catch((e: any) => {
-        console.error(e)
+    .alias('c')
+    .description('use the local preset config')
+    .option('-t, --tech', 'configure the local technology stack')
+  CONFIG_SUB_CMDS.forEach((item: SubcommandItem) => {
+    const { cmd, desc } = item
+    configCMD
+      .command(cmd)
+      .description(desc)
+      .action((filePath) => {
+        configure({
+          cmd,
+          filePath,
+        }).catch((e: any) => {
+          console.error(e)
+        })
       })
-    })
-  configCMD
-    .command('set <file-path>')
-    .description('save the local config file path')
-    .action((filePath) => {
-      configure({
-        cmd: 'set',
-        filePath,
-      }).catch((e: any) => {
-        console.error(e)
+  })
+
+  /**
+   * The `config` command
+   */
+  const proxyCMD = program.command('proxy')
+  proxyCMD.alias('p').description('use proxy to download template')
+  PROXY_SUB_CMDS.forEach((item: SubcommandItem) => {
+    const { cmd, desc } = item
+    proxyCMD
+      .command(cmd)
+      .description(desc)
+      .action(() => {
+        proxy({
+          cmd,
+        }).catch((e: any) => {
+          console.error(e)
+        })
       })
-    })
-  configCMD
-    .command('remove')
-    .description('remove the local config file path')
-    .action(() => {
-      configure({
-        cmd: 'remove',
-      }).catch((e: any) => {
-        console.error(e)
-      })
-    })
+  })
 
   /**
    * The `upgrade` command

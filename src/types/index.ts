@@ -1,6 +1,23 @@
 import type { Chalk } from 'chalk'
 
 /**
+ * The `.presetrc` file content type
+ */
+export interface Presetrc {
+  proxy?: string
+  localTech?: string
+  localPreset?: string
+}
+
+/**
+ * Subcommand type for core
+ */
+export interface SubcommandItem {
+  cmd: string
+  desc: string
+}
+
+/**
  * Current package info
  */
 export interface PKGFromProgram {
@@ -49,12 +66,7 @@ export interface UserInputFromCMD {
 /**
  * The item type of `variants` in tech stack
  */
-export interface VariantItem {
-  name: string
-  desc: string
-  color: Chalk
-  repo: string
-}
+export interface VariantItem extends Omit<ConfigItem, 'tech'> {}
 
 /**
  * The type of color about the source of starters
