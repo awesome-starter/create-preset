@@ -21,6 +21,10 @@
 
 Provides the ability to quickly create preset projects.
 
+>In addition to creating excellent templates provided by official and open source communities, it can also be used as a local management tool for your personal common project configuration. Visit [Manage local configuration](https://preset.js.org/docs.html#manage-local-configuration) to learn more.
+
+If you find it useful, [Welcome to give it a Star](https://github.com/awesome-starter/create-preset) !
+
 ## Usage
 
 With NPM:
