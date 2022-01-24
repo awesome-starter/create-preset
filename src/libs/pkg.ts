@@ -8,25 +8,31 @@ import { PKGFromProgram, PKGFromUserAgent } from '@/types'
 /**
  * Get the package info
  * @param curVersion - The current version number
+ * @param assignVersion - Assign a version to test
  * @returns The package info
  */
-export async function packageInfo(curVersion = ''): Promise<PKGFromProgram> {
+export async function packageInfo(
+  curVersion = '',
+  assignVersion?: string
+): Promise<PKGFromProgram> {
   console.log()
   const spinner = ora('Detecting upgrade information…').start()
   // The current version
-  let cv = curVersion || version || '0.0.0'
+  let cv: string = curVersion || version || '0.0.0'
 
   // The latest version
-  let lv = '0.0.0'
+  let lv: string = assignVersion || '0.0.0'
 
   // Check the current version is need to upgrade
   let needToUpgrade = false
 
-  try {
-    lv = await latestVersion(packageName)
-    needToUpgrade = compareVersions(cv, lv) === -1
-  } catch (e) {
-    // console.log(e)
+  if (!assignVersion) {
+    try {
+      lv = await latestVersion(packageName)
+      needToUpgrade = compareVersions(cv, lv) === -1
+    } catch (e) {
+      // console.log(e)
+    }
   }
 
   console.log()
