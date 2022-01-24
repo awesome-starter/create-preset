@@ -4,7 +4,9 @@
 
 <p align='center'>
   <a href='https://www.npmjs.com/package/create-preset'>
-    <img src="https://img.shields.io/npm/v/create-preset?color=f97316&label=npm" />
+    <img src="https://img.shields.io/npm/v/create-preset?color=f97316" />
+    <span style="margin: 0 5px;"></span> 
+    <img src="https://img.shields.io/npm/dw/create-preset?color=f97316" />
   </a>
 </p>
 
