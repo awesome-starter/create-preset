@@ -56,14 +56,37 @@ export async function fetchTechConfig(): Promise<TechConfig[]> {
 }
 
 /**
+ * Unique tech stacks
+ * @returns A unique list
+ */
+export async function uniqueTechConfig(): Promise<TechConfig[]> {
+  const origin: TechConfig[] = [
+    ...(await fetchTechConfig()),
+    ...readTechConfig(),
+  ]
+
+  const techInfo: { [key: string]: TechConfig } = {}
+  origin.forEach((tech) => {
+    if (techInfo[tech.name]) return
+    techInfo[tech.name] = tech
+  })
+
+  const unique: TechConfig[] = []
+  for (const key in techInfo) {
+    if (Object.prototype.hasOwnProperty.call(techInfo, key)) {
+      unique.push(techInfo[key])
+    }
+  }
+
+  return unique
+}
+
+/**
  * Get the basic tech stack config, without variants
  * @returns The tech stack config without variants
  */
 export async function getTechStacks(): Promise<TechStackItem[]> {
-  const techConfig: TechConfig[] = [
-    ...(await fetchTechConfig()),
-    ...readTechConfig(),
-  ]
+  const techConfig: TechConfig[] = await uniqueTechConfig()
   const techStack: TechStackItem[] = techConfig.map((tech) => {
     return {
       name: tech.name,
@@ -90,10 +113,7 @@ export async function handleOriginConfig(
     return []
   }
 
-  const techConfig: TechConfig[] = [
-    ...(await fetchTechConfig()),
-    ...readTechConfig(),
-  ]
+  const techConfig: TechConfig[] = await uniqueTechConfig()
   const techNames: string[] = techConfig.map((t) => t.name)
   const config: ConfigItem[] = originConfig
     .filter((item) => techNames.includes(item.tech))
