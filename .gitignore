@@ -4,3 +4,5 @@ dist
 dist-ssr
 bin
 *.local
+pnpm-lock.yaml
+package-lock.json

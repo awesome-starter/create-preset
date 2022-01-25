@@ -3,6 +3,7 @@ import chalk from 'chalk'
 import ora from 'ora'
 import fetch from 'node-fetch'
 import { get as getLocalConfigFilePath } from './local'
+import { unique } from './utils'
 import {
   ColorConfig,
   TechConfig,
@@ -56,14 +57,23 @@ export async function fetchTechConfig(): Promise<TechConfig[]> {
 }
 
 /**
+ * Unique tech stacks
+ * @returns A unique list
+ */
+export async function uniqueTechConfig(): Promise<TechConfig[]> {
+  const uniqueList = unique({
+    target: 'name',
+    list: [...(await fetchTechConfig()), ...readTechConfig()],
+  })
+  return uniqueList as TechConfig[]
+}
+
+/**
  * Get the basic tech stack config, without variants
  * @returns The tech stack config without variants
  */
 export async function getTechStacks(): Promise<TechStackItem[]> {
-  const techConfig: TechConfig[] = [
-    ...(await fetchTechConfig()),
-    ...readTechConfig(),
-  ]
+  const techConfig: TechConfig[] = await uniqueTechConfig()
   const techStack: TechStackItem[] = techConfig.map((tech) => {
     return {
       name: tech.name,
@@ -90,10 +100,7 @@ export async function handleOriginConfig(
     return []
   }
 
-  const techConfig: TechConfig[] = [
-    ...(await fetchTechConfig()),
-    ...readTechConfig(),
-  ]
+  const techConfig: TechConfig[] = await uniqueTechConfig()
   const techNames: string[] = techConfig.map((t) => t.name)
   const config: ConfigItem[] = originConfig
     .filter((item) => techNames.includes(item.tech))
@@ -147,6 +154,26 @@ export async function fetchConfigFile(fileName: string): Promise<ConfigItem[]> {
 }
 
 /**
+ * Unique tech stacks
+ * @returns A unique list
+ */
+export async function uniqueConfig(): Promise<ConfigItem[]> {
+  const uniqueListByName = unique({
+    target: 'name',
+    list: [
+      ...(await readConfigFile('local')),
+      ...(await fetchConfigFile('official')),
+      ...(await fetchConfigFile('community')),
+    ],
+  })
+  const uniqueList = unique({
+    target: 'repo',
+    list: uniqueListByName,
+  })
+  return uniqueList as ConfigItem[]
+}
+
+/**
  * Get config
  * @returns Config
  */
@@ -161,11 +188,7 @@ export async function getConfig(): Promise<{
   const techStacks: TechStackItem[] = await getTechStacks()
 
   // Meger all template data
-  const templateList: ConfigItem[] = [
-    ...(await fetchConfigFile('official')),
-    ...(await fetchConfigFile('community')),
-    ...(await readConfigFile('local')),
-  ]
+  const templateList: ConfigItem[] = await uniqueConfig()
 
   // Fill tech stack variants
   templateList.forEach((template) => {
