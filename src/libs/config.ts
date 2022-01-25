@@ -162,9 +162,9 @@ export async function getConfig(): Promise<{
 
   // Meger all template data
   const templateList: ConfigItem[] = [
+    ...(await readConfigFile('local')),
     ...(await fetchConfigFile('official')),
     ...(await fetchConfigFile('community')),
-    ...(await readConfigFile('local')),
   ]
 
   // Fill tech stack variants
