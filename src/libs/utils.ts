@@ -4,6 +4,8 @@ type UniqueItem = TechConfig | ConfigItem
 
 /**
  * Unique an array containing objects
+ * @param target - The key used to determine if there are duplicate values
+ * @param list - The original data list
  * @returns A unique list
  */
 export function unique({
