@@ -25,6 +25,10 @@ Provides the ability to quickly create preset projects.
 
 If you find it useful, [Welcome to give it a Star](https://github.com/awesome-starter/create-preset) !
 
+- 🗝 Simple - List of out-of-the-box templates.
+- 🤹 Interactive - Simple command line operation.
+- 🎨 Personalise - Configure your favorite technology stack and template list.
+
 ## Documentation
 
 Please visit the official website for full docs.
@@ -41,7 +45,7 @@ You can simply experience it through the command of the package manager, and dir
 
 ```bash
 # With NPM:
-npm init preset@latest init
+npm create preset init
 
 # With Yarn:
 yarn create preset init
