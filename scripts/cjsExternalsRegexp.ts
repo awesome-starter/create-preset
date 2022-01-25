@@ -1,4 +1,4 @@
-import escapeRegExp from 'lodash.escapeRegExp'
+import escapeRegExp from 'lodash.escaperegexp'
 import pkg from '../package.json'
 
 const deps: string = Object.keys(pkg.dependencies)
