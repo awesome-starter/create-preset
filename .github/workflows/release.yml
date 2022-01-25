@@ -32,13 +32,12 @@ jobs:
       # 安装依赖并打包
       - name: Install and build
         run: |
-          yarn global add semantic-release
           yarn add -D @semantic-release/changelog @semantic-release/git
           yarn install
           yarn build
       # 发版
       - name: Release
-        run: kp release
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: npx semantic-release
