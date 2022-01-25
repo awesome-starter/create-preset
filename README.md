@@ -21,11 +21,21 @@
 
 Provides the ability to quickly create preset projects.
 
->In addition to creating excellent templates provided by official and open source communities, it can also be used as a local management tool for your personal common project configuration. Visit [Manage local configuration](https://preset.js.org/docs.html#manage-local-configuration) to learn more.
+>In addition to creating excellent templates provided by the official and open source communities as your projects, you are encouraged to use it as a tool to manage the configuration of your personal common project templates. Visit [Manage local configuration](https://preset.js.org/docs.html#manage-local-configuration) to learn more.
 
 If you find it useful, [Welcome to give it a Star](https://github.com/awesome-starter/create-preset) !
 
-## Usage
+## Documentation
+
+See: [preset.js.org](https://preset.js.org/)
+
+## Preview
+
+![create-preset](https://cdn.jsdelivr.net/gh/chengpeiquan/assets-storage/img/2021/11/20220110155037.gif)
+
+## Simply Usage
+
+You can simply experience it through the command of the package manager, and directly create the template you need by create preset.
 
 With NPM:
 
@@ -47,13 +57,35 @@ pnpm create preset init
 
 Then follow the prompts!
 
-## Documentation
+## Global Usage
 
-See: [preset.js.org](https://preset.js.org/)
+It is recommended to install globally for easier usage, Please install it globally first:
 
-## Preview
+With NPM:
 
-![create-preset](https://cdn.jsdelivr.net/gh/chengpeiquan/assets-storage/img/2021/11/20220110155037.gif)
+```bash
+npm install -g create-preset
+```
+
+With Yarn:
+
+```bash
+yarn global add create-preset
+```
+
+With PNPM:
+
+```bash
+pnpm add -g create-preset
+```
+
+You can use the following command to check whether the installation was successful. If successful, you will get a version number.
+
+```bash
+preset -v
+```
+
+You can refer to [Upgrade](https://preset.js.org/guide.html#upgrade) to learn how to upgrade in the future.
 
 ## License
 
