@@ -2,7 +2,7 @@ name: Release
 
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
     types: [closed]
 
 jobs:
@@ -32,6 +32,7 @@ jobs:
       # 安装依赖并打包
       - name: Install and build
         run: |
+          yarn global add semantic-release
           yarn add -D @semantic-release/changelog @semantic-release/git
           yarn install
           yarn build
