@@ -1,9 +1,16 @@
 import { describe, test } from 'vitest'
-import { uniqueTechConfig } from '../src/libs/config'
+import { uniqueTechConfig, uniqueConfig } from '../src/libs/config'
 
-describe('download master, turn on proxy', () => {
-  test('Download Git Repo with master branch, turn on proxy', async () => {
+describe('unique', () => {
+  test('Unique Tech Config', async () => {
     const unique = await uniqueTechConfig()
-    console.log('unique', unique)
+    console.log('uniqueTechConfig', unique)
+  })
+})
+
+describe('unique', () => {
+  test('Unique Config', async () => {
+    const unique = await uniqueConfig()
+    console.log('uniqueConfig', unique)
   })
 })

@@ -3,6 +3,7 @@ import chalk from 'chalk'
 import ora from 'ora'
 import fetch from 'node-fetch'
 import { get as getLocalConfigFilePath } from './local'
+import { unique } from './utils'
 import {
   ColorConfig,
   TechConfig,
@@ -60,25 +61,11 @@ export async function fetchTechConfig(): Promise<TechConfig[]> {
  * @returns A unique list
  */
 export async function uniqueTechConfig(): Promise<TechConfig[]> {
-  const origin: TechConfig[] = [
-    ...(await fetchTechConfig()),
-    ...readTechConfig(),
-  ]
-
-  const techInfo: { [key: string]: TechConfig } = {}
-  origin.forEach((tech) => {
-    if (techInfo[tech.name]) return
-    techInfo[tech.name] = tech
+  const uniqueList = unique({
+    target: 'name',
+    list: [...(await fetchTechConfig()), ...readTechConfig()],
   })
-
-  const unique: TechConfig[] = []
-  for (const key in techInfo) {
-    if (Object.prototype.hasOwnProperty.call(techInfo, key)) {
-      unique.push(techInfo[key])
-    }
-  }
-
-  return unique
+  return uniqueList as TechConfig[]
 }
 
 /**
@@ -167,6 +154,26 @@ export async function fetchConfigFile(fileName: string): Promise<ConfigItem[]> {
 }
 
 /**
+ * Unique tech stacks
+ * @returns A unique list
+ */
+export async function uniqueConfig(): Promise<ConfigItem[]> {
+  const uniqueListByName = unique({
+    target: 'name',
+    list: [
+      ...(await readConfigFile('local')),
+      ...(await fetchConfigFile('official')),
+      ...(await fetchConfigFile('community')),
+    ],
+  })
+  const uniqueList = unique({
+    target: 'repo',
+    list: uniqueListByName,
+  })
+  return uniqueList as ConfigItem[]
+}
+
+/**
  * Get config
  * @returns Config
  */
@@ -181,11 +188,7 @@ export async function getConfig(): Promise<{
   const techStacks: TechStackItem[] = await getTechStacks()
 
   // Meger all template data
-  const templateList: ConfigItem[] = [
-    ...(await readConfigFile('local')),
-    ...(await fetchConfigFile('official')),
-    ...(await fetchConfigFile('community')),
-  ]
+  const templateList: ConfigItem[] = await uniqueConfig()
 
   // Fill tech stack variants
   templateList.forEach((template) => {
