@@ -27,6 +27,8 @@ If you find it useful, [Welcome to give it a Star](https://github.com/awesome-st
 
 ## Documentation
 
+Please visit the official website for full docs.
+
 See: [preset.js.org](https://preset.js.org/)
 
 ## Preview
@@ -37,21 +39,14 @@ See: [preset.js.org](https://preset.js.org/)
 
 You can simply experience it through the command of the package manager, and directly create the template you need by create preset.
 
-With NPM:
-
 ```bash
+# With NPM:
 npm init preset@latest init
-```
 
-With Yarn:
-
-```bash
+# With Yarn:
 yarn create preset init
-```
 
-With PNPM:
-
-```bash
+# With PNPM:
 pnpm create preset init
 ```
 
@@ -61,21 +56,14 @@ Then follow the prompts!
 
 It is recommended to install globally for easier usage, Please install it globally first:
 
-With NPM:
-
 ```bash
+# With NPM:
 npm install -g create-preset
-```
 
-With Yarn:
-
-```bash
+# With Yarn:
 yarn global add create-preset
-```
 
-With PNPM:
-
-```bash
+# With PNPM:
 pnpm add -g create-preset
 ```
 
