@@ -45,7 +45,7 @@ You can simply experience it through the command of the package manager, and dir
 
 ```bash
 # With NPM:
-npm create preset init
+npm create preset@latest init
 
 # With Yarn:
 yarn create preset init
