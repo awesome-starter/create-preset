@@ -3,7 +3,7 @@ import chalk from 'chalk'
 import ora from 'ora'
 import fetch from 'node-fetch'
 import { get as getLocalConfigFilePath } from './local'
-import { unique } from './utils'
+import { unique, shuffle } from './utils'
 import {
   ColorConfig,
   TechConfig,
@@ -163,7 +163,7 @@ export async function uniqueConfig(): Promise<ConfigItem[]> {
     list: [
       ...(await readConfigFile('local')),
       ...(await fetchConfigFile('official')),
-      ...(await fetchConfigFile('community')),
+      ...shuffle(await fetchConfigFile('community')),
     ],
   })
   const uniqueList = unique({
