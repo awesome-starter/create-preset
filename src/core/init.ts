@@ -85,13 +85,17 @@ export default async function init(targetDirFromCMD: string | undefined) {
               ? `"${template}" isn't a valid template. Please choose from below: `
               : 'Select a tech stack:',
           initial: 0,
-          choices: techStacks.map((techStack) => {
-            const techStackColor = techStack.color
-            return {
-              title: techStackColor(techStack.name),
-              value: techStack,
-            }
-          }),
+          choices: techStacks
+            .filter((techStack) => {
+              return techStack.variants.length
+            })
+            .map((techStack) => {
+              const techStackColor = techStack.color
+              return {
+                title: techStackColor(techStack.name),
+                value: techStack,
+              }
+            }),
         },
         {
           type: (techStack) =>
@@ -104,8 +108,8 @@ export default async function init(targetDirFromCMD: string | undefined) {
             techStack.variants.map((variant) => {
               const variantColor = variant.color
               return {
-                title: `${variantColor(variant.name)} - ${chalk.grey(
-                  variant.desc
+                title: `${variantColor(variant.name)}${chalk.grey(
+                  ' - ' + variant.desc
                 )}`,
                 value: variant.name,
               }

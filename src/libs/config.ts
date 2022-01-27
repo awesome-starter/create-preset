@@ -3,7 +3,7 @@ import chalk from 'chalk'
 import ora from 'ora'
 import fetch from 'node-fetch'
 import { get as getLocalConfigFilePath } from './local'
-import { unique } from './utils'
+import { unique, shuffle, ellipsis } from './utils'
 import {
   ColorConfig,
   TechConfig,
@@ -163,7 +163,7 @@ export async function uniqueConfig(): Promise<ConfigItem[]> {
     list: [
       ...(await readConfigFile('local')),
       ...(await fetchConfigFile('official')),
-      ...(await fetchConfigFile('community')),
+      ...shuffle(await fetchConfigFile('community')),
     ],
   })
   const uniqueList = unique({
@@ -195,7 +195,12 @@ export async function getConfig(): Promise<{
     const { tech, name, desc, repo, color } = template
     const target = techStacks.find((t) => t.name === tech)
     if (!target) return
-    target.variants.push({ name, desc, repo, color })
+    target.variants.push({
+      name: ellipsis(name, 20),
+      desc: ellipsis(desc, 80),
+      repo,
+      color,
+    })
   })
 
   // Get template names from tech stack list

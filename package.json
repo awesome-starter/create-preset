@@ -1,7 +1,7 @@
 {
   "name": "create-preset",
   "description": "Provides the ability to quickly create preset projects.",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "author": "chengpeiquan",
   "license": "MIT",
   "homepage": "https://preset.js.org",
