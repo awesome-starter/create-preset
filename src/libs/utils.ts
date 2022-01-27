@@ -35,7 +35,7 @@ export function unique({
 /**
  * Shuffle array sort
  */
-export const shuffle = (arr: any[]): any[] => {
+export function shuffle(arr: any[]): any[] {
   for (let i = arr.length - 1; i > 0; i--) {
     const j: number = Math.floor(Math.random() * (i + 1))
     const item: any = arr[i]
@@ -43,4 +43,16 @@ export const shuffle = (arr: any[]): any[] => {
     arr[j] = item
   }
   return arr
+}
+
+/**
+ * Add ellipses to words that are out of length
+ * @param word - The sentence to be processed
+ * @param limit - The upper limit
+ * @returns The processed word
+ */
+export function ellipsis(word: string, limit: number): string {
+  return String(word).length > limit
+    ? String(word).slice(0, limit) + '…'
+    : String(word)
 }
