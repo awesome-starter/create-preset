@@ -1,3 +1,11 @@
+# [0.10.0](https://github.com/awesome-starter/create-preset/compare/v0.9.0...v0.10.0) (2022-01-27)
+
+
+### Features
+
+* community templates randomly sorted ([9e02764](https://github.com/awesome-starter/create-preset/commit/9e02764dbfee4b60768e283ee8f7118edca7716f))
+* hide tech stack without templates on interactive interface ([cabbe4c](https://github.com/awesome-starter/create-preset/commit/cabbe4c9cad0ce7e4db7aad318d3f4772dc70fc4))
+
 # [0.9.0](https://github.com/awesome-starter/create-preset/compare/v0.8.0...v0.9.0) (2022-01-25)
 
 
