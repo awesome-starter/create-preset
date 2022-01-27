@@ -3,7 +3,7 @@ import chalk from 'chalk'
 import ora from 'ora'
 import fetch from 'node-fetch'
 import { get as getLocalConfigFilePath } from './local'
-import { unique, shuffle } from './utils'
+import { unique, shuffle, ellipsis } from './utils'
 import {
   ColorConfig,
   TechConfig,
@@ -196,8 +196,8 @@ export async function getConfig(): Promise<{
     const target = techStacks.find((t) => t.name === tech)
     if (!target) return
     target.variants.push({
-      name,
-      desc: desc.length > 80 ? desc.slice(0, 80) + '…' : desc,
+      name: ellipsis(name, 20),
+      desc: ellipsis(desc, 80),
       repo,
       color,
     })
