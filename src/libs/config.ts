@@ -195,7 +195,12 @@ export async function getConfig(): Promise<{
     const { tech, name, desc, repo, color } = template
     const target = techStacks.find((t) => t.name === tech)
     if (!target) return
-    target.variants.push({ name, desc, repo, color })
+    target.variants.push({
+      name,
+      desc: desc.length > 80 ? desc.slice(0, 80) + '…' : desc,
+      repo,
+      color,
+    })
   })
 
   // Get template names from tech stack list
