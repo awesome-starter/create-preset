@@ -27,7 +27,8 @@ export default async function proxy({ cmd }: { cmd: string }) {
   switch (cmd) {
     case 'on':
     case 'off': {
-      const proxyTarget: string = cmd === 'on' ? 'github.com.cnpmjs.org' : ''
+      const proxyTarget: string =
+        cmd === 'on' ? 'create.preset.workers.dev' : ''
       const isSuccess = saveRC('proxy', proxyTarget)
       if (isSuccess) {
         console.log()
