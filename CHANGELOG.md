@@ -1,3 +1,10 @@
+# [0.11.0](https://github.com/awesome-starter/create-preset/compare/v0.10.0...v0.11.0) (2022-02-11)
+
+
+### Features
+
+* change download proxy source ([1aa0975](https://github.com/awesome-starter/create-preset/commit/1aa0975352880f8379bb1cb551617b8d90216743))
+
 # [0.10.0](https://github.com/awesome-starter/create-preset/compare/v0.9.0...v0.10.0) (2022-01-27)
 
 
