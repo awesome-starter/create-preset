@@ -1,7 +1,7 @@
 {
   "name": "create-preset",
   "description": "Provides the ability to quickly create preset projects.",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "author": "chengpeiquan",
   "license": "MIT",
   "homepage": "https://preset.js.org",
@@ -23,7 +23,8 @@
     "test": "vitest",
     "coverage": "vitest --coverage",
     "format": "prettier --write .",
-    "backup": "git add . && git commit -m \"chore: save the coding progress\" && git push"
+    "backup": "git add . && git commit -m \"chore: save the coding progress\" && git push",
+    "up": "npx npx npm-check-updates"
   },
   "engines": {
     "node": ">=12.0.0"
@@ -37,40 +38,41 @@
   },
   "dependencies": {
     "chalk": "4.1.2",
-    "commander": "^8.3.0",
+    "commander": "^9.2.0",
     "compare-versions": "3.6.0",
     "download-git-repo": "^3.0.2",
     "latest-version": "5.1.0",
     "leven": "3.1.0",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.6",
     "node-fetch": "2.6.7",
     "ora": "5.4.1",
     "prompts": "^2.4.2"
   },
   "devDependencies": {
-    "@types/lodash.escaperegexp": "^4.1.6",
+    "@types/lodash.escaperegexp": "^4.1.7",
     "@types/minimist": "^1.2.2",
-    "@types/node": "^17.0.10",
+    "@types/node": "^17.0.31",
     "@types/prompts": "^2.0.14",
-    "@typescript-eslint/eslint-plugin": "^5.10.0",
-    "@typescript-eslint/parser": "^5.10.0",
-    "eslint": "^8.7.0",
-    "eslint-config-prettier": "^8.3.0",
+    "@typescript-eslint/eslint-plugin": "^5.21.0",
+    "@typescript-eslint/parser": "^5.21.0",
+    "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "lint-staged": "^12.3.1",
+    "esno": "^0.14.1",
+    "lint-staged": "^12.4.1",
     "lodash.escaperegexp": "^4.1.2",
-    "prettier": "^2.5.1",
+    "prettier": "^2.6.2",
     "tscpaths": "^0.0.9",
-    "typescript": "^4.5.5",
-    "vite": "^2.7.13",
+    "typescript": "^4.6.4",
+    "vite": "^2.9.7",
     "vite-plugin-banner": "^0.2.0",
     "vite-plugin-commonjs-externals": "^0.1.1",
-    "vitest": "^0.2.0",
+    "vitest": "^0.10.0",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {
     "pre-commit": "lint-staged",
-    "commit-msg": "node ./scripts/verifyCommit.js"
+    "commit-msg": "esno ./scripts/verifyCommit.ts"
   },
   "lint-staged": {
     "*.js": [
