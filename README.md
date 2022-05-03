@@ -13,9 +13,11 @@
     <img src="https://img.shields.io/static/v1?label=&message=docs%20%26%20demos&color=f97316" />
   </a>
   <a href="https://github.com/awesome-starter/create-preset" target="__blank">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/awesome-starter/create-preset?style=social">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/awesome-starter/create-preset?style=social" />
   </a>
 </p>
+
+English | [简体中文](https://preset.js.org/zh/)
 
 ## Features
 
@@ -44,14 +46,7 @@ See: [preset.js.org](https://preset.js.org/)
 You can simply experience it through the command of the package manager, and directly create the template you need by create preset.
 
 ```bash
-# With NPM:
-npm create preset@latest init
-
-# With Yarn:
-yarn create preset init
-
-# With PNPM:
-pnpm create preset init
+npm create preset
 ```
 
 Then follow the prompts!
@@ -61,14 +56,7 @@ Then follow the prompts!
 It is recommended to install globally for easier usage, Please install it globally first:
 
 ```bash
-# With NPM:
 npm install -g create-preset
-
-# With Yarn:
-yarn global add create-preset
-
-# With PNPM:
-pnpm add -g create-preset
 ```
 
 You can use the following command to check whether the installation was successful. If successful, you will get a version number.
