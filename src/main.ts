@@ -23,7 +23,7 @@ function start() {
    * The `init` command
    */
   program
-    .command('init [app-name]')
+    .command('init [app-name]', { isDefault: true })
     .alias('i')
     .description('generate a project from a preset template')
     .option('-t, --template', 'specify a template name')
