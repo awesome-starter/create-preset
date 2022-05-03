@@ -31,16 +31,6 @@ If you find it useful, [Welcome to give it a Star](https://github.com/awesome-st
 - 🤹 Interactive - Simple command line operation.
 - 🎨 Personalise - Configure your favorite technology stack and template list.
 
-## Documentation
-
-Please visit the official website for full docs.
-
-See: [preset.js.org](https://preset.js.org/)
-
-## Preview
-
-![create-preset](https://cdn.jsdelivr.net/gh/chengpeiquan/assets-storage/img/2021/11/20220110155037.gif)
-
 ## Simply Usage
 
 You can simply experience it through the command of the package manager, and directly create the template you need by create preset.
@@ -50,6 +40,8 @@ npm create preset
 ```
 
 Then follow the prompts!
+
+>If you download fails, try setting the proxy `npm create preset proxy on` and try again.
 
 ## Global Usage
 
@@ -66,6 +58,16 @@ preset -v
 ```
 
 You can refer to [Upgrade](https://preset.js.org/guide.html#upgrade) to learn how to upgrade in the future.
+
+## Documentation
+
+Please visit the official website for full docs.
+
+See: [preset.js.org](https://preset.js.org/)
+
+## Preview
+
+![create-preset](https://cdn.jsdelivr.net/gh/chengpeiquan/assets-storage/img/2021/11/20220110155037.gif)
 
 ## License
 
