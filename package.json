@@ -24,7 +24,7 @@
     "coverage": "vitest --coverage",
     "format": "prettier --write .",
     "backup": "git add . && git commit -m \"chore: save the coding progress\" && git push",
-    "up": "npx npx npm-check-updates"
+    "up": "npx npm-check-updates"
   },
   "engines": {
     "node": ">=12.0.0"
