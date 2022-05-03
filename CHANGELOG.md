@@ -1,3 +1,11 @@
+# [0.12.0](https://github.com/awesome-starter/create-preset/compare/v0.11.0...v0.12.0) (2022-05-03)
+
+
+### Features
+
+* make the init command to be default ([f7754bd](https://github.com/awesome-starter/create-preset/commit/f7754bd515d55e047cdadab88651b4704760610d))
+* support specify a template name when init ([c0fa9ea](https://github.com/awesome-starter/create-preset/commit/c0fa9ea47d3245c7d9a13c350eda4d4b501a2d2a))
+
 # [0.11.0](https://github.com/awesome-starter/create-preset/compare/v0.10.0...v0.11.0) (2022-02-11)
 
 
