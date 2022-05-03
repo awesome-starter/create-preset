@@ -2,7 +2,7 @@ import ora from 'ora'
 import chalk from 'chalk'
 import downloadGitRepo from 'download-git-repo'
 import { readRC } from './local'
-import type { Presetrc, VariantItem } from '@/types'
+import type { Presetrc, VariantItem, ConfigItem } from '@/types'
 
 /**
  * Get Download URL
@@ -16,7 +16,7 @@ export function getDownloadUrl({
   variants,
 }: {
   template: string
-  variants: VariantItem[]
+  variants: VariantItem[] | ConfigItem[]
 }): string {
   if (!Array.isArray(variants)) return ''
 

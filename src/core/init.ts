@@ -19,17 +19,22 @@ const cwd = process.cwd()
  * @param targetDirFromCMD - The dir name from CMD, if there is input
  */
 export default async function init(targetDirFromCMD: string | undefined) {
-  const { techStacks, templates } = await getConfig()
+  if (argv._.length > 2) {
+    console.log(
+      chalk.yellow(
+        "\nInfo: You provided more than one argument. The first one will be used as the app's name, the rest are ignored."
+      )
+    )
+  }
+
+  const { techStacks, templates, allTemplates } = await getConfig()
 
   let targetDir = targetDirFromCMD || argv._[1]
+
   let template = argv.template || argv.t
 
   const defaultProjectName = !targetDir ? 'my-preset-app' : targetDir
 
-  /**
-   * @typedef { import('../types').UserInputFromCMD } UserInputFromCMD
-   * @type {UserInputFromCMD}
-   */
   let result: UserInputFromCMD = {
     projectName: '',
     packageName: '',
@@ -147,7 +152,7 @@ export default async function init(targetDirFromCMD: string | undefined) {
   // Get download URL from CMD
   const downloadUrl = getDownloadUrl({
     template,
-    variants: techStack ? techStack.variants : [],
+    variants: techStack ? techStack.variants : allTemplates,
   })
 
   // Download template

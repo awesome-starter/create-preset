@@ -2,7 +2,6 @@
 import chalk from 'chalk'
 import { program } from 'commander'
 import { version } from '../package.json'
-import argv from './libs/argv'
 import { suggestCommands } from './libs/cmd'
 import init from './core/init'
 import configure, { CMDS as CONFIG_SUB_CMDS } from './core/configure'
@@ -24,17 +23,11 @@ function start() {
    * The `init` command
    */
   program
-    .command('init [app-name]')
+    .command('init [app-name]', { isDefault: true })
     .alias('i')
     .description('generate a project from a preset template')
+    .option('-t, --template', 'specify a template name')
     .action((source) => {
-      if (argv._.length > 2) {
-        console.log(
-          chalk.yellow(
-            "\nInfo: You provided more than one argument. The first one will be used as the app's name, the rest are ignored."
-          )
-        )
-      }
       init(source).catch((e) => {
         console.error(e)
       })

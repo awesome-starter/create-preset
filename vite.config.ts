@@ -17,7 +17,7 @@ export default defineConfig({
       formats: ['cjs'],
       fileName: () => `${pkg.name}.js`,
     },
-    minify: true,
+    minify: false,
   },
   resolve: {
     alias: {
