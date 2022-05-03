@@ -65,6 +65,8 @@ export function isValidPackageName(projectName: string): boolean {
  * @returns a valid package name
  */
 export function toValidPackageName(projectName: string): string {
+  console.log('projectName', projectName)
+
   return projectName
     .trim()
     .toLowerCase()

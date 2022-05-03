@@ -180,6 +180,7 @@ export async function uniqueConfig(): Promise<ConfigItem[]> {
 export async function getConfig(): Promise<{
   techStacks: TechStackItem[]
   templates: string[]
+  allTemplates: ConfigItem[]
 }> {
   console.log()
   const spinner = ora('Fetching the latest config…').start()
@@ -214,5 +215,6 @@ export async function getConfig(): Promise<{
   return {
     techStacks,
     templates,
+    allTemplates: templateList,
   }
 }
