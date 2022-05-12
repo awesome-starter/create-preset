@@ -27,8 +27,8 @@ export default async function proxy({ cmd }: { cmd: string }) {
   switch (cmd) {
     case 'on':
     case 'off': {
-      const proxyTarget: string =
-        cmd === 'on' ? 'create.preset.workers.dev' : ''
+      // https://doc.fastgit.org/
+      const proxyTarget: string = cmd === 'on' ? 'hub.fastgit.xyz' : ''
       const isSuccess = saveRC('proxy', proxyTarget)
       if (isSuccess) {
         console.log()
