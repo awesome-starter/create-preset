@@ -8,18 +8,14 @@ jobs:
   auto-pr:
     runs-on: ubuntu-latest
     steps:
-      # 获取目标分支源码
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          # 需要指定目标分支
           ref: main
-      # 重置源分支以便运用新的更改
       - name: Reset develop branch
         run: |
           git fetch origin develop:develop
           git reset --hard develop
-      # 自动发起 PR
       - name: Create pull request
         uses: peter-evans/create-pull-request@v3
         with:
