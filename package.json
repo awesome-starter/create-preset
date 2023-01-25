@@ -1,0 +1,84 @@
+{
+  "name": "create-preset",
+  "description": "Provides the ability to quickly create preset projects.",
+  "version": "0.12.2",
+  "author": "chengpeiquan <chengpeiquan@chengpeiquan.com>",
+  "license": "MIT",
+  "homepage": "https://preset.js.org",
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/types/main.d.ts",
+  "main": "./dist/create-preset.js",
+  "bin": {
+    "create-preset": "./dist/create-preset.js",
+    "preset": "./dist/create-preset.js"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build && npm run dts && npm run replace",
+    "dts": "tsc --emitDeclarationOnly --declaration --declarationDir ./dist/types",
+    "replace": "tscpaths -p tsconfig.json -s ./src -o ./dist/types",
+    "lint": "eslint src --ext .js,.ts",
+    "test": "vitest",
+    "coverage": "vitest --coverage",
+    "format": "prettier --write .",
+    "backup": "git add . && git commit -m \"chore: backup\" && git push",
+    "up": "npx npm-check-updates"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awesome-starter/create-preset.git"
+  },
+  "bugs": {
+    "url": "https://github.com/awesome-starter/create-preset/issues"
+  },
+  "dependencies": {
+    "@withtypes/fs-extra": "^0.1.1",
+    "@withtypes/minimist": "^0.1.1",
+    "@withtypes/prompts": "^0.1.1",
+    "chalk": "4.1.2",
+    "commander": "^10.0.0",
+    "compare-versions": "3.6.0",
+    "download-git-repo": "^3.0.2",
+    "latest-version": "5.1.0",
+    "leven": "3.1.0",
+    "node-fetch": "2.6.7",
+    "ora": "5.4.1"
+  },
+  "devDependencies": {
+    "@types/lodash.escaperegexp": "^4.1.7",
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
+    "@typescript-eslint/parser": "^5.49.0",
+    "eslint": "^8.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "lint-staged": "^13.1.0",
+    "lodash.escaperegexp": "^4.1.2",
+    "prettier": "^2.8.3",
+    "simple-git-hooks": "^2.8.1",
+    "tscpaths": "^0.0.9",
+    "tsx": "^3.12.2",
+    "typescript": "^4.9.4",
+    "vite": "^4.0.4",
+    "vite-plugin-banner": "^0.7.0",
+    "vite-plugin-commonjs-externals": "^0.1.1",
+    "vitest": "^0.28.1"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm exec lint-staged --concurrent false",
+    "commit-msg": "pnpm exec tsx scripts/verifyCommit $1"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write"
+    ]
+  }
+}
