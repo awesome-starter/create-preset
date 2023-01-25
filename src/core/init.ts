@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import prompts from 'prompts'
+import prompts from '@withtypes/prompts'
 import chalk from 'chalk'
 import {
   isValidPackageName,
