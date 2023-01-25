@@ -1,7 +1,7 @@
 import fs from 'fs'
 import chalk from 'chalk'
 import ora from 'ora'
-import fetch from 'node-fetch'
+import axios from 'axios'
 import { get as getLocalConfigFilePath } from './local'
 import { unique, shuffle, ellipsis } from './utils'
 import {
@@ -45,8 +45,8 @@ export function readTechConfig(): TechConfig[] {
  */
 export async function fetchTechConfig(): Promise<TechConfig[]> {
   try {
-    const res = await fetch(`https://preset.js.org/config/tech.json`)
-    const config: TechConfig[] = await res.json()
+    const res = await axios(`https://preset.js.org/config/tech.json`)
+    const config: TechConfig[] = res.data
     if (!Array.isArray(config)) {
       return []
     }
@@ -141,8 +141,8 @@ export async function readConfigFile(fileName: string): Promise<ConfigItem[]> {
  */
 export async function fetchConfigFile(fileName: string): Promise<ConfigItem[]> {
   try {
-    const res = await fetch(`https://preset.js.org/config/${fileName}.json`)
-    const originConfig: OriginConfigItem[] = await res.json()
+    const res = await axios(`https://preset.js.org/config/${fileName}.json`)
+    const originConfig: OriginConfigItem[] = res.data
     const config: ConfigItem[] = await handleOriginConfig(
       fileName,
       originConfig
