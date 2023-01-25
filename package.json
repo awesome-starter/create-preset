@@ -24,7 +24,8 @@
     "coverage": "vitest --coverage",
     "format": "prettier --write .",
     "backup": "git add . && git commit -m \"chore: save the coding progress\" && git push",
-    "up": "npx npm-check-updates"
+    "up": "npx npm-check-updates",
+    "prepare": "simple-git-hooks"
   },
   "engines": {
     "node": ">=12.0.0"
@@ -37,6 +38,7 @@
     "url": "https://github.com/awesome-starter/create-preset/issues"
   },
   "dependencies": {
+    "@withtypes/fs-extra": "^0.1.1",
     "chalk": "4.1.2",
     "commander": "^9.2.0",
     "compare-versions": "3.6.0",
@@ -64,24 +66,22 @@
     "lint-staged": "^12.4.1",
     "lodash.escaperegexp": "^4.1.2",
     "prettier": "^2.6.2",
+    "simple-git-hooks": "^2.8.1",
     "tscpaths": "^0.0.9",
     "typescript": "^4.6.4",
     "vite": "^2.9.7",
     "vite-plugin-banner": "^0.2.0",
     "vite-plugin-commonjs-externals": "^0.1.1",
-    "vitest": "^0.10.0",
-    "yorkie": "^2.0.0"
+    "vitest": "^0.10.0"
   },
-  "gitHooks": {
-    "pre-commit": "lint-staged",
-    "commit-msg": "esno ./scripts/verifyCommit.ts"
+  "simple-git-hooks": {
+    "pre-commit": "pnpm exec lint-staged --concurrent false",
+    "commit-msg": "pnpm exec tsx scripts/verifyCommit $1"
   },
   "lint-staged": {
-    "*.js": [
-      "prettier --write"
-    ],
-    "*.ts?(x)": [
-      "prettier --parser=typescript --write"
+    "*.{js,jsx,vue,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
     ]
   }
 }
