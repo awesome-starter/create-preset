@@ -8,7 +8,7 @@
   "files": [
     "dist"
   ],
-  "types": "./dist/types/main.d.ts",
+  "types": "./dist/create-preset.d.ts",
   "main": "./dist/create-preset.js",
   "bin": {
     "create-preset": "./dist/create-preset.js",
