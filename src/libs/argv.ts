@@ -1,4 +1,4 @@
-import minimist from 'minimist'
+import minimist from '@withtypes/minimist'
 
 // Avoids autoconversion to number of the project name by defining that the args
 // non associated with an option ( _ ) needs to be parsed as a string. See #4606

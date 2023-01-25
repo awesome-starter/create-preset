@@ -39,13 +39,13 @@
   },
   "dependencies": {
     "@withtypes/fs-extra": "^0.1.1",
+    "@withtypes/minimist": "^0.1.1",
     "chalk": "4.1.2",
     "commander": "^9.2.0",
     "compare-versions": "3.6.0",
     "download-git-repo": "^3.0.2",
     "latest-version": "5.1.0",
     "leven": "3.1.0",
-    "minimist": "^1.2.6",
     "node-fetch": "2.6.7",
     "ora": "5.4.1",
     "prompts": "^2.4.2"
@@ -54,7 +54,6 @@
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
     "@types/lodash.escaperegexp": "^4.1.7",
-    "@types/minimist": "^1.2.2",
     "@types/node": "^17.0.31",
     "@types/prompts": "^2.0.14",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
