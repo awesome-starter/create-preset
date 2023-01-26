@@ -38,7 +38,7 @@
     "url": "https://github.com/awesome-starter/create-preset/issues"
   },
   "dependencies": {
-    "@bassist/utils": "^0.8.0",
+    "@bassist/utils": "^0.9.0",
     "@withtypes/fs-extra": "^0.1.1",
     "@withtypes/minimist": "^0.1.1",
     "@withtypes/prompts": "^0.1.1",
