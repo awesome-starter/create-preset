@@ -2,8 +2,8 @@ import fs from 'fs'
 import chalk from 'chalk'
 import ora from 'ora'
 import axios from 'axios'
+import { ellipsis, shuffle, unique } from '@bassist/utils'
 import { get as getLocalConfigFilePath } from './local'
-import { unique, shuffle, ellipsis } from './utils'
 import {
   ColorConfig,
   TechConfig,
@@ -62,7 +62,7 @@ export async function fetchTechConfig(): Promise<TechConfig[]> {
  */
 export async function uniqueTechConfig(): Promise<TechConfig[]> {
   const uniqueList = unique({
-    target: 'name',
+    primaryKey: 'name',
     list: [...(await fetchTechConfig()), ...readTechConfig()],
   })
   return uniqueList as TechConfig[]
@@ -158,8 +158,8 @@ export async function fetchConfigFile(fileName: string): Promise<ConfigItem[]> {
  * @returns A unique list
  */
 export async function uniqueConfig(): Promise<ConfigItem[]> {
-  const uniqueListByName = unique({
-    target: 'name',
+  const uniqueListByName = unique<ConfigItem>({
+    primaryKey: 'name',
     list: [
       ...(await readConfigFile('local')),
       ...(await fetchConfigFile('official')),
@@ -167,10 +167,10 @@ export async function uniqueConfig(): Promise<ConfigItem[]> {
     ],
   })
   const uniqueList = unique({
-    target: 'repo',
+    primaryKey: 'repo',
     list: uniqueListByName,
   })
-  return uniqueList as ConfigItem[]
+  return uniqueList
 }
 
 /**
