@@ -23,7 +23,7 @@
     "test": "vitest",
     "coverage": "vitest --coverage",
     "format": "prettier --write .",
-    "backup": "git add . && git commit -m \"chore: save the coding progress\" && git push",
+    "backup": "git add . && git commit -m \"chore: backup\" && git push",
     "up": "npx npm-check-updates",
     "prepare": "simple-git-hooks"
   },
