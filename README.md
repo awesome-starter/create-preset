@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/create-preset" target="__blank">
-    <img src="https://img.shields.io/npm/v/create-preset?color=10b981&label=" />
+    <img src="https://img.shields.io/npm/v/create-preset?color=10b981&label=npm" />
   </a>
   <a href="https://www.npmjs.com/package/create-preset" target="__blank">
     <img src="https://img.shields.io/npm/dm/create-preset?color=10b981&label=" />
