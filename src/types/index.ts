@@ -28,14 +28,6 @@ export interface PKGFromProgram {
 }
 
 /**
- * The package info from user agent
- */
-export interface PKGFromUserAgent {
-  name: string
-  version: string
-}
-
-/**
  * The starter item type of root config file
  */
 export interface OriginConfigItem {

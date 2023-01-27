@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@bassist/node-utils': ^0.1.0
   '@bassist/utils': ^0.9.0
   '@semantic-release/changelog': ^6.0.2
   '@semantic-release/git': ^10.0.1
@@ -33,6 +34,7 @@ specifiers:
   vitest: ^0.28.1
 
 dependencies:
+  '@bassist/node-utils': 0.1.0
   '@bassist/utils': 0.9.0
   '@withtypes/fs-extra': 0.1.1
   '@withtypes/minimist': 0.1.1
@@ -88,6 +90,12 @@ packages:
       chalk: 2.4.2
       js-tokens: 4.0.0
     dev: true
+
+  /@bassist/node-utils/0.1.0:
+    resolution: {integrity: sha512-DKWBCcGi9e7mhMdYFGmL743MhkIRU+JrgHJwnb2vzuPzZES4Vgauc+GaguvsPIyo1s2lMbTs8d2nKEvyB6AqIg==}
+    dependencies:
+      '@withtypes/fs-extra': 0.1.1
+    dev: false
 
   /@bassist/utils/0.9.0:
     resolution: {integrity: sha512-6/CuUUB+oidRFt4T7ZqKukQ429VhJO7cURuxcceAuOmCrjednQpgT+kcEL+LC1ccXnNkMK91NTz+6xgRFGRFwQ==}
