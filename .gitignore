@@ -4,5 +4,5 @@ dist
 dist-ssr
 bin
 *.local
-pnpm-lock.yaml
+yarn.lock
 package-lock.json

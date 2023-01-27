@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ESNext",
     "module": "commonjs",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": false,
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
     "suppressImplicitAnyIndexErrors": true,
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
@@ -15,17 +15,17 @@
     "incremental": false,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "baseUrl": "./",
+    "baseUrl": ".",
+    "rootDir": ".",
     "types": ["vite/client", "node"],
     "paths": {
       "@/*": ["src/*"],
       "@libs/*": ["src/libs/*"],
       "@core/*": ["src/core/*"]
     },
-    "lib": ["esnext", "dom", "dom.iterable"],
-    "rootDir": "./src",
-    "outDir": "./dist"
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "declaration": true
   },
-  "include": ["./src"],
-  "exclude": ["node_modules"]
+  "include": ["./src", "./src/global.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }

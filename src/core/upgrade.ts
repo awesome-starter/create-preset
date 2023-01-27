@@ -1,5 +1,5 @@
 import { exec } from 'child_process'
-import prompts from 'prompts'
+import prompts from '@withtypes/prompts'
 import ora from 'ora'
 import chalk from 'chalk'
 import { packageInfo } from '../libs/pkg'

@@ -1,7 +1,7 @@
 import { resolve } from 'path'
 import { describe, expect, test } from 'vitest'
 import { download } from '../src/libs/download'
-import { emptyDir } from '../src/libs/dir'
+import { emptyDir } from '@bassist/node-utils'
 
 const folder = 'test-download'
 const fullPath = resolve(__dirname, '..', folder)

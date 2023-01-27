@@ -1,9 +1,9 @@
 import fs from 'fs'
 import chalk from 'chalk'
 import ora from 'ora'
-import fetch from 'node-fetch'
+import axios from 'axios'
+import { ellipsis, shuffle, unique } from '@bassist/utils'
 import { get as getLocalConfigFilePath } from './local'
-import { unique, shuffle, ellipsis } from './utils'
 import {
   ColorConfig,
   TechConfig,
@@ -45,8 +45,8 @@ export function readTechConfig(): TechConfig[] {
  */
 export async function fetchTechConfig(): Promise<TechConfig[]> {
   try {
-    const res = await fetch(`https://preset.js.org/config/tech.json`)
-    const config: TechConfig[] = await res.json()
+    const res = await axios(`https://preset.js.org/config/tech.json`)
+    const config: TechConfig[] = res.data
     if (!Array.isArray(config)) {
       return []
     }
@@ -62,7 +62,7 @@ export async function fetchTechConfig(): Promise<TechConfig[]> {
  */
 export async function uniqueTechConfig(): Promise<TechConfig[]> {
   const uniqueList = unique({
-    target: 'name',
+    primaryKey: 'name',
     list: [...(await fetchTechConfig()), ...readTechConfig()],
   })
   return uniqueList as TechConfig[]
@@ -141,8 +141,8 @@ export async function readConfigFile(fileName: string): Promise<ConfigItem[]> {
  */
 export async function fetchConfigFile(fileName: string): Promise<ConfigItem[]> {
   try {
-    const res = await fetch(`https://preset.js.org/config/${fileName}.json`)
-    const originConfig: OriginConfigItem[] = await res.json()
+    const res = await axios(`https://preset.js.org/config/${fileName}.json`)
+    const originConfig: OriginConfigItem[] = res.data
     const config: ConfigItem[] = await handleOriginConfig(
       fileName,
       originConfig
@@ -158,8 +158,8 @@ export async function fetchConfigFile(fileName: string): Promise<ConfigItem[]> {
  * @returns A unique list
  */
 export async function uniqueConfig(): Promise<ConfigItem[]> {
-  const uniqueListByName = unique({
-    target: 'name',
+  const uniqueListByName = unique<ConfigItem>({
+    primaryKey: 'name',
     list: [
       ...(await readConfigFile('local')),
       ...(await fetchConfigFile('official')),
@@ -167,10 +167,10 @@ export async function uniqueConfig(): Promise<ConfigItem[]> {
     ],
   })
   const uniqueList = unique({
-    target: 'repo',
+    primaryKey: 'repo',
     list: uniqueListByName,
   })
-  return uniqueList as ConfigItem[]
+  return uniqueList
 }
 
 /**

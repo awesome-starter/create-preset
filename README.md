@@ -1,16 +1,22 @@
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/awesome-starter/assets/img/logo.png" alt="create-preset" />
+  <img
+    width="400"
+    src="https://cdn.jsdelivr.net/gh/awesome-starter/assets/create-preset/create-preset.svg"
+    alt="create-preset"
+  />
 </p>
+
+<h1 align='center'>create-preset</h1>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/create-preset" target="__blank">
-    <img src="https://img.shields.io/npm/v/create-preset?color=f97316&label=" />
+    <img src="https://img.shields.io/npm/v/create-preset?color=10b981&label=npm" />
   </a>
   <a href="https://www.npmjs.com/package/create-preset" target="__blank">
-    <img src="https://img.shields.io/npm/dm/create-preset?color=f97316&label=" />
+    <img src="https://img.shields.io/npm/dm/create-preset?color=10b981&label=" />
   </a>
   <a href="https://preset.js.org/docs.html" target="__blank">
-    <img src="https://img.shields.io/static/v1?label=&message=docs%20%26%20demos&color=f97316" />
+    <img src="https://img.shields.io/static/v1?label=&message=docs%20%26%20demos&color=10b981" />
   </a>
   <a href="https://github.com/awesome-starter/create-preset" target="__blank">
     <img alt="GitHub stars" src="https://img.shields.io/github/stars/awesome-starter/create-preset?style=social" />
@@ -23,13 +29,16 @@ English | [简体中文](https://preset.js.org/zh/)
 
 Provides the ability to quickly create preset projects.
 
->In addition to creating excellent templates provided by the official and open source communities as your projects, you are encouraged to use it as a tool to manage the configuration of your personal common project templates. Visit [Manage local configuration](https://preset.js.org/docs.html#manage-local-configuration) to learn more.
+> In addition to creating excellent templates provided by the official and open source communities as your projects, you are encouraged to use it as a tool to manage the configuration of your personal common project templates. Visit [Manage local configuration](https://preset.js.org/docs.html#manage-local-configuration) to learn more.
 
 If you find it useful, [Welcome to give it a Star](https://github.com/awesome-starter/create-preset) !
 
-- 🗝 Simple - List of out-of-the-box templates.
-- 🤹 Interactive - Simple command line operation.
-- 🎨 Personalise - Configure your favorite technology stack and template list.
+- ✈ Practicality - Out-of-the-box starter templates for projects.
+- ⚡️ Efficient - Reduces repetitive configuration processes every time a new project is created.
+- 🤹 Interactive - Simple command-line interactive operation.
+- 🛠 Multi-Tech Stacks - Provide commonly used multiple technology stack project support.
+- 🚀 keep pace with the times - Provide open source and long-term maintenance and update templates.
+- 🔑 Private Configuration - Support for local configuration files to manage private template lists.
 
 ## Simply Usage
 
@@ -40,8 +49,6 @@ npm create preset
 ```
 
 Then follow the prompts!
-
->If you download fails, try setting the proxy `npm create preset proxy on` and try again.
 
 ## Global Usage
 

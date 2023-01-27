@@ -1,17 +1,21 @@
 import fs from 'fs'
 import path from 'path'
-import prompts from 'prompts'
+import prompts from '@withtypes/prompts'
 import chalk from 'chalk'
 import {
+  write,
+  remove,
+  emptyDir,
+  isEmpty,
   isValidPackageName,
   toValidPackageName,
-  pkgFromUserAgent,
-} from '../libs/pkg'
-import { write, remove, emptyDir, isEmpty } from '../libs/dir'
+  getPackageManagerByUserAgent,
+} from '@bassist/node-utils'
 import { getDownloadUrl, download } from '../libs/download'
 import { getConfig } from '../libs/config'
 import argv from '../libs/argv'
 import type { UserInputFromCMD } from '@/types'
+
 const cwd = process.cwd()
 
 /**
@@ -113,7 +117,7 @@ export default async function init(targetDirFromCMD: string | undefined) {
             techStack.variants.map((variant) => {
               const variantColor = variant.color
               return {
-                title: `${variantColor(variant.name)}${chalk.grey(
+                title: `${variantColor(variant.name)}${chalk.gray(
                   ' - ' + variant.desc
                 )}`,
                 value: variant.name,
@@ -162,9 +166,9 @@ export default async function init(targetDirFromCMD: string | undefined) {
   })
 
   // Remove lock files
-  remove('file', path.join(root, `package-lock.json`))
-  remove('file', path.join(root, `yarn.lock`))
-  remove('file', path.join(root, `pnpm-lock.yaml`))
+  remove(path.join(root, `package-lock.json`))
+  remove(path.join(root, `yarn.lock`))
+  remove(path.join(root, `pnpm-lock.yaml`))
 
   // Get package info
   const pkg = path.join(root, `package.json`)
@@ -178,8 +182,8 @@ export default async function init(targetDirFromCMD: string | undefined) {
   write(pkg, JSON.stringify(pkgContent, null, 2))
 
   // Notification result
-  const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent)
-  const pkgManager = pkgInfo ? pkgInfo.name : 'npm'
+  const pkgManagerInfo = getPackageManagerByUserAgent()
+  const pkgManager = pkgManagerInfo.name || 'npm'
 
   console.log(`\nDone. Now run:\n`)
   if (root !== cwd) {
