@@ -1,6 +1,12 @@
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/awesome-starter/assets/create-preset/create-preset.svg" alt="create-preset" />
+  <img
+    width="400"
+    src="https://cdn.jsdelivr.net/gh/awesome-starter/assets/create-preset/create-preset.svg"
+    alt="create-preset"
+  />
 </p>
+
+<h1 align='center'>create-preset</h1>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/create-preset" target="__blank">
@@ -23,7 +29,7 @@ English | [简体中文](https://preset.js.org/zh/)
 
 Provides the ability to quickly create preset projects.
 
->In addition to creating excellent templates provided by the official and open source communities as your projects, you are encouraged to use it as a tool to manage the configuration of your personal common project templates. Visit [Manage local configuration](https://preset.js.org/docs.html#manage-local-configuration) to learn more.
+> In addition to creating excellent templates provided by the official and open source communities as your projects, you are encouraged to use it as a tool to manage the configuration of your personal common project templates. Visit [Manage local configuration](https://preset.js.org/docs.html#manage-local-configuration) to learn more.
 
 If you find it useful, [Welcome to give it a Star](https://github.com/awesome-starter/create-preset) !
 
