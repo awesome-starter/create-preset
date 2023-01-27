@@ -1,3 +1,10 @@
+## [0.12.2](https://github.com/awesome-starter/create-preset/compare/v0.12.1...v0.12.2) (2023-01-27)
+
+
+### Bug Fixes
+
+* remove invalid mirror proxy service ([3a7fc7b](https://github.com/awesome-starter/create-preset/commit/3a7fc7b65c3fded7799e9c3821b916e1f342d530))
+
 ## [0.12.1](https://github.com/awesome-starter/create-preset/compare/v0.12.0...v0.12.1) (2022-05-12)
 
 
