@@ -33,9 +33,12 @@ Provides the ability to quickly create preset projects.
 
 If you find it useful, [Welcome to give it a Star](https://github.com/awesome-starter/create-preset) !
 
-- 🗝 Simple - List of out-of-the-box templates.
-- 🤹 Interactive - Simple command line operation.
-- 🎨 Personalise - Configure your favorite technology stack and template list.
+- ✈ Practicality - Out-of-the-box starter templates for projects.
+- ⚡️ Efficient - Reduces repetitive configuration processes every time a new project is created.
+- 🤹 Interactive - Simple command-line interactive operation.
+- 🛠 Multi-Tech Stacks - Provide commonly used multiple technology stack project support.
+- 🚀 keep pace with the times - Provide open source and long-term maintenance and update templates.
+- 🔑 Private Configuration - Support for local configuration files to manage private template lists.
 
 ## Simply Usage
 
