@@ -41,8 +41,6 @@ npm create preset
 
 Then follow the prompts!
 
->If you download fails, try setting the proxy `npm create preset proxy on` and try again.
-
 ## Global Usage
 
 It is recommended to install globally for easier usage, Please install it globally first:
