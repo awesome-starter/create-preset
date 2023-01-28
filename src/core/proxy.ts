@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { saveRC } from '@libs/local'
+import { saveRC } from '@/libs/local'
 import type { SubcommandItem } from '@/types'
 
 /**

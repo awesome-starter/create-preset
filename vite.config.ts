@@ -22,8 +22,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve('src'),
-      '@core': resolve('src/core'),
-      '@libs': resolve('src/libs'),
     },
   },
   plugins: [

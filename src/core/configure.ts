@@ -1,6 +1,6 @@
 import chalk from 'chalk'
-import { get, set, remove } from '@libs/local'
-import argv from '@libs/argv'
+import { get, set, remove } from '@/libs/local'
+import argv from '@/libs/argv'
 import type { SubcommandItem } from '@/types'
 
 // If `true`, handle the tech config

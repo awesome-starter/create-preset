@@ -19,9 +19,7 @@
     "rootDir": ".",
     "types": ["vite/client", "node"],
     "paths": {
-      "@/*": ["src/*"],
-      "@libs/*": ["src/libs/*"],
-      "@core/*": ["src/core/*"]
+      "@/*": ["src/*"]
     },
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "declaration": true

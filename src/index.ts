@@ -9,8 +9,6 @@ import proxy, { CMDS as PROXY_SUB_CMDS } from './core/proxy'
 import upgrade from './core/upgrade'
 import type { SubcommandItem } from '@/types'
 
-export const foo = 'foo'
-
 /**
  * Main entry of the program
  */
