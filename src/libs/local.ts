@@ -3,7 +3,7 @@ import fs from 'fs'
 import os from 'os'
 import { resolve } from 'path'
 import argv from './argv'
-import type { Presetrc } from '@/types'
+import type { PresetRCFileContent } from '@/types'
 
 // Get user's config path of program
 const homedir = os.homedir()
@@ -17,8 +17,8 @@ const key: string = isTech ? 'localTech' : 'localPreset'
  * Get `.presetrc` file content
  * @returns JSON of `.presetrc`
  */
-export function readRC(): Presetrc {
-  let rcConfig: Presetrc = {}
+export function readRC(): PresetRCFileContent {
+  let rcConfig: PresetRCFileContent = {}
 
   try {
     const data = fs.readFileSync(rcFile, 'utf-8')
@@ -47,7 +47,7 @@ export function readRC(): Presetrc {
  */
 export function saveRC(key: string, value: string): boolean {
   try {
-    const rcConfig: Presetrc = readRC()
+    const rcConfig: PresetRCFileContent = readRC()
     rcConfig[key] = value
     fs.writeFileSync(rcFile, JSON.stringify(rcConfig, null, 2))
     return true

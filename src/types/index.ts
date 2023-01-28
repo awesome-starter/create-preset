@@ -3,7 +3,7 @@ import type { Chalk } from 'chalk'
 /**
  * The `.presetrc` file content type
  */
-export interface Presetrc {
+export interface PresetRCFileContent {
   proxy?: string
   localTech?: string
   localPreset?: string
@@ -83,4 +83,33 @@ export interface TechConfig {
 export interface TechStackItem extends Omit<TechConfig, 'color'> {
   color: Chalk
   variants: VariantItem[]
+}
+
+export interface GetDownloadUrlOptions {
+  /**
+   * The selected template name from CMD
+   */
+  template: string
+
+  /**
+   * The `variants` in `techStack` from config
+   */
+  variants: VariantItem[] | ConfigItem[]
+}
+
+export interface DownloadOptions {
+  /**
+   * The repo url to download
+   */
+  repo: string
+
+  /**
+   * The project folder name
+   */
+  folder: string
+
+  /**
+   * If true, use `git clone` to download repo
+   */
+  clone?: boolean
 }

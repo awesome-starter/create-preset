@@ -2,22 +2,17 @@ import ora from 'ora'
 import chalk from 'chalk'
 import downloadGitRepo from 'download-git-repo'
 import { readRC } from './local'
-import type { Presetrc, VariantItem, ConfigItem } from '@/types'
+import type {
+  PresetRCFileContent,
+  DownloadOptions,
+  GetDownloadUrlOptions,
+} from '@/types'
 
 /**
  * Get Download URL
- * @param options - The result from CMD
- *  - template: The selected template name from CMD
- *  - variants: The `variants` in `techStack` from config
- * @returns {string} The repo url about selected template starter
+ * @returns The repo url about selected template starter
  */
-export function getDownloadUrl({
-  template,
-  variants,
-}: {
-  template: string
-  variants: VariantItem[] | ConfigItem[]
-}): string {
+export function getDownloadUrl({ template, variants }: GetDownloadUrlOptions) {
   if (!Array.isArray(variants)) return ''
 
   const target = variants.find((v) => v.name === template)
@@ -42,7 +37,7 @@ export function getDownloadUrl({
   })
 
   // Use proxy to speed up GitHub download
-  const rcConfig: Presetrc = readRC()
+  const rcConfig: PresetRCFileContent = readRC()
   const { proxy } = rcConfig
   if (proxy && repo.startsWith('https://github.com/')) {
     url = repo.replace(/https:\/\/github.com\//, `${proxy}:`)
@@ -58,23 +53,13 @@ export function getDownloadUrl({
 
 /**
  * Download GitHub Repo
- * @param options - the download options.
- *  - repo: The repo url to download
- *  - folder: The project folder name
- *  - clone: If true, use `git clone` to download repo
- * @returns The download status:
- *  true: success
- *  false: error
+ * @returns Whether the download status is successful
  */
 export function download({
   repo,
   folder,
   clone,
-}: {
-  repo: string
-  folder: string
-  clone?: boolean
-}): Promise<boolean> {
+}: DownloadOptions): Promise<boolean> {
   return new Promise((resolve) => {
     console.log()
     const spinner = ora('Downloading…').start()
