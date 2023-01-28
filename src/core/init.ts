@@ -14,7 +14,7 @@ import {
 import { getDownloadUrl, download } from '../libs/download'
 import { getConfig } from '../libs/config'
 import argv from '../libs/argv'
-import type { UserInputFromCMD } from '@/types'
+import type { UserInputInfoFromCommandLine } from '@/types'
 
 const cwd = process.cwd()
 
@@ -39,7 +39,7 @@ export default async function init(targetDirFromCMD: string | undefined) {
 
   const defaultProjectName = !targetDir ? 'my-preset-app' : targetDir
 
-  let result: UserInputFromCMD = {
+  let result: UserInputInfoFromCommandLine = {
     projectName: '',
     packageName: '',
     overwrite: false,

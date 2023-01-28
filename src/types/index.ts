@@ -47,7 +47,7 @@ export interface ConfigItem extends OriginConfigItem {
 /**
  * The type for CMD from user input
  */
-export interface UserInputFromCMD {
+export interface UserInputInfoFromCommandLine {
   projectName: string
   packageName: string
   overwrite: boolean
