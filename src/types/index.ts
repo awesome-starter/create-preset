@@ -3,11 +3,13 @@ import type { Chalk } from 'chalk'
 /**
  * The `.presetrc` file content type
  */
-export interface PresetRCFileContent {
+export interface RuntimeConfigFileContent {
   proxy?: string
   localTech?: string
   localPreset?: string
 }
+
+export type RuntimeConfigType = 'localTech' | 'localPreset'
 
 /**
  * Subcommand type for core

@@ -3,7 +3,7 @@ import chalk from 'chalk'
 import downloadGitRepo from 'download-git-repo'
 import { readRuntimeConfigFile } from './local'
 import type {
-  PresetRCFileContent,
+  RuntimeConfigFileContent,
   DownloadOptions,
   GetDownloadUrlOptions,
 } from '@/types'
@@ -37,7 +37,7 @@ export function getDownloadUrl({ template, variants }: GetDownloadUrlOptions) {
   })
 
   // Use proxy to speed up GitHub download
-  const rcConfig: PresetRCFileContent = readRuntimeConfigFile()
+  const rcConfig: RuntimeConfigFileContent = readRuntimeConfigFile()
   const { proxy } = rcConfig
   if (proxy && repo.startsWith('https://github.com/')) {
     url = repo.replace(/https:\/\/github.com\//, `${proxy}:`)

@@ -1,35 +1,37 @@
 import chalk from 'chalk'
-import fs from 'fs'
-import os from 'os'
+import { readFileSync, writeFileSync } from '@withtypes/fs-extra'
+import { homedir } from 'os'
 import { resolve } from 'path'
+import { hasKey } from '@bassist/utils'
 import argv from './argv'
-import type { PresetRCFileContent } from '@/types'
+import type { RuntimeConfigFileContent, RuntimeConfigType } from '@/types'
 
 // Get user's config path of program
-const homedir = os.homedir()
-const rcFile = resolve(homedir, '.presetrc')
+const rcFile = resolve(homedir(), '.presetrc')
 
 // If `true`, handle the tech config
 const isTech = Boolean(argv.tech) || Boolean(argv.t)
-const key: string = isTech ? 'localTech' : 'localPreset'
+const runtimeConfigType: RuntimeConfigType = isTech
+  ? 'localTech'
+  : 'localPreset'
 
 /**
  * Get `.presetrc` file content
  * @returns JSON of `.presetrc`
  */
-export function readRuntimeConfigFile(): PresetRCFileContent {
-  let rcConfig: PresetRCFileContent = {}
+export function readRuntimeConfigFile(): RuntimeConfigFileContent {
+  let rcConfig: RuntimeConfigFileContent = {}
 
   try {
-    const data = fs.readFileSync(rcFile, 'utf-8')
+    const data = readFileSync(rcFile, 'utf-8')
     rcConfig = JSON.parse(data)
   } catch (e) {
     // console.log(e)
   }
 
-  const keys: string[] = ['proxy', 'localTech', 'localPreset']
+  const keys = ['proxy', 'localTech', 'localPreset']
   keys.forEach((k) => {
-    if (!Object.prototype.hasOwnProperty.call(rcConfig, k)) {
+    if (!hasKey(rcConfig, k)) {
       rcConfig[k] = ''
     }
   })
@@ -41,15 +43,13 @@ export function readRuntimeConfigFile(): PresetRCFileContent {
  * Save `.presetrc` file content
  * @param key - Key of `.presetrc` JSON
  * @param value - Value of the key in `.presetrc` JSON
- * @returns isSuccess
- *  true: success
- *  false: fail
+ * @returns Whether the save operation was successful
  */
-export function saveRuntimeConfigFile(key: string, value: string): boolean {
+export function saveRuntimeConfigFile(key: string, value: string) {
   try {
-    const rcConfig: PresetRCFileContent = readRuntimeConfigFile()
+    const rcConfig: RuntimeConfigFileContent = readRuntimeConfigFile()
     rcConfig[key] = value
-    fs.writeFileSync(rcFile, JSON.stringify(rcConfig, null, 2))
+    writeFileSync(rcFile, JSON.stringify(rcConfig, null, 2))
     return true
   } catch (e) {
     console.log(e)
@@ -62,12 +62,12 @@ export function saveRuntimeConfigFile(key: string, value: string): boolean {
  * @param isGetTech - If `true`, return tech stack
  * @returns The local preset file path
  */
-export function getRuntimeConfig(isGetTech?: boolean): string {
+export function getRuntimeConfig(mode: RuntimeConfigType = 'localPreset') {
   try {
     const rcConfig = readRuntimeConfigFile()
-    const targetKey: string = isGetTech ? 'localTech' : key
-    const filePath: string = rcConfig[targetKey]
-      ? resolve(rcConfig[targetKey])
+    const targetKey = mode === 'localTech' ? 'localTech' : runtimeConfigType
+    const filePath = rcConfig[targetKey]
+      ? resolve(String(rcConfig[targetKey]))
       : ''
     return filePath
   } catch (e) {
@@ -79,19 +79,19 @@ export function getRuntimeConfig(isGetTech?: boolean): string {
  * Set local preset file path into user config
  * @param filePath - The local config file path
  */
-export function setRuntimeConfig(filePath: string): boolean {
+export function setRuntimeConfig(filePath: string) {
   if (!filePath.endsWith('.json')) {
     console.log()
     console.log(`  ` + chalk.red('The file path must be a ".json" file.'))
     console.log()
     return false
   }
-  return saveRuntimeConfigFile(key, filePath)
+  return saveRuntimeConfigFile(runtimeConfigType, filePath)
 }
 
 /**
  * Remove local preset file path from user config
  */
-export function removeRuntimeConfig(): boolean {
-  return saveRuntimeConfigFile(key, '')
+export function removeRuntimeConfig() {
+  return saveRuntimeConfigFile(runtimeConfigType, '')
 }

@@ -1,9 +1,9 @@
-import fs from 'fs'
+import { readFileSync } from '@withtypes/fs-extra'
 import chalk from 'chalk'
 import ora from 'ora'
 import axios from 'axios'
 import { ellipsis, shuffle, unique } from '@bassist/utils'
-import { get as getLocalConfigFilePath } from './local'
+import { getRuntimeConfig as getLocalConfigFilePath } from './local'
 import {
   ColorConfig,
   TechConfig,
@@ -27,8 +27,8 @@ const colorConfig: ColorConfig = {
  */
 export function readTechConfig(): TechConfig[] {
   try {
-    const filePath: string = getLocalConfigFilePath(true)
-    const data: string = fs.readFileSync(filePath, 'utf-8')
+    const filePath = getLocalConfigFilePath('localTech')
+    const data = readFileSync(filePath, 'utf-8')
     const config: TechConfig[] = JSON.parse(data)
     if (!Array.isArray(config)) {
       return []
@@ -122,7 +122,7 @@ export async function handleOriginConfig(
 export async function readConfigFile(fileName: string): Promise<ConfigItem[]> {
   try {
     const filePath: string = getLocalConfigFilePath()
-    const data: string = fs.readFileSync(filePath, 'utf-8')
+    const data: string = readFileSync(filePath, 'utf-8')
     const originConfig: OriginConfigItem[] = JSON.parse(data)
     const config: ConfigItem[] = await handleOriginConfig(
       fileName,
