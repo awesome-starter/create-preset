@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest'
 import { getDownloadUrl } from '../src/libs/download'
-import { readRC } from '../src/libs/local'
+import { readRuntimeConfigFile } from '../src/libs/local'
 
 describe('getDownloadUrl', () => {
   test('GitHub', () => {
-    const { proxy } = readRC()
+    const { proxy } = readRuntimeConfigFile()
     expect(
       getDownloadUrl({
         template: 'test',

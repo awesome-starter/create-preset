@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { saveRC } from '@/libs/local'
+import { saveRuntimeConfigFile } from '@/libs/local'
 import type { SubcommandItem } from '@/types'
 
 /**
@@ -24,7 +24,7 @@ export const CMDS: SubcommandItem[] = [
 export default async function proxy({ cmd }: { cmd: string }) {
   if (!CMDS.map((c) => c.cmd).includes(cmd)) return
 
-  saveRC('proxy', '')
+  saveRuntimeConfigFile('proxy', '')
   console.log()
   console.log(
     `  ${chalk.red(
@@ -43,7 +43,7 @@ export default async function proxy({ cmd }: { cmd: string }) {
   //   case 'off': {
   //     // https://doc.fastgit.org/
   //     const proxyTarget: string = cmd === 'on' ? 'hub.fastgit.xyz' : ''
-  //     const isSuccess = saveRC('proxy', proxyTarget)
+  //     const isSuccess = saveRuntimeConfigFile('proxy', proxyTarget)
   //     if (isSuccess) {
   //       console.log()
   //       console.log(`  ${chalk.green(`Turn ${cmd} proxy successfully.`)}`)

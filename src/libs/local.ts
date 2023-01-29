@@ -17,7 +17,7 @@ const key: string = isTech ? 'localTech' : 'localPreset'
  * Get `.presetrc` file content
  * @returns JSON of `.presetrc`
  */
-export function readRC(): PresetRCFileContent {
+export function readRuntimeConfigFile(): PresetRCFileContent {
   let rcConfig: PresetRCFileContent = {}
 
   try {
@@ -45,9 +45,9 @@ export function readRC(): PresetRCFileContent {
  *  true: success
  *  false: fail
  */
-export function saveRC(key: string, value: string): boolean {
+export function saveRuntimeConfigFile(key: string, value: string): boolean {
   try {
-    const rcConfig: PresetRCFileContent = readRC()
+    const rcConfig: PresetRCFileContent = readRuntimeConfigFile()
     rcConfig[key] = value
     fs.writeFileSync(rcFile, JSON.stringify(rcConfig, null, 2))
     return true
@@ -62,9 +62,9 @@ export function saveRC(key: string, value: string): boolean {
  * @param isGetTech - If `true`, return tech stack
  * @returns The local preset file path
  */
-export function get(isGetTech?: boolean): string {
+export function getRuntimeConfig(isGetTech?: boolean): string {
   try {
-    const rcConfig = readRC()
+    const rcConfig = readRuntimeConfigFile()
     const targetKey: string = isGetTech ? 'localTech' : key
     const filePath: string = rcConfig[targetKey]
       ? resolve(rcConfig[targetKey])
@@ -79,19 +79,19 @@ export function get(isGetTech?: boolean): string {
  * Set local preset file path into user config
  * @param filePath - The local config file path
  */
-export function set(filePath: string): boolean {
+export function setRuntimeConfig(filePath: string): boolean {
   if (!filePath.endsWith('.json')) {
     console.log()
     console.log(`  ` + chalk.red('The file path must be a ".json" file.'))
     console.log()
     return false
   }
-  return saveRC(key, filePath)
+  return saveRuntimeConfigFile(key, filePath)
 }
 
 /**
  * Remove local preset file path from user config
  */
-export function remove(): boolean {
-  return saveRC(key, '')
+export function removeRuntimeConfig(): boolean {
+  return saveRuntimeConfigFile(key, '')
 }

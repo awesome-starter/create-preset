@@ -1,7 +1,7 @@
 import ora from 'ora'
 import chalk from 'chalk'
 import downloadGitRepo from 'download-git-repo'
-import { readRC } from './local'
+import { readRuntimeConfigFile } from './local'
 import type {
   PresetRCFileContent,
   DownloadOptions,
@@ -37,7 +37,7 @@ export function getDownloadUrl({ template, variants }: GetDownloadUrlOptions) {
   })
 
   // Use proxy to speed up GitHub download
-  const rcConfig: PresetRCFileContent = readRC()
+  const rcConfig: PresetRCFileContent = readRuntimeConfigFile()
   const { proxy } = rcConfig
   if (proxy && repo.startsWith('https://github.com/')) {
     url = repo.replace(/https:\/\/github.com\//, `${proxy}:`)
