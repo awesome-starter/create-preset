@@ -9,7 +9,7 @@ export interface RuntimeConfigFileContent {
   localPreset?: string
 }
 
-export type RuntimeConfigType = 'localTech' | 'localPreset'
+export type LocalConfigType = 'localTech' | 'localPreset'
 
 /**
  * Subcommand type for core
@@ -19,10 +19,7 @@ export interface SubcommandItem {
   desc: string
 }
 
-/**
- * Current package info
- */
-export interface PKGFromProgram {
+export interface PackageUpgradeInfo {
   packageName: string
   currentVersion: string
   latestVersion: string

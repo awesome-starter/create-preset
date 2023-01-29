@@ -3,18 +3,17 @@ import chalk from 'chalk'
 import latestVersion from 'latest-version'
 import compareVersions from 'compare-versions'
 import { name as packageName, version } from '../../package.json'
-import { PKGFromProgram } from '@/types'
+import { PackageUpgradeInfo } from '@/types'
 
 /**
- * Get the package info
+ * Query the CLI upgrade info
  * @param curVersion - The current version number
  * @param assignVersion - Assign a version to test
- * @returns The package info
  */
-export async function packageInfo(
+export async function queryPackageUpgradeInfo(
   curVersion = '',
   assignVersion?: string
-): Promise<PKGFromProgram> {
+): Promise<PackageUpgradeInfo> {
   console.log()
   const spinner = ora('Detecting upgrade information…').start()
   // The current version

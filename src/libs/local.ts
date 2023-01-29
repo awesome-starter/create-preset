@@ -4,16 +4,14 @@ import { homedir } from 'os'
 import { resolve } from 'path'
 import { hasKey } from '@bassist/utils'
 import argv from './argv'
-import type { RuntimeConfigFileContent, RuntimeConfigType } from '@/types'
+import type { RuntimeConfigFileContent, LocalConfigType } from '@/types'
 
 // Get user's config path of program
 const rcFile = resolve(homedir(), '.presetrc')
 
 // If `true`, handle the tech config
 const isTech = Boolean(argv.tech) || Boolean(argv.t)
-const runtimeConfigType: RuntimeConfigType = isTech
-  ? 'localTech'
-  : 'localPreset'
+const runtimeConfigType: LocalConfigType = isTech ? 'localTech' : 'localPreset'
 
 /**
  * Get `.presetrc` file content
@@ -62,7 +60,7 @@ export function saveRuntimeConfigFile(key: string, value: string) {
  * @param isGetTech - If `true`, return tech stack
  * @returns The local preset file path
  */
-export function getRuntimeConfig(mode: RuntimeConfigType = 'localPreset') {
+export function getRuntimeConfig(mode: LocalConfigType = 'localPreset') {
   try {
     const rcConfig = readRuntimeConfigFile()
     const targetKey = mode === 'localTech' ? 'localTech' : runtimeConfigType
