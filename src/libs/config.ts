@@ -43,7 +43,7 @@ export function readTechConfig(): TechConfig[] {
  * Get the list of supported tech stacks
  * @returns Tech list
  */
-export async function fetchTechConfig(): Promise<TechConfig[]> {
+export async function queryTechConfig(): Promise<TechConfig[]> {
   try {
     const res = await axios(`https://preset.js.org/config/tech.json`)
     const config: TechConfig[] = res.data
@@ -63,7 +63,7 @@ export async function fetchTechConfig(): Promise<TechConfig[]> {
 export async function uniqueTechConfig(): Promise<TechConfig[]> {
   const uniqueList = unique({
     primaryKey: 'name',
-    list: [...(await fetchTechConfig()), ...readTechConfig()],
+    list: [...(await queryTechConfig()), ...readTechConfig()],
   })
   return uniqueList as TechConfig[]
 }

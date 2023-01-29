@@ -2,7 +2,7 @@ import { exec } from 'child_process'
 import prompts from '@withtypes/prompts'
 import ora from 'ora'
 import chalk from 'chalk'
-import { queryPackageUpgradeInfo } from '../libs/pkg'
+import { queryPackageUpgradeInfo } from '@/libs/pkg'
 
 /**
  * The action for `upgrade` command

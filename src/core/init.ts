@@ -11,9 +11,9 @@ import {
   toValidPackageName,
   getPackageManagerByUserAgent,
 } from '@bassist/node-utils'
-import { getDownloadUrl, download } from '../libs/download'
-import { getConfig } from '../libs/config'
-import argv from '../libs/argv'
+import { getDownloadUrl, download } from '@/libs/download'
+import { getConfig } from '@/libs/config'
+import argv from '@/libs/argv'
 import type { UserInputInfoFromCommandLine } from '@/types'
 
 const cwd = process.cwd()
