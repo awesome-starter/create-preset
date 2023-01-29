@@ -23,6 +23,9 @@
     "test": "vitest",
     "coverage": "vitest --coverage",
     "format": "prettier --write .",
+    "mirror:get": "npm config get registry",
+    "mirror:set": "npm config set registry https://registry.npmmirror.com",
+    "mirror:rm": "npm config rm registry",
     "backup": "git add . && git commit -m \"chore: backup\" && git push",
     "up": "npx npm-check-updates",
     "prepare": "simple-git-hooks"
