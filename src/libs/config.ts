@@ -139,7 +139,7 @@ export async function readConfigFile(fileName: string): Promise<ConfigItem[]> {
  * @param fileName - The config file name
  * @returns The config array from root config file
  */
-export async function fetchConfigFile(fileName: string): Promise<ConfigItem[]> {
+export async function queryConfigFile(fileName: string): Promise<ConfigItem[]> {
   try {
     const res = await axios(`https://preset.js.org/config/${fileName}.json`)
     const originConfig: OriginConfigItem[] = res.data
@@ -162,8 +162,8 @@ export async function uniqueConfig(): Promise<ConfigItem[]> {
     primaryKey: 'name',
     list: [
       ...(await readConfigFile('local')),
-      ...(await fetchConfigFile('official')),
-      ...shuffle(await fetchConfigFile('community')),
+      ...(await queryConfigFile('official')),
+      ...shuffle(await queryConfigFile('community')),
     ],
   })
   const uniqueList = unique({
