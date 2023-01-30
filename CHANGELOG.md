@@ -1,3 +1,11 @@
+# [0.13.0](https://github.com/awesome-starter/create-preset/compare/v0.12.2...v0.13.0) (2023-01-30)
+
+
+### Features
+
+* add a tips to enable proxy ([e7f60f0](https://github.com/awesome-starter/create-preset/commit/e7f60f0fcc86269c751d2199c9d8b4c8c141ffae))
+* add mirror config ([5cf4e14](https://github.com/awesome-starter/create-preset/commit/5cf4e14924d11e735d20904d1d66e91aaf088145))
+
 ## [0.12.2](https://github.com/awesome-starter/create-preset/compare/v0.12.1...v0.12.2) (2023-01-27)
 
 
