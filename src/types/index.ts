@@ -34,6 +34,7 @@ export interface OriginConfigItem {
   name: string
   desc: string
   repo: string
+  mirror: string
 }
 
 /**

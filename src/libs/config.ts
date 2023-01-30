@@ -4,7 +4,8 @@ import ora from 'ora'
 import axios from 'axios'
 import { ellipsis, shuffle, unique } from '@bassist/utils'
 import { getRuntimeConfig as getLocalConfigFilePath } from './local'
-import {
+import { isValidConfig } from './validator'
+import type {
   ColorConfig,
   TechConfig,
   TechStackItem,
@@ -142,11 +143,27 @@ export async function readConfigFile(fileName: string): Promise<ConfigItem[]> {
 export async function queryConfigFile(fileName: string): Promise<ConfigItem[]> {
   try {
     const res = await axios(`https://preset.js.org/config/${fileName}.json`)
+    if (!Array.isArray(res.data)) {
+      return []
+    }
+
     const originConfig: OriginConfigItem[] = res.data
+      .map((item) => {
+        return {
+          tech: item.tech || '',
+          name: item.name || '',
+          desc: item.desc || '',
+          repo: item.repo || '',
+          mirror: item.mirror || '',
+        }
+      })
+      .filter((item) => isValidConfig(item))
+
     const config: ConfigItem[] = await handleOriginConfig(
       fileName,
       originConfig
     )
+
     return config
   } catch (e) {
     return []
@@ -193,13 +210,14 @@ export async function getConfig(): Promise<{
 
   // Fill tech stack variants
   templateList.forEach((template) => {
-    const { tech, name, desc, repo, color } = template
+    const { tech, name, desc, repo, mirror, color } = template
     const target = techStacks.find((t) => t.name === tech)
     if (!target) return
     target.variants.push({
       name: ellipsis(name, 20),
       desc: ellipsis(desc, 80),
       repo,
+      mirror,
       color,
     })
   })
