@@ -1,4 +1,4 @@
-import { readRuntimeConfigFile } from '@/libs/local'
+import { isProxyOn } from '@/libs/local'
 
 /**
  * Whitelist for conversion shorthand repositories
@@ -14,8 +14,7 @@ export const whitelist = [
  * If proxy is enabled, the configuration file also points to the mirroring domain name
  */
 export function getBaseUrl() {
-  const { proxy } = readRuntimeConfigFile()
-  return proxy === 'on'
+  return isProxyOn()
     ? 'https://gitee.com/awesome-starter/website/raw/main/docs/public/config'
     : 'https://preset.js.org/config'
 }

@@ -93,3 +93,11 @@ export function setRuntimeConfig(filePath: string) {
 export function removeRuntimeConfig() {
   return saveRuntimeConfigFile(runtimeConfigType, '')
 }
+
+/**
+ * Check if the proxy feature is enabled
+ */
+export function isProxyOn() {
+  const { proxy } = readRuntimeConfigFile()
+  return proxy === 'on'
+}

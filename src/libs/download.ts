@@ -2,7 +2,7 @@ import ora from 'ora'
 import chalk from 'chalk'
 import downloadGitRepo from 'download-git-repo'
 import { whitelist } from '@/data'
-import { readRuntimeConfigFile } from './local'
+import { isProxyOn } from './local'
 import { isValidDownloadUrl } from './validator'
 import type { DownloadOptions, GetDownloadUrlOptions } from '@/types'
 
@@ -44,8 +44,7 @@ export function getDownloadUrl({ template, variants }: GetDownloadUrlOptions) {
   if (!target) return ''
 
   // Check if required proxy to speed up GitHub download
-  const { proxy } = readRuntimeConfigFile()
-  const isUseMirror = proxy === 'on' && isValidDownloadUrl(target.mirror)
+  const isUseMirror = isProxyOn() && isValidDownloadUrl(target.mirror)
   const repo = isUseMirror ? target.mirror : target.repo
 
   return formatDownloadUrl(repo)
