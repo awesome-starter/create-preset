@@ -65,7 +65,6 @@ export function download({
   clone,
 }: DownloadOptions): Promise<boolean> {
   return new Promise((resolve) => {
-    console.log('download', repo)
     console.log()
     const spinner = ora('Downloading…').start()
 
@@ -84,10 +83,13 @@ export function download({
         resolve(false)
         process.exit()
       }
-      console.log()
-      spinner.succeed(chalk.green('Download successfully.'))
-      console.log()
-      resolve(true)
+
+      setTimeout(() => {
+        console.log()
+        spinner.succeed(chalk.green('Download successfully.'))
+        console.log()
+        resolve(true)
+      }, 100)
     })
   })
 }

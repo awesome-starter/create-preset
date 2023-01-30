@@ -165,10 +165,20 @@ export default async function init(targetDirFromCMD: string | undefined) {
     folder: targetDir,
   })
 
-  // Remove lock files
-  remove(path.join(root, `package-lock.json`))
-  remove(path.join(root, `yarn.lock`))
-  remove(path.join(root, `pnpm-lock.yaml`))
+  // Remove some files out of templates
+  const outOfTemplateFiles = [
+    '.git',
+    '.github',
+    '.gitlab',
+    '.gitee',
+    'LICENSE',
+    'package-lock.json',
+    'yarn.lock',
+    'pnpm-lock.yaml',
+  ]
+  outOfTemplateFiles.forEach((name) => {
+    remove(path.join(root, name))
+  })
 
   // Get package info
   const pkg = path.join(root, `package.json`)
