@@ -4,7 +4,8 @@ import ora from 'ora'
 import axios from 'axios'
 import { ellipsis, shuffle, unique } from '@bassist/utils'
 import { getBaseUrl } from '@/data'
-import { getRuntimeConfig as getLocalConfigFilePath } from './local'
+import { showTipsToEnableProxy, welcome } from './tips'
+import { getRuntimeConfig as getLocalConfigFilePath, isProxyOn } from './local'
 import { isValidConfig } from './validator'
 import type {
   ColorConfig,
@@ -203,6 +204,12 @@ export async function getConfig(): Promise<{
   allTemplates: ConfigItem[]
 }> {
   console.log()
+  await welcome()
+
+  if (!isProxyOn()) {
+    showTipsToEnableProxy()
+  }
+
   const spinner = ora('Fetching the latest config…').start()
 
   // Get tech stack data

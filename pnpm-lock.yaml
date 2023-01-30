@@ -8,6 +8,7 @@ specifiers:
   '@types/node': ^18.11.18
   '@typescript-eslint/eslint-plugin': ^5.49.0
   '@typescript-eslint/parser': ^5.49.0
+  '@withtypes/figlet': ^0.1.0
   '@withtypes/fs-extra': ^0.1.1
   '@withtypes/minimist': ^0.1.1
   '@withtypes/prompts': ^0.1.1
@@ -36,6 +37,7 @@ specifiers:
 dependencies:
   '@bassist/node-utils': 0.1.2
   '@bassist/utils': 0.9.0
+  '@withtypes/figlet': 0.1.0
   '@withtypes/fs-extra': 0.1.1
   '@withtypes/minimist': 0.1.1
   '@withtypes/prompts': 0.1.1
@@ -887,6 +889,12 @@ packages:
       picocolors: 1.0.0
       pretty-format: 27.5.1
     dev: true
+
+  /@withtypes/figlet/0.1.0:
+    resolution: {integrity: sha512-Z7X7hLMqC1ZCs7xgj/F8Mjthxr2OFTOsqnuNmMDS5rjeMKMkm4PjSfahpZLvf8Ee6QZ8o6Ea76yvhht6mtCj7Q==}
+    dependencies:
+      figlet: 1.5.2
+    dev: false
 
   /@withtypes/fs-extra/0.1.1:
     resolution: {integrity: sha512-CRkgyqOU00CYHaxjcA7lKyUc9XxHqrtWtBc6TcH7jPeKtBMlSW3SWuizf2b73w3Y1w8+SdlPa2/1V4cQGKLpww==}
@@ -2199,6 +2207,11 @@ packages:
     resolution: {integrity: sha512-cE1qsB/VwyQozZ+q1dGxR8LBYNZeofhEdUNGSMbQD3Gw2lAzX9Zb3uIU6Ebc/Fmyjo9AWWfnn0AUCHqtevs/8g==}
     dependencies:
       pend: 1.2.0
+    dev: false
+
+  /figlet/1.5.2:
+    resolution: {integrity: sha512-WOn21V8AhyE1QqVfPIVxe3tupJacq1xGkPTB4iagT6o+P2cAgEOOwIxMftr4+ZCTI6d551ij9j61DFr0nsP2uQ==}
+    engines: {node: '>= 0.4.0'}
     dev: false
 
   /figures/2.0.0:

@@ -43,6 +43,7 @@
   "dependencies": {
     "@bassist/node-utils": "^0.1.2",
     "@bassist/utils": "^0.9.0",
+    "@withtypes/figlet": "^0.1.0",
     "@withtypes/fs-extra": "^0.1.1",
     "@withtypes/minimist": "^0.1.1",
     "@withtypes/prompts": "^0.1.1",
