@@ -3,6 +3,7 @@ import chalk from 'chalk'
 import ora from 'ora'
 import axios from 'axios'
 import { ellipsis, shuffle, unique } from '@bassist/utils'
+import { getBaseUrl } from '@/data'
 import { getRuntimeConfig as getLocalConfigFilePath } from './local'
 import { isValidConfig } from './validator'
 import type {
@@ -46,7 +47,9 @@ export function readTechConfig(): TechConfig[] {
  */
 export async function queryTechConfig(): Promise<TechConfig[]> {
   try {
-    const res = await axios(`https://preset.js.org/config/tech.json`)
+    const baseUrl = getBaseUrl()
+    console.log(baseUrl)
+    const res = await axios(`${baseUrl}/tech.json`)
     const config: TechConfig[] = res.data
     if (!Array.isArray(config)) {
       return []
@@ -142,7 +145,8 @@ export async function readConfigFile(fileName: string): Promise<ConfigItem[]> {
  */
 export async function queryConfigFile(fileName: string): Promise<ConfigItem[]> {
   try {
-    const res = await axios(`https://preset.js.org/config/${fileName}.json`)
+    const baseUrl = getBaseUrl()
+    const res = await axios(`${baseUrl}/${fileName}.json`)
     if (!Array.isArray(res.data)) {
       return []
     }

@@ -1,6 +1,7 @@
 import ora from 'ora'
 import chalk from 'chalk'
 import downloadGitRepo from 'download-git-repo'
+import { whitelist } from '@/data'
 import { readRuntimeConfigFile } from './local'
 import { isValidDownloadUrl } from './validator'
 import type { DownloadOptions, GetDownloadUrlOptions } from '@/types'
@@ -10,11 +11,6 @@ function formatDownloadUrl(repo: string) {
   let url = repo
 
   // Use shorthand repository string
-  const whitelist = [
-    'https://github.com/',
-    'https://gitlab.com/',
-    'https://bitbucket.com/',
-  ]
   whitelist.forEach((w) => {
     if (repo.startsWith(w)) {
       const short = w.replace(/https:\/\/(.*).com\//, '$1')
@@ -84,12 +80,10 @@ export function download({
         process.exit()
       }
 
-      setTimeout(() => {
-        console.log()
-        spinner.succeed(chalk.green('Download successfully.'))
-        console.log()
-        resolve(true)
-      }, 100)
+      console.log()
+      spinner.succeed(chalk.green('Download successfully.'))
+      console.log()
+      resolve(true)
     })
   })
 }
