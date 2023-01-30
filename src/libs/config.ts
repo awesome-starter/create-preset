@@ -48,7 +48,6 @@ export function readTechConfig(): TechConfig[] {
 export async function queryTechConfig(): Promise<TechConfig[]> {
   try {
     const baseUrl = getBaseUrl()
-    console.log(baseUrl)
     const res = await axios(`${baseUrl}/tech.json`)
     const config: TechConfig[] = res.data
     if (!Array.isArray(config)) {
