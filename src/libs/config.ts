@@ -1,10 +1,13 @@
-import fs from 'fs'
+import { readFileSync } from '@withtypes/fs-extra'
 import chalk from 'chalk'
 import ora from 'ora'
 import axios from 'axios'
 import { ellipsis, shuffle, unique } from '@bassist/utils'
-import { get as getLocalConfigFilePath } from './local'
-import {
+import { getBaseUrl } from '@/data'
+import { showTipsToEnableProxy, welcome } from './tips'
+import { getRuntimeConfig as getLocalConfigFilePath, isProxyOn } from './local'
+import { isValidConfig } from './validator'
+import type {
   ColorConfig,
   TechConfig,
   TechStackItem,
@@ -27,8 +30,8 @@ const colorConfig: ColorConfig = {
  */
 export function readTechConfig(): TechConfig[] {
   try {
-    const filePath: string = getLocalConfigFilePath(true)
-    const data: string = fs.readFileSync(filePath, 'utf-8')
+    const filePath = getLocalConfigFilePath('localTech')
+    const data = readFileSync(filePath, 'utf-8')
     const config: TechConfig[] = JSON.parse(data)
     if (!Array.isArray(config)) {
       return []
@@ -43,9 +46,10 @@ export function readTechConfig(): TechConfig[] {
  * Get the list of supported tech stacks
  * @returns Tech list
  */
-export async function fetchTechConfig(): Promise<TechConfig[]> {
+export async function queryTechConfig(): Promise<TechConfig[]> {
   try {
-    const res = await axios(`https://preset.js.org/config/tech.json`)
+    const baseUrl = getBaseUrl()
+    const res = await axios(`${baseUrl}/tech.json`)
     const config: TechConfig[] = res.data
     if (!Array.isArray(config)) {
       return []
@@ -63,7 +67,7 @@ export async function fetchTechConfig(): Promise<TechConfig[]> {
 export async function uniqueTechConfig(): Promise<TechConfig[]> {
   const uniqueList = unique({
     primaryKey: 'name',
-    list: [...(await fetchTechConfig()), ...readTechConfig()],
+    list: [...(await queryTechConfig()), ...readTechConfig()],
   })
   return uniqueList as TechConfig[]
 }
@@ -122,7 +126,7 @@ export async function handleOriginConfig(
 export async function readConfigFile(fileName: string): Promise<ConfigItem[]> {
   try {
     const filePath: string = getLocalConfigFilePath()
-    const data: string = fs.readFileSync(filePath, 'utf-8')
+    const data: string = readFileSync(filePath, 'utf-8')
     const originConfig: OriginConfigItem[] = JSON.parse(data)
     const config: ConfigItem[] = await handleOriginConfig(
       fileName,
@@ -139,14 +143,31 @@ export async function readConfigFile(fileName: string): Promise<ConfigItem[]> {
  * @param fileName - The config file name
  * @returns The config array from root config file
  */
-export async function fetchConfigFile(fileName: string): Promise<ConfigItem[]> {
+export async function queryConfigFile(fileName: string): Promise<ConfigItem[]> {
   try {
-    const res = await axios(`https://preset.js.org/config/${fileName}.json`)
+    const baseUrl = getBaseUrl()
+    const res = await axios(`${baseUrl}/${fileName}.json`)
+    if (!Array.isArray(res.data)) {
+      return []
+    }
+
     const originConfig: OriginConfigItem[] = res.data
+      .map((item) => {
+        return {
+          tech: item.tech || '',
+          name: item.name || '',
+          desc: item.desc || '',
+          repo: item.repo || '',
+          mirror: item.mirror || '',
+        }
+      })
+      .filter((item) => isValidConfig(item))
+
     const config: ConfigItem[] = await handleOriginConfig(
       fileName,
       originConfig
     )
+
     return config
   } catch (e) {
     return []
@@ -162,8 +183,8 @@ export async function uniqueConfig(): Promise<ConfigItem[]> {
     primaryKey: 'name',
     list: [
       ...(await readConfigFile('local')),
-      ...(await fetchConfigFile('official')),
-      ...shuffle(await fetchConfigFile('community')),
+      ...(await queryConfigFile('official')),
+      ...shuffle(await queryConfigFile('community')),
     ],
   })
   const uniqueList = unique({
@@ -183,6 +204,12 @@ export async function getConfig(): Promise<{
   allTemplates: ConfigItem[]
 }> {
   console.log()
+  await welcome()
+
+  if (!isProxyOn()) {
+    showTipsToEnableProxy()
+  }
+
   const spinner = ora('Fetching the latest config…').start()
 
   // Get tech stack data
@@ -193,13 +220,14 @@ export async function getConfig(): Promise<{
 
   // Fill tech stack variants
   templateList.forEach((template) => {
-    const { tech, name, desc, repo, color } = template
+    const { tech, name, desc, repo, mirror, color } = template
     const target = techStacks.find((t) => t.name === tech)
     if (!target) return
     target.variants.push({
       name: ellipsis(name, 20),
       desc: ellipsis(desc, 80),
       repo,
+      mirror,
       color,
     })
   })

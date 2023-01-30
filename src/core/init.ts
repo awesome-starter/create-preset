@@ -11,10 +11,10 @@ import {
   toValidPackageName,
   getPackageManagerByUserAgent,
 } from '@bassist/node-utils'
-import { getDownloadUrl, download } from '../libs/download'
-import { getConfig } from '../libs/config'
-import argv from '../libs/argv'
-import type { UserInputFromCMD } from '@/types'
+import { getDownloadUrl, download } from '@/libs/download'
+import { getConfig } from '@/libs/config'
+import argv from '@/libs/argv'
+import type { UserInputInfoFromCommandLine } from '@/types'
 
 const cwd = process.cwd()
 
@@ -39,7 +39,7 @@ export default async function init(targetDirFromCMD: string | undefined) {
 
   const defaultProjectName = !targetDir ? 'my-preset-app' : targetDir
 
-  let result: UserInputFromCMD = {
+  let result: UserInputInfoFromCommandLine = {
     projectName: '',
     packageName: '',
     overwrite: false,
@@ -165,10 +165,20 @@ export default async function init(targetDirFromCMD: string | undefined) {
     folder: targetDir,
   })
 
-  // Remove lock files
-  remove(path.join(root, `package-lock.json`))
-  remove(path.join(root, `yarn.lock`))
-  remove(path.join(root, `pnpm-lock.yaml`))
+  // Remove some files out of templates
+  const outOfTemplateFiles = [
+    '.git',
+    '.github',
+    '.gitlab',
+    '.gitee',
+    'LICENSE',
+    'package-lock.json',
+    'yarn.lock',
+    'pnpm-lock.yaml',
+  ]
+  outOfTemplateFiles.forEach((name) => {
+    remove(path.join(root, name))
+  })
 
   // Get package info
   const pkg = path.join(root, `package.json`)

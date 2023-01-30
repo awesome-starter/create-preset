@@ -2,14 +2,14 @@ import { exec } from 'child_process'
 import prompts from '@withtypes/prompts'
 import ora from 'ora'
 import chalk from 'chalk'
-import { packageInfo } from '../libs/pkg'
+import { queryPackageUpgradeInfo } from '@/libs/pkg'
 
 /**
  * The action for `upgrade` command
  */
 export default async function upgrade() {
   const { packageName, currentVersion, latestVersion, needToUpgrade } =
-    await packageInfo()
+    await queryPackageUpgradeInfo()
   console.log()
 
   // No upgrade required, process terminated

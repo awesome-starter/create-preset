@@ -1,6 +1,10 @@
 import chalk from 'chalk'
-import { get, set, remove } from '@libs/local'
-import argv from '@libs/argv'
+import {
+  getRuntimeConfig,
+  setRuntimeConfig,
+  removeRuntimeConfig,
+} from '@/libs/local'
+import argv from '@/libs/argv'
 import type { SubcommandItem } from '@/types'
 
 // If `true`, handle the tech config
@@ -46,7 +50,7 @@ export default async function configure({
   switch (cmd) {
     // Get the local config file path in .presetrc
     case 'get': {
-      const localConfigfilePath = get()
+      const localConfigfilePath = getRuntimeConfig()
       console.log()
       if (localConfigfilePath) {
         console.log('  The local configuration is stored in:')
@@ -62,7 +66,7 @@ export default async function configure({
 
     // Set the local config file path into .presetrc
     case 'set <file-path>': {
-      const isSuccess = set(String(filePath))
+      const isSuccess = setRuntimeConfig(String(filePath))
       if (isSuccess) {
         console.log()
         console.log(`  ${chalk.green(`Saved ${target} successfully.`)}`)
@@ -73,14 +77,14 @@ export default async function configure({
 
     // Set the local config file path into .presetrc
     case 'remove': {
-      const localConfigfilePath = get()
+      const localConfigfilePath = getRuntimeConfig()
       if (!localConfigfilePath) {
         configure({
           cmd: 'get',
         })
         return
       }
-      const isSuccess = remove()
+      const isSuccess = removeRuntimeConfig()
       if (isSuccess) {
         console.log()
         console.log(`  ${chalk.green(`Removed ${target} successfully.`)}`)

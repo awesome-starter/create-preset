@@ -6,3 +6,4 @@ bin
 *.local
 yarn.lock
 package-lock.json
+.test-download

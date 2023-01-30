@@ -1,8 +1,8 @@
 {
   "name": "create-preset",
   "description": "Provides the ability to quickly create preset projects.",
-  "version": "0.12.2",
-  "author": "chengpeiquan",
+  "version": "0.0.0",
+  "author": "chengpeiquan <chengpeiquan@chengpeiquan.com>",
   "license": "MIT",
   "homepage": "https://preset.js.org",
   "files": [
@@ -23,6 +23,9 @@
     "test": "vitest",
     "coverage": "vitest --coverage",
     "format": "prettier --write .",
+    "mirror:get": "npm config get registry",
+    "mirror:set": "npm config set registry https://registry.npmmirror.com",
+    "mirror:rm": "npm config rm registry",
     "backup": "git add . && git commit -m \"chore: backup\" && git push",
     "up": "npx npm-check-updates",
     "prepare": "simple-git-hooks"
@@ -38,8 +41,9 @@
     "url": "https://github.com/awesome-starter/create-preset/issues"
   },
   "dependencies": {
-    "@bassist/node-utils": "^0.1.0",
+    "@bassist/node-utils": "^0.1.2",
     "@bassist/utils": "^0.9.0",
+    "@withtypes/figlet": "^0.1.0",
     "@withtypes/fs-extra": "^0.1.1",
     "@withtypes/minimist": "^0.1.1",
     "@withtypes/prompts": "^0.1.1",
