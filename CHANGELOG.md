@@ -1,3 +1,10 @@
+## [0.13.1](https://github.com/awesome-starter/create-preset/compare/v0.13.0...v0.13.1) (2023-03-14)
+
+
+### Bug Fixes
+
+* the `-v` option get the wrong version ([227ab09](https://github.com/awesome-starter/create-preset/commit/227ab09ae68467c9f3330244988b2f9c139ba660))
+
 # [0.13.0](https://github.com/awesome-starter/create-preset/compare/v0.12.2...v0.13.0) (2023-01-30)
 
 
