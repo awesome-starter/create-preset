@@ -56,20 +56,22 @@ Expected flow:
 ```text
 Project name
 Select a tech stack
-Select a starter
+Select a preset
 ```
 
-The tech stack list uses the colors from the official `tech.json` configuration.
-The starter list places private presets before official generators.
+Official technology stack colors are built into the CLI. Custom technology
+stacks come from the private preset configuration. Private presets appear before
+official generators.
 
 ## Direct Generator Tests
 
-The `--template` value can select an official generator directly:
+The `--preset` value can select an official generator directly. Use
+`--package-manager` to make global CLI tests deterministic:
 
 ```bash
-"$PRESET_BIN" init test-vue --template vue
-"$PRESET_BIN" init test-vite --template vite
-"$PRESET_BIN" init test-next --template next-app
+"$PRESET_BIN" init test-vue --preset vue --package-manager pnpm
+"$PRESET_BIN" init test-vite --preset vite --package-manager pnpm
+"$PRESET_BIN" init test-next --preset next-app --package-manager pnpm
 ```
 
 The selected official CLI owns all following prompts and output. Remove test
@@ -111,6 +113,9 @@ Run the interactive flow and select Vue. `my-private-vue` should appear before
 "$PRESET_BIN" init private-demo
 ```
 
+Change `tech` to an arbitrary value such as `python` to verify that custom
+technology stacks appear without a separate `config --tech` file.
+
 Remove the local binding when finished:
 
 ```bash
@@ -123,8 +128,8 @@ Remove the local binding when finished:
 "$PRESET_BIN" init old-demo --template vue3-ts-vite
 ```
 
-The CLI should explain that maintained starter repositories were retired and
-then show the current official/private choices instead of silently switching.
+The CLI should print the `--template` deprecation notice and then show the
+current official/private choices instead of silently switching.
 
 ## npm Wrapper Test
 

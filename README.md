@@ -56,11 +56,13 @@ For copy-ready local build and E2E commands, see [Local debugging](docs/local-de
 
 `preset` currently supports official generators for Vue, Vite, and Next.js. Private presets configured with `preset config set <filePath>` are shown before official generators.
 
+Private presets can introduce any technology stack, including Python, Go, iOS, Android, or internal company stacks. See [Private presets](docs/private-presets.md) for the simple array and versioned manifest formats.
+
 ### Migration from v1
 
-Version 2 no longer downloads or maintains the remote `official` and `community` starter lists. When an old template name is passed with `--template`, the CLI explains that the starter repository was retired and presents the new choices. Your local preset file remains supported.
+Version 1.0 no longer downloads or maintains the remote `tech`, `official`, and `community` lists. Official generators and their brand colors are built in, while private presets can add arbitrary technology stacks. The legacy `--template` option prints a migration notice; use `--preset` instead.
 
-The `preset proxy` command and `mirror` field were also removed. Official generators use your package manager's registry configuration; private presets should set `repo` to a repository URL accessible in your environment.
+The `preset proxy` command, `config --tech`, `localTech`, and `mirror` field were also removed. Official generators use your package manager's registry configuration; private presets should set `repo` to a repository URL accessible in your environment.
 
 ## Global Usage
 

@@ -3,7 +3,12 @@
 - Breaking: delegate project creation to official CLI generators and prioritize private presets.
 - Breaking: remove the `proxy` command and private preset `mirror` field; package manager registry and repository access are now user-managed.
 - Breaking: remove the `i`, `c`, and `u` command aliases; use `init`, `config`, and `upgrade` explicitly.
+- Breaking: replace `--template` with `--preset`; the old option remains hidden with a migration notice for this release.
+- Breaking: remove `config --tech` and `localTech`; private presets now introduce arbitrary technology stacks directly.
 - Remove remote community and official starter lists from the default creation flow.
+- Remove the remote `tech.json` dependency and build the catalog from built-in generators plus private presets.
+- Validate private preset files before binding them and support versioned manifests with custom labels and brand colors.
+- Preserve private preset lockfiles, licenses, workflows, and package metadata; only clone metadata and package name are reset.
 - Retire the maintained starter-template model in favor of future extensible presets.
 
 ## [0.13.1](https://github.com/awesome-starter/create-preset/compare/v0.13.0...v0.13.1) (2023-03-14)
