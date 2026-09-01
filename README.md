@@ -52,6 +52,8 @@ npm create preset
 
 Then follow the prompts!
 
+For copy-ready local build and E2E commands, see [Local debugging](docs/local-debugging.md).
+
 `preset` currently supports official generators for Vue, Vite, and Next.js. Private presets configured with `preset config set <filePath>` are shown before official generators.
 
 ### Migration from v1
