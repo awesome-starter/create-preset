@@ -19,19 +19,23 @@ pub enum Commands {
         /// Project name
         app_name: Option<String>,
 
-        /// Specify a template name
-        #[arg(short, long)]
+        /// Select a preset or official generator
+        #[arg(short = 'p', long)]
+        preset: Option<String>,
+
+        /// Legacy alias for --preset
+        #[arg(short = 't', long, hide = true)]
         template: Option<String>,
+
+        /// Package manager used to run official generators
+        #[arg(long, value_enum)]
+        package_manager: Option<crate::types::PackageManager>,
     },
 
     /// Manage the private preset configuration
     Config {
         #[command(subcommand)]
         action: ConfigAction,
-
-        /// Configure the local technology stack
-        #[arg(short, long, global = true)]
-        tech: bool,
     },
 
     /// Update the global installation to the latest version
@@ -67,9 +71,9 @@ mod tests {
     }
 
     #[test]
-    fn accepts_tech_flag_before_and_after_subcommand() {
-        assert!(Cli::try_parse_from(["preset", "config", "--tech", "get"]).is_ok());
-        assert!(Cli::try_parse_from(["preset", "config", "get", "--tech"]).is_ok());
+    fn rejects_removed_tech_config_flag() {
+        assert!(Cli::try_parse_from(["preset", "config", "--tech", "get"]).is_err());
+        assert!(Cli::try_parse_from(["preset", "config", "get", "--tech"]).is_err());
     }
 
     #[test]
@@ -83,5 +87,19 @@ mod tests {
         assert!(Cli::try_parse_from(["preset", "i"]).is_err());
         assert!(Cli::try_parse_from(["preset", "c", "get"]).is_err());
         assert!(Cli::try_parse_from(["preset", "u"]).is_err());
+    }
+
+    #[test]
+    fn accepts_preset_and_package_manager_options() {
+        assert!(Cli::try_parse_from([
+            "preset",
+            "init",
+            "demo",
+            "--preset",
+            "vue",
+            "--package-manager",
+            "pnpm",
+        ])
+        .is_ok());
     }
 }

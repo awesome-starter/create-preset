@@ -56,17 +56,6 @@ impl RuntimeConfigManager {
         Ok(())
     }
 
-    /// Get local tech config path
-    pub fn get_local_tech_path(&self) -> Result<Option<PathBuf>> {
-        self.read().map(|config| {
-            if config.local_tech.is_empty() {
-                None
-            } else {
-                Some(resolve_config_path(config.local_tech))
-            }
-        })
-    }
-
     /// Get local preset config path
     pub fn get_local_preset_path(&self) -> Result<Option<PathBuf>> {
         self.read().map(|config| {
@@ -78,26 +67,11 @@ impl RuntimeConfigManager {
         })
     }
 
-    /// Set local tech config path
-    pub fn set_local_tech_path(&self, path: String) -> Result<()> {
-        let path = resolve_config_path(path).to_string_lossy().into_owned();
-        self.update(|config| {
-            config.local_tech = path;
-        })
-    }
-
     /// Set local preset config path
     pub fn set_local_preset_path(&self, path: String) -> Result<()> {
         let path = resolve_config_path(path).to_string_lossy().into_owned();
         self.update(|config| {
             config.local_preset = path;
-        })
-    }
-
-    /// Remove local tech config path
-    pub fn remove_local_tech_path(&self) -> Result<()> {
-        self.update(|config| {
-            config.local_tech = String::new();
         })
     }
 
@@ -109,7 +83,7 @@ impl RuntimeConfigManager {
     }
 }
 
-fn resolve_config_path(path: String) -> PathBuf {
+pub(crate) fn resolve_config_path(path: String) -> PathBuf {
     let path = PathBuf::from(path);
     if path.is_absolute() {
         path
@@ -127,21 +101,18 @@ mod tests {
     #[test]
     fn test_runtime_config_serialization() {
         let config = RuntimeConfig {
-            local_tech: "/path/to/tech.json".to_string(),
             local_preset: "/path/to/preset.json".to_string(),
         };
 
         let json = serde_json::to_string(&config).unwrap();
         let deserialized: RuntimeConfig = serde_json::from_str(&json).unwrap();
 
-        assert_eq!(config.local_tech, deserialized.local_tech);
         assert_eq!(config.local_preset, deserialized.local_preset);
     }
 
     #[test]
     fn test_default_runtime_config() {
         let config = RuntimeConfig::default();
-        assert_eq!(config.local_tech, "");
         assert_eq!(config.local_preset, "");
     }
 

@@ -1,5 +1,5 @@
 use crate::error::{PresetError, Result};
-use crate::types::{GeneratorConfig, PackageManager};
+use crate::types::{BuiltInTech, GeneratorConfig, PackageManager};
 use std::collections::HashMap;
 use std::path::Path;
 use std::process::{Command, Stdio};
@@ -41,6 +41,26 @@ pub fn official_generators() -> Vec<GeneratorConfig> {
             "Official Next.js Starter",
             &["{project}"],
         ),
+    ]
+}
+
+pub fn built_in_techs() -> Vec<BuiltInTech> {
+    vec![
+        BuiltInTech {
+            id: "vue",
+            label: "Vue",
+            color: "#42b983",
+        },
+        BuiltInTech {
+            id: "react",
+            label: "React",
+            color: "#61dafb",
+        },
+        BuiltInTech {
+            id: "vite",
+            label: "Vite",
+            color: "#787ffd",
+        },
     ]
 }
 
@@ -100,5 +120,27 @@ mod tests {
         let generators = official_generators();
         assert!(generators.iter().any(|item| item.id == "vue"));
         assert!(generators.iter().any(|item| item.id == "vite"));
+        assert!(generators
+            .iter()
+            .any(|item| item.id == "nuxt" && item.tech == "vue"));
+        assert!(generators
+            .iter()
+            .any(|item| item.id == "next-app" && item.tech == "react"));
+    }
+
+    #[test]
+    fn builds_package_manager_specific_commands() {
+        let vue = official_generators()
+            .into_iter()
+            .find(|item| item.id == "vue")
+            .unwrap();
+        assert_eq!(
+            vue.commands[&PackageManager::Npm],
+            ["create", "vue@latest", "{project}"]
+        );
+        assert_eq!(
+            vue.commands[&PackageManager::Pnpm],
+            ["create", "vue", "{project}"]
+        );
     }
 }

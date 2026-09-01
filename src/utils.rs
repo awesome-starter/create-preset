@@ -1,5 +1,6 @@
 use regex::Regex;
 use std::path::Path;
+use std::sync::OnceLock;
 
 /// Check if a package name is valid for package.json
 pub fn is_valid_package_name(name: &str) -> bool {
@@ -11,7 +12,10 @@ pub fn is_valid_package_name(name: &str) -> bool {
     // - can contain lowercase letters, digits, hyphens, underscores, dots
     // - cannot start with a dot or underscore
     // - scoped packages: @scope/name
-    let re = Regex::new(r"^(@[a-z0-9-~][a-z0-9-._~]*/)?[a-z0-9-~][a-z0-9-._~]*$").unwrap();
+    static PACKAGE_NAME_RE: OnceLock<Regex> = OnceLock::new();
+    let re = PACKAGE_NAME_RE.get_or_init(|| {
+        Regex::new(r"^(@[a-z0-9-~][a-z0-9-._~]*/)?[a-z0-9-~][a-z0-9-._~]*$").unwrap()
+    });
     re.is_match(name)
 }
 
@@ -78,17 +82,6 @@ pub fn detect_package_manager() -> crate::types::PackageManager {
     crate::types::PackageManager::Npm
 }
 
-/// Ellipsis a string to a maximum length
-pub fn ellipsis(s: &str, max_len: usize) -> String {
-    if s.chars().count() <= max_len {
-        s.to_string()
-    } else if max_len <= 3 {
-        ".".repeat(max_len)
-    } else {
-        format!("{}...", s.chars().take(max_len - 3).collect::<String>())
-    }
-}
-
 /// Check if URL is a valid download URL
 pub fn is_valid_download_url(url: &str) -> bool {
     !url.is_empty()
@@ -117,15 +110,6 @@ mod tests {
         assert_eq!(to_valid_package_name("my@package"), "my-package");
         assert_eq!(to_valid_package_name("  my-package  "), "my-package");
         assert_eq!(to_valid_package_name("my__package"), "my__package");
-    }
-
-    #[test]
-    fn test_ellipsis() {
-        assert_eq!(ellipsis("hello", 10), "hello");
-        assert_eq!(ellipsis("hello world", 8), "hello...");
-        assert_eq!(ellipsis("hi", 5), "hi");
-        assert_eq!(ellipsis("你好世界", 3), "...");
-        assert_eq!(ellipsis("你好世界", 4), "你好世界");
     }
 
     #[test]

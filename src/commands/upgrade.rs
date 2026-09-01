@@ -1,9 +1,9 @@
 use crate::constants::PACKAGE_NAME;
 use crate::error::{PresetError, Result};
-use crate::types::{PackageManager, PackageUpgradeInfo};
+use crate::types::PackageManager;
+use crate::ui::{dialoguer_error, spinner};
 use console::style;
 use dialoguer::{Confirm, Select};
-use indicatif::{ProgressBar, ProgressStyle};
 use semver::Version;
 use serde::Deserialize;
 use std::process::Command;
@@ -11,6 +11,14 @@ use std::process::Command;
 #[derive(Deserialize)]
 struct RegistryPackage {
     version: String,
+}
+
+#[derive(Debug)]
+struct PackageUpgradeInfo {
+    package_name: String,
+    current_version: String,
+    latest_version: String,
+    need_to_upgrade: bool,
 }
 
 pub fn upgrade_command() -> Result<()> {
@@ -125,23 +133,6 @@ fn package_upgrade_info(current_version: &str, latest: &str) -> Result<PackageUp
         latest_version: latest.to_string(),
         need_to_upgrade: current < latest_version,
     })
-}
-
-fn spinner(message: &str) -> ProgressBar {
-    let spinner = ProgressBar::new_spinner();
-    spinner.set_style(ProgressStyle::with_template("{spinner} {msg}").unwrap());
-    spinner.set_message(message.to_string());
-    spinner.enable_steady_tick(std::time::Duration::from_millis(80));
-    spinner
-}
-
-fn dialoguer_error(error: dialoguer::Error) -> PresetError {
-    if matches!(error, dialoguer::Error::IO(ref io) if io.kind() == std::io::ErrorKind::Interrupted)
-    {
-        PresetError::UserCancelled
-    } else {
-        PresetError::IoError(error.to_string())
-    }
 }
 
 #[cfg(test)]

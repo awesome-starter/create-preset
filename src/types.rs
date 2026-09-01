@@ -1,100 +1,72 @@
+use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
-/// Runtime config file content (~/.presetrc)
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct RuntimeConfig {
-    #[serde(default, rename = "localTech")]
-    pub local_tech: String,
-
     #[serde(default, rename = "localPreset")]
     pub local_preset: String,
 }
 
-/// Tech stack configuration
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TechConfig {
-    pub name: String,
+#[derive(Debug, Clone, Deserialize, Default)]
+pub struct TechMetadata {
+    #[serde(default)]
+    pub label: String,
     #[serde(default)]
     pub color: String,
 }
 
-/// Variant item (template) in a tech stack
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct VariantItem {
+#[derive(Debug, Clone, Deserialize)]
+pub struct PrivatePreset {
+    pub tech: String,
     pub name: String,
+    #[serde(default)]
     pub desc: String,
     pub repo: String,
 }
 
-/// Tech stack with variants
-#[derive(Debug, Clone)]
-pub struct TechStack {
-    pub name: String,
-    pub color: String,
-    pub variants: Vec<VariantItem>,
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+pub enum PrivatePresetFile {
+    Presets(Vec<PrivatePreset>),
+    Manifest {
+        version: u32,
+        #[serde(default)]
+        techs: HashMap<String, TechMetadata>,
+        presets: Vec<PrivatePreset>,
+    },
 }
 
-/// A command-based official project generator.
 #[derive(Debug, Clone)]
 pub struct GeneratorConfig {
     pub id: String,
     pub tech: String,
     pub name: String,
     pub desc: String,
-    pub commands: std::collections::HashMap<PackageManager, Vec<String>>,
+    pub commands: HashMap<PackageManager, Vec<String>>,
 }
 
-/// A selectable starter source. Git presets remain user-owned; generators are
-/// delegated to the upstream CLI and keep their own interactive experience.
 #[derive(Debug, Clone)]
 pub enum StarterChoice {
-    Private(ConfigItem),
+    Private(PrivatePreset),
     Official(GeneratorConfig),
 }
 
-/// Origin config item from remote/local JSON files
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct OriginConfigItem {
-    pub tech: String,
-    pub name: String,
-    #[serde(default)]
-    pub desc: String,
-    pub repo: String,
-    #[serde(default)]
-    pub r#type: String,
-}
-
-/// Config item with source information
 #[derive(Debug, Clone)]
-pub struct ConfigItem {
-    pub tech: String,
-    pub name: String,
-    pub desc: String,
-    pub repo: String,
+pub struct TechStack {
+    pub id: String,
+    pub label: String,
+    pub color: String,
+    pub choices: Vec<StarterChoice>,
 }
 
-impl From<OriginConfigItem> for ConfigItem {
-    fn from(origin: OriginConfigItem) -> Self {
-        Self {
-            tech: origin.tech,
-            name: origin.name,
-            desc: origin.desc,
-            repo: origin.repo,
-        }
-    }
+pub struct BuiltInTech {
+    pub id: &'static str,
+    pub label: &'static str,
+    pub color: &'static str,
 }
 
-/// Package upgrade information
-#[derive(Debug)]
-pub struct PackageUpgradeInfo {
-    pub package_name: String,
-    pub current_version: String,
-    pub latest_version: String,
-    pub need_to_upgrade: bool,
-}
-
-/// Package manager type
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, ValueEnum)]
 pub enum PackageManager {
     Npm,
     Yarn,
@@ -118,11 +90,17 @@ mod tests {
     use super::*;
 
     #[test]
-    fn accepts_optional_template_fields_from_remote_config() {
-        let item: OriginConfigItem = serde_json::from_str(
-            r#"{"tech":"node","name":"node-basic","repo":"https://example.com/repo"}"#,
+    fn reads_legacy_array_and_manifest_formats() {
+        let legacy: PrivatePresetFile = serde_json::from_str(
+            r#"[{"tech":"python","name":"api","repo":"https://example.com/api"}]"#,
         )
         .unwrap();
-        assert_eq!(item.desc, "");
+        assert!(matches!(legacy, PrivatePresetFile::Presets(_)));
+
+        let manifest: PrivatePresetFile = serde_json::from_str(
+            r##"{"version":1,"techs":{"python":{"label":"Python","color":"#3776ab"}},"presets":[]}"##,
+        )
+        .unwrap();
+        assert!(matches!(manifest, PrivatePresetFile::Manifest { .. }));
     }
 }

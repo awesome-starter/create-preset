@@ -1,62 +1,82 @@
-use crate::config::{RemoteConfigManager, RuntimeConfigManager};
-use crate::constants::{DEFAULT_PROJECT_NAME, OUT_OF_TEMPLATE_FILES};
-use crate::download::{download_repo, get_download_url};
+use crate::catalog::{build_catalog, load_private_catalog};
+use crate::config::RuntimeConfigManager;
+use crate::constants::{DEFAULT_PROJECT_NAME, PRIVATE_PRESET_METADATA};
+use crate::download::download_repo;
 use crate::error::{PresetError, Result};
-use crate::generator::{official_generators, run_generator};
-use crate::types::{ConfigItem, GeneratorConfig, StarterChoice, TechStack};
+use crate::generator::run_generator;
+use crate::types::{PackageManager, PrivatePreset, StarterChoice, TechStack};
+use crate::ui::{dialoguer_error, spinner};
 use crate::utils::{
-    detect_package_manager, ellipsis, empty_dir, is_dir_empty, is_valid_package_name,
-    to_valid_package_name,
+    detect_package_manager, empty_dir, is_dir_empty, is_valid_package_name, to_valid_package_name,
 };
 use console::style;
 use dialoguer::{Confirm, Input, Select};
-use indicatif::{ProgressBar, ProgressStyle};
 use serde_json::Value;
 use std::path::Path;
 
-pub fn init_command(app_name: Option<String>, template: Option<String>) -> Result<()> {
+pub fn init_command(
+    app_name: Option<String>,
+    preset: Option<String>,
+    legacy_template: Option<String>,
+    package_manager: Option<PackageManager>,
+) -> Result<()> {
+    display_welcome();
+    let requested = resolve_requested_preset(preset, legacy_template)?;
     let runtime = RuntimeConfigManager::new()?;
-    let remote = RemoteConfigManager::new();
-
-    remote.display_welcome();
-    let (tech_configs, all_templates) = remote.load(&runtime)?;
-
-    let tech_stacks = remote.build_tech_stacks(tech_configs, all_templates.clone());
+    let private = runtime
+        .get_local_preset_path()?
+        .map(|path| load_private_catalog(&path))
+        .transpose()?;
+    let catalog = build_catalog(private);
     let target_dir = prompt_target_dir(app_name)?;
-    let root = std::env::current_dir()?.join(&target_dir);
-    let package_name = prompt_package_name(&target_dir)?;
-    let choice = choose_starter(template.as_deref(), &tech_stacks, &all_templates)?;
-    let target_was_created = prepare_target_dir(&root)?;
+    let choice = choose_starter(requested.as_deref(), &catalog)?;
+    let cwd = std::env::current_dir()?;
+    let root = cwd.join(&target_dir);
+    let target_existed = prepare_target(&root, matches!(choice, StarterChoice::Official(_)))?;
 
-    println!("\nScaffolding project in {}...", root.display());
     let result = match choice {
         StarterChoice::Official(generator) => run_generator(
             &generator,
             &target_dir,
-            &std::env::current_dir()?,
-            detect_package_manager(),
+            &cwd,
+            package_manager.unwrap_or_else(detect_package_manager),
         ),
-        StarterChoice::Private(template) => {
-            let download_url = get_download_url(&template.name, &all_templates)?;
-            let download_spinner = spinner("Downloading...");
-            let result = download_repo(&download_url, &root)
-                .and_then(|_| clean_template(&root))
-                .and_then(|_| reset_package_json(&root, &package_name));
-            if result.is_ok() {
-                download_spinner
-                    .finish_with_message(style("Download successfully.").green().to_string());
-            } else {
-                download_spinner.abandon_with_message(style("Download failed.").red().to_string());
-            }
-            result
-        }
+        StarterChoice::Private(preset) => create_private_preset(&preset, &root, &target_dir),
     };
     if let Err(error) = result {
-        cleanup_failed_target(&root, target_was_created);
+        cleanup_failed_target(&root, target_existed);
         return Err(error);
     }
-    print_next_steps(&root)?;
     Ok(())
+}
+
+fn resolve_requested_preset(
+    preset: Option<String>,
+    legacy_template: Option<String>,
+) -> Result<Option<String>> {
+    match (preset, legacy_template) {
+        (Some(_), Some(_)) => Err(PresetError::ValidationError(
+            "Use either --preset or the legacy --template option, not both".to_string(),
+        )),
+        (Some(preset), None) => Ok(Some(preset)),
+        (None, Some(template)) => {
+            println!(
+                "\n{}",
+                style("--template is deprecated; use --preset instead.").yellow()
+            );
+            Ok(Some(template))
+        }
+        (None, None) => Ok(None),
+    }
+}
+
+fn display_welcome() {
+    println!();
+    println!("{}", style("create-preset").cyan().bold());
+    println!(
+        "{}",
+        style("Create projects with official generators and private presets.").dim()
+    );
 }
 
 fn prompt_target_dir(app_name: Option<String>) -> Result<String> {
@@ -69,7 +89,6 @@ fn prompt_target_dir(app_name: Option<String>) -> Result<String> {
         }
         return Ok(trimmed.to_string());
     }
-
     Input::<String>::new()
         .with_prompt("Project name")
         .default(DEFAULT_PROJECT_NAME.to_string())
@@ -85,9 +104,86 @@ fn prompt_target_dir(app_name: Option<String>) -> Result<String> {
         .map_err(dialoguer_error)
 }
 
-fn prepare_target_dir(root: &Path) -> Result<bool> {
+fn choose_starter(requested: Option<&str>, catalog: &[TechStack]) -> Result<StarterChoice> {
+    if let Some(name) = requested {
+        if let Some(choice) = catalog
+            .iter()
+            .flat_map(|stack| stack.choices.iter())
+            .find(|choice| choice_id(choice) == name || choice_name(choice) == name)
+        {
+            return Ok(choice.clone());
+        }
+        println!(
+            "\n{}",
+            style(format!(
+                "\"{}\" is not a known preset. Please choose from below:",
+                name
+            ))
+            .yellow()
+        );
+    }
+    if catalog.is_empty() {
+        return Err(PresetError::ConfigError(
+            "No presets are currently available".to_string(),
+        ));
+    }
+    let tech_names: Vec<String> = catalog
+        .iter()
+        .map(|stack| colorize(&stack.label, &stack.color))
+        .collect();
+    let tech_index = Select::new()
+        .with_prompt("Select a tech stack")
+        .items(&tech_names)
+        .default(0)
+        .interact()
+        .map_err(dialoguer_error)?;
+    let stack = &catalog[tech_index];
+    let labels: Vec<String> = stack.choices.iter().map(choice_label).collect();
+    let choice_index = Select::new()
+        .with_prompt("Select a preset")
+        .items(&labels)
+        .default(0)
+        .interact()
+        .map_err(dialoguer_error)?;
+    Ok(stack.choices[choice_index].clone())
+}
+
+fn choice_id(choice: &StarterChoice) -> &str {
+    match choice {
+        StarterChoice::Private(preset) => &preset.name,
+        StarterChoice::Official(generator) => &generator.id,
+    }
+}
+
+fn choice_name(choice: &StarterChoice) -> &str {
+    match choice {
+        StarterChoice::Private(preset) => &preset.name,
+        StarterChoice::Official(generator) => &generator.name,
+    }
+}
+
+fn choice_label(choice: &StarterChoice) -> String {
+    match choice {
+        StarterChoice::Private(preset) => {
+            with_description(format!("★ {}", preset.name), &preset.desc)
+        }
+        StarterChoice::Official(generator) => {
+            with_description(format!("{} ↗", generator.name), &generator.desc)
+        }
+    }
+}
+
+fn with_description(name: String, description: &str) -> String {
+    if description.is_empty() {
+        name
+    } else {
+        format!("{} - {}", name, description)
+    }
+}
+
+fn prepare_target(root: &Path, delegated: bool) -> Result<bool> {
     let existed = root.exists();
-    if root.exists() && !is_dir_empty(root)? {
+    if existed && !is_dir_empty(root)? {
         let target = if root == std::env::current_dir()? {
             "Current directory".to_string()
         } else {
@@ -109,17 +205,55 @@ fn prepare_target_dir(root: &Path) -> Result<bool> {
         if !overwrite {
             return Err(PresetError::UserCancelled);
         }
-        empty_dir(root)?;
-    } else if !root.exists() {
-        std::fs::create_dir_all(root)?;
     }
-    Ok(!existed)
+
+    if delegated && root != std::env::current_dir()? {
+        if root.exists() {
+            std::fs::remove_dir_all(root)?;
+        }
+    } else {
+        if root.exists() {
+            empty_dir(root)?;
+        } else {
+            std::fs::create_dir_all(root)?;
+        }
+    }
+    Ok(existed)
 }
 
-fn prompt_package_name(target_dir: &str) -> Result<String> {
+fn create_private_preset(preset: &PrivatePreset, root: &Path, target_dir: &str) -> Result<()> {
+    println!("\nCreating project in {}...", root.display());
+    let download_spinner = spinner("Downloading private preset...");
+    let result = download_repo(&preset.repo, root)
+        .and_then(|_| clean_private_preset(root))
+        .and_then(|_| reset_package_name(root, target_dir));
+    if result.is_ok() {
+        download_spinner.finish_with_message(style("Created successfully.").green().to_string());
+    } else {
+        download_spinner.abandon_with_message(style("Creation failed.").red().to_string());
+    }
+    result
+}
+
+fn clean_private_preset(root: &Path) -> Result<()> {
+    for name in PRIVATE_PRESET_METADATA {
+        let path = root.join(name);
+        if path.is_dir() {
+            std::fs::remove_dir_all(path)?;
+        } else if path.exists() {
+            std::fs::remove_file(path)?;
+        }
+    }
+    Ok(())
+}
+
+fn reset_package_name(root: &Path, target_dir: &str) -> Result<()> {
+    let path = root.join("package.json");
+    if !path.exists() {
+        return Ok(());
+    }
     let inferred = if target_dir == "." {
-        std::env::current_dir()?
-            .file_name()
+        root.file_name()
             .and_then(|name| name.to_str())
             .unwrap_or(DEFAULT_PROJECT_NAME)
             .to_string()
@@ -130,114 +264,40 @@ fn prompt_package_name(target_dir: &str) -> Result<String> {
             .unwrap_or(target_dir)
             .to_string()
     };
-    if is_valid_package_name(&inferred) {
-        return Ok(inferred);
-    }
-
-    Input::<String>::new()
-        .with_prompt("Package name")
-        .default(to_valid_package_name(&inferred))
-        .validate_with(|value: &String| -> std::result::Result<(), &str> {
-            if is_valid_package_name(value) {
-                Ok(())
-            } else {
-                Err("Invalid package.json name")
-            }
-        })
-        .interact_text()
-        .map_err(dialoguer_error)
+    let package_name = if is_valid_package_name(&inferred) {
+        inferred
+    } else {
+        Input::<String>::new()
+            .with_prompt("Package name")
+            .default(to_valid_package_name(&inferred))
+            .validate_with(|value: &String| -> std::result::Result<(), &str> {
+                if is_valid_package_name(value) {
+                    Ok(())
+                } else {
+                    Err("Invalid package.json name")
+                }
+            })
+            .interact_text()
+            .map_err(dialoguer_error)?
+    };
+    let content = std::fs::read_to_string(&path)?;
+    let mut package: Value = serde_json::from_str(&content)?;
+    let object = package.as_object_mut().ok_or_else(|| {
+        PresetError::ConfigError("Private preset package.json must be an object".to_string())
+    })?;
+    object.insert("name".to_string(), Value::String(package_name));
+    std::fs::write(path, serde_json::to_string_pretty(&package)? + "\n")?;
+    Ok(())
 }
 
-fn choose_starter(
-    requested: Option<&str>,
-    tech_stacks: &[TechStack],
-    all_templates: &[ConfigItem],
-) -> Result<StarterChoice> {
-    let generators = official_generators();
-    if let Some(name) = requested {
-        if let Some(item) = all_templates
-            .iter()
-            .find(|item| item.name == name || ellipsis(&item.name, 20) == name)
-        {
-            return Ok(StarterChoice::Private(item.clone()));
-        }
-        if let Some(generator) = generators
-            .iter()
-            .find(|item| item.id == name || item.name == name)
-        {
-            return Ok(StarterChoice::Official(generator.clone()));
-        }
-        println!(
-            "\n{}",
-            style(format!(
-                "\"{}\" is a legacy or unknown template. Starter repositories are no longer maintained; please choose an official generator or a private preset:",
-                name
-            ))
-            .yellow()
-        );
+fn cleanup_failed_target(root: &Path, target_existed: bool) {
+    if !root.exists() {
+        return;
     }
-
-    let available: Vec<&TechStack> = tech_stacks
-        .iter()
-        .filter(|stack| {
-            !stack.variants.is_empty() || generators.iter().any(|item| item.tech == stack.name)
-        })
-        .collect();
-    if available.is_empty() {
-        return Err(PresetError::ConfigError(
-            "No templates are currently available".to_string(),
-        ));
-    }
-    let names: Vec<String> = available
-        .iter()
-        .map(|stack| colorize(&stack.name, &stack.color))
-        .collect();
-    let tech_index = Select::new()
-        .with_prompt("Select a tech stack")
-        .items(&names)
-        .default(0)
-        .interact()
-        .map_err(dialoguer_error)?;
-    let stack = available[tech_index];
-    let private: Vec<&ConfigItem> = all_templates
-        .iter()
-        .filter(|item| item.tech == stack.name)
-        .collect();
-    let official: Vec<&GeneratorConfig> = generators
-        .iter()
-        .filter(|item| item.tech == stack.name)
-        .collect();
-    let mut choices = Vec::new();
-    choices.extend(private.iter().map(|item| {
-        format!(
-            "★ {}{}",
-            item.name,
-            if item.desc.is_empty() {
-                String::new()
-            } else {
-                format!(" - {}", item.desc)
-            }
-        )
-    }));
-    choices.extend(official.iter().map(|item| {
-        if item.desc.is_empty() {
-            format!("{} ↗", item.name)
-        } else {
-            format!("{} ↗ - {}", item.name, item.desc)
-        }
-    }));
-    let choice_index = Select::new()
-        .with_prompt("Select a starter")
-        .items(&choices)
-        .default(0)
-        .interact()
-        .map_err(dialoguer_error)?;
-    if choice_index < private.len() {
-        Ok(StarterChoice::Private(private[choice_index].clone()))
+    if target_existed {
+        let _ = empty_dir(root);
     } else {
-        Ok(StarterChoice::Official(
-            official[choice_index - private.len()].clone(),
-        ))
+        let _ = std::fs::remove_dir_all(root);
     }
 }
 
@@ -259,117 +319,37 @@ fn rgb_to_ansi256(r: u8, g: u8, b: u8) -> u8 {
     16 + 36 * channel(r) + 6 * channel(g) + channel(b)
 }
 
-fn clean_template(root: &Path) -> Result<()> {
-    for name in OUT_OF_TEMPLATE_FILES {
-        let path = root.join(name);
-        if path.is_dir() {
-            std::fs::remove_dir_all(path)?;
-        } else if path.exists() {
-            std::fs::remove_file(path)?;
-        }
-    }
-    Ok(())
-}
-
-fn reset_package_json(root: &Path, package_name: &str) -> Result<()> {
-    let path = root.join("package.json");
-    if !path.exists() {
-        return Ok(());
-    }
-    let content = std::fs::read_to_string(&path)?;
-    let mut package: Value = serde_json::from_str(&content)?;
-    let object = package.as_object_mut().ok_or_else(|| {
-        PresetError::ConfigError("Template package.json must contain a JSON object".to_string())
-    })?;
-    object.insert("name".to_string(), Value::String(package_name.to_string()));
-    object.insert("version".to_string(), Value::String("0.0.0".to_string()));
-    object.insert("description".to_string(), Value::String(String::new()));
-    object.insert("author".to_string(), Value::String(String::new()));
-    let content = serde_json::to_string_pretty(&package)? + "\n";
-    std::fs::write(path, content)?;
-    Ok(())
-}
-
-fn print_next_steps(root: &Path) -> Result<()> {
-    let cwd = std::env::current_dir()?;
-    let package_manager = detect_package_manager();
-    println!("\nDone. Now run:\n");
-    if root != cwd {
-        let display = root.strip_prefix(&cwd).unwrap_or(root);
-        println!("  cd {}", display.display());
-    }
-    if package_manager.as_str() == "yarn" {
-        println!("  yarn\n  yarn dev");
-    } else {
-        println!(
-            "  {} install\n  {} run dev",
-            package_manager.as_str(),
-            package_manager.as_str()
-        );
-    }
-    println!();
-    Ok(())
-}
-
-fn cleanup_failed_target(root: &Path, target_was_created: bool) {
-    if !root.exists() {
-        return;
-    }
-    if target_was_created {
-        let _ = std::fs::remove_dir_all(root);
-    } else {
-        let _ = empty_dir(root);
-    }
-}
-
-fn spinner(message: &str) -> ProgressBar {
-    let spinner = ProgressBar::new_spinner();
-    spinner.set_style(ProgressStyle::with_template("{spinner} {msg}").unwrap());
-    spinner.set_message(message.to_string());
-    spinner.enable_steady_tick(std::time::Duration::from_millis(80));
-    spinner
-}
-
-fn dialoguer_error(error: dialoguer::Error) -> PresetError {
-    if matches!(error, dialoguer::Error::IO(ref io) if io.kind() == std::io::ErrorKind::Interrupted)
-    {
-        PresetError::UserCancelled
-    } else {
-        PresetError::IoError(error.to_string())
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn resets_package_metadata() {
+    fn updates_only_package_name() {
         let temp = tempfile::tempdir().unwrap();
         std::fs::write(
             temp.path().join("package.json"),
-            r#"{"name":"old","version":"1.2.3","description":"x","author":"y","private":true}"#,
+            r#"{"name":"old","version":"1.2.3","description":"keep","author":"keep"}"#,
         )
         .unwrap();
-        reset_package_json(temp.path(), "new-name").unwrap();
+        reset_package_name(temp.path(), "new-name").unwrap();
         let package: Value = serde_json::from_str(
             &std::fs::read_to_string(temp.path().join("package.json")).unwrap(),
         )
         .unwrap();
         assert_eq!(package["name"], "new-name");
-        assert_eq!(package["version"], "0.0.0");
-        assert_eq!(package["private"], true);
+        assert_eq!(package["version"], "1.2.3");
+        assert_eq!(package["description"], "keep");
     }
 
     #[test]
-    fn cleans_only_template_metadata() {
+    fn cleans_only_clone_metadata() {
         let temp = tempfile::tempdir().unwrap();
         std::fs::create_dir(temp.path().join(".git")).unwrap();
         std::fs::write(temp.path().join("pnpm-lock.yaml"), "lock").unwrap();
-        std::fs::write(temp.path().join("src.txt"), "keep").unwrap();
-        clean_template(temp.path()).unwrap();
+        std::fs::create_dir(temp.path().join(".github")).unwrap();
+        clean_private_preset(temp.path()).unwrap();
         assert!(!temp.path().join(".git").exists());
-        assert!(!temp.path().join("pnpm-lock.yaml").exists());
-        assert!(temp.path().join("src.txt").exists());
+        assert!(temp.path().join("pnpm-lock.yaml").exists());
+        assert!(temp.path().join(".github").exists());
     }
 }
