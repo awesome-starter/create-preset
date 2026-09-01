@@ -159,3 +159,8 @@ Commands:
 # 0.1.0 (2021-12-27)
 
 The basic version, powered by [create-vite](https://github.com/vitejs/vite/tree/main/packages/create-vite)
+## Unreleased
+
+- Breaking: delegate project creation to official CLI generators and prioritize private presets.
+- Remove remote community and official starter lists from the default creation flow.
+- Retire the maintained starter-template model in favor of future extensible presets.

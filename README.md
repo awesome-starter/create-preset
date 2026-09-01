@@ -27,28 +27,36 @@ English | [简体中文](https://preset.js.org/zh/)
 
 ## Features
 
-Provides the ability to quickly create preset projects.
+Provides a unified CLI for creating and applying development presets.
 
-> In addition to creating excellent templates provided by the official and open source communities as your projects, you are encouraged to use it as a tool to manage the configuration of your personal common project templates. Visit [Manage local configuration](https://preset.js.org/docs.html#manage-local-configuration) to learn more.
+`create-preset` delegates project creation to official CLIs and keeps your private presets at the center of the workflow. A preset can grow beyond a starter project to include company-specific skills, `AGENTS.md`, and other repeatable development configuration.
 
 If you find it useful, [Welcome to give it a Star](https://github.com/awesome-starter/create-preset) !
 
-- ✈ Practicality - Out-of-the-box starter templates for projects.
+- ✈ Practicality - One entry point for official project generators.
 - ⚡️ Efficient - Reduces repetitive configuration processes every time a new project is created.
 - 🤹 Interactive - Simple command-line interactive operation.
 - 🛠 Multi-Tech Stacks - Provide commonly used multiple technology stack project support.
-- 🚀 keep pace with the times - Provide open source and long-term maintenance and update templates.
-- 🔑 Private Configuration - Support for local configuration files to manage private template lists.
+- 🚀 Keep pace with the ecosystem - Let official CLIs own their templates and prompts.
+- 🔑 Private Presets - Put your local presets first and keep private repositories private.
 
 ## Simply Usage
 
-You can simply experience it through the command of the package manager, and directly create the template you need by create preset.
+Node.js and a package manager are required for official generators; Git is only required when using a private Git preset.
+
+You can experience it through your package manager and choose an official generator or one of your private presets.
 
 ```bash
 npm create preset
 ```
 
 Then follow the prompts!
+
+`preset` currently supports official generators for Vue, Vite, and Next.js. Private presets configured with `preset config set <filePath>` are shown before official generators.
+
+### Migration from v1
+
+Version 2 no longer downloads or maintains the remote `official` and `community` starter lists. When an old template name is passed with `--template`, the CLI explains that the starter repository was retired and presents the new choices. Your local preset file remains supported.
 
 ## Global Usage
 
