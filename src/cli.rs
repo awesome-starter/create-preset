@@ -2,7 +2,7 @@ use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(name = "preset")]
-#[command(author, version, disable_version_flag = true, about = "Provides the ability to quickly create preset projects.", long_about = None)]
+#[command(author, version, disable_version_flag = true, about = "Create projects with official generators and private presets.", long_about = None)]
 pub struct Cli {
     /// Output the version number
     #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
@@ -14,8 +14,7 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Generate a project from a preset template
-    #[command(alias = "i")]
+    /// Create a project from an official generator or private preset
     Init {
         /// Project name
         app_name: Option<String>,
@@ -25,8 +24,7 @@ pub enum Commands {
         template: Option<String>,
     },
 
-    /// Use the local preset config
-    #[command(alias = "c")]
+    /// Manage the private preset configuration
     Config {
         #[command(subcommand)]
         action: ConfigAction,
@@ -36,8 +34,7 @@ pub enum Commands {
         tech: bool,
     },
 
-    /// Update to the latest version
-    #[command(alias = "u")]
+    /// Update the global installation to the latest version
     Upgrade,
 }
 
@@ -79,5 +76,12 @@ mod tests {
     fn rejects_removed_proxy_commands() {
         assert!(Cli::try_parse_from(["preset", "proxy", "on"]).is_err());
         assert!(Cli::try_parse_from(["preset", "p", "on"]).is_err());
+    }
+
+    #[test]
+    fn rejects_removed_command_aliases() {
+        assert!(Cli::try_parse_from(["preset", "i"]).is_err());
+        assert!(Cli::try_parse_from(["preset", "c", "get"]).is_err());
+        assert!(Cli::try_parse_from(["preset", "u"]).is_err());
     }
 }

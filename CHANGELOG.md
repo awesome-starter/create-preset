@@ -2,6 +2,7 @@
 
 - Breaking: delegate project creation to official CLI generators and prioritize private presets.
 - Breaking: remove the `proxy` command and private preset `mirror` field; package manager registry and repository access are now user-managed.
+- Breaking: remove the `i`, `c`, and `u` command aliases; use `init`, `config`, and `upgrade` explicitly.
 - Remove remote community and official starter lists from the default creation flow.
 - Retire the maintained starter-template model in favor of future extensible presets.
 
