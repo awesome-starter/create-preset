@@ -16,8 +16,7 @@ use std::path::Path;
 
 pub fn init_command(app_name: Option<String>, template: Option<String>) -> Result<()> {
     let runtime = RuntimeConfigManager::new()?;
-    let use_proxy = runtime.is_proxy_on()?;
-    let remote = RemoteConfigManager::new(use_proxy);
+    let remote = RemoteConfigManager::new();
 
     remote.display_welcome();
     let (tech_configs, all_templates) = remote.load(&runtime)?;
@@ -38,7 +37,7 @@ pub fn init_command(app_name: Option<String>, template: Option<String>) -> Resul
             detect_package_manager(),
         ),
         StarterChoice::Private(template) => {
-            let download_url = get_download_url(&template.name, &all_templates, use_proxy)?;
+            let download_url = get_download_url(&template.name, &all_templates)?;
             let download_spinner = spinner("Downloading...");
             let result = download_repo(&download_url, &root)
                 .and_then(|_| clean_template(&root))

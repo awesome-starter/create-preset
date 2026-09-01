@@ -1,6 +1,6 @@
-use crate::constants::{DEFAULT_BASE_URL, MIRROR_BASE_URL};
+use crate::constants::DEFAULT_BASE_URL;
 use crate::error::{PresetError, Result};
-use crate::types::{ConfigItem, OriginConfigItem, TechConfig, TemplateSource};
+use crate::types::{ConfigItem, OriginConfigItem, TechConfig};
 use crate::utils::ellipsis;
 use console::style;
 use std::collections::HashMap;
@@ -13,15 +13,9 @@ pub struct RemoteConfigManager {
 
 impl RemoteConfigManager {
     /// Create a new remote config manager
-    pub fn new(use_proxy: bool) -> Self {
-        let base_url = if use_proxy {
-            MIRROR_BASE_URL.to_string()
-        } else {
-            DEFAULT_BASE_URL.to_string()
-        };
-
+    pub fn new() -> Self {
         Self {
-            base_url,
+            base_url: DEFAULT_BASE_URL.to_string(),
             client: reqwest::blocking::Client::new(),
         }
     }
@@ -53,52 +47,8 @@ impl RemoteConfigManager {
         Ok(tech_config)
     }
 
-    /// Fetch config file (official or community)
-    #[allow(dead_code)]
-    pub fn fetch_config_file(
-        &self,
-        file_name: &str,
-        source: TemplateSource,
-    ) -> Result<Vec<ConfigItem>> {
-        let url = format!("{}/{}.json", self.base_url, file_name);
-
-        let response = self
-            .client
-            .get(&url)
-            .timeout(std::time::Duration::from_secs(15))
-            .send()
-            .map_err(|e| {
-                PresetError::NetworkError(format!("Failed to fetch {} config: {}", file_name, e))
-            })?;
-
-        if !response.status().is_success() {
-            // If fetch fails, return empty list instead of error
-            return Ok(Vec::new());
-        }
-
-        let origin_config: Vec<OriginConfigItem> = response.json().map_err(|e| {
-            PresetError::ConfigError(format!("Failed to parse {} config: {}", file_name, e))
-        })?;
-
-        let config_items: Vec<ConfigItem> = origin_config
-            .into_iter()
-            .filter(|item| !item.tech.is_empty() && !item.name.is_empty() && !item.repo.is_empty())
-            .map(|item| {
-                let mut config_item = ConfigItem::from(item);
-                config_item.source = source;
-                config_item
-            })
-            .collect();
-
-        Ok(config_items)
-    }
-
     /// Read local config file
-    pub fn read_local_config(
-        &self,
-        file_path: &std::path::Path,
-        source: TemplateSource,
-    ) -> Result<Vec<ConfigItem>> {
+    pub fn read_local_config(&self, file_path: &std::path::Path) -> Result<Vec<ConfigItem>> {
         if !file_path.exists() {
             return Ok(Vec::new());
         }
@@ -113,18 +63,14 @@ impl RemoteConfigManager {
         let config_items: Vec<ConfigItem> = origin_config
             .into_iter()
             .filter(|item| !item.tech.is_empty() && !item.name.is_empty() && !item.repo.is_empty())
-            .map(|item| {
-                let mut config_item = ConfigItem::from(item);
-                config_item.source = source;
-                config_item
-            })
+            .map(ConfigItem::from)
             .collect();
 
         Ok(config_items)
     }
 
     /// Merge and deduplicate config items
-    /// Priority: local > official > community
+    /// Deduplicate local presets by name and repository.
     pub fn merge_configs(&self, configs: Vec<Vec<ConfigItem>>) -> Vec<ConfigItem> {
         let mut seen_names = HashMap::new();
         let mut seen_repos = HashMap::new();
@@ -173,7 +119,6 @@ impl RemoteConfigManager {
                     name: item.name,
                     desc: ellipsis(&item.desc, 80),
                     repo: item.repo,
-                    mirror: item.mirror,
                 });
             }
         }
@@ -181,7 +126,7 @@ impl RemoteConfigManager {
         tech_stacks
     }
 
-    /// Load all configuration sources in the same priority order as the legacy CLI.
+    /// Load technology stacks and private presets.
     pub fn load(
         &self,
         runtime: &crate::config::RuntimeConfigManager,
@@ -207,7 +152,7 @@ impl RemoteConfigManager {
 
         let mut configs = Vec::new();
         if let Some(path) = runtime.get_local_preset_path()? {
-            configs.push(self.read_local_config(&path, TemplateSource::Local)?);
+            configs.push(self.read_local_config(&path)?);
         }
 
         Ok((tech_configs, self.merge_configs(configs)))
@@ -249,7 +194,7 @@ fn merge_tech_configs(remote: Vec<TechConfig>, local: Vec<TechConfig>) -> Vec<Te
 
 impl Default for RemoteConfigManager {
     fn default() -> Self {
-        Self::new(false)
+        Self::new()
     }
 }
 
@@ -258,28 +203,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_base_url_without_proxy() {
-        let manager = RemoteConfigManager::new(false);
+    fn uses_default_config_url() {
+        let manager = RemoteConfigManager::new();
         assert_eq!(manager.base_url, DEFAULT_BASE_URL);
     }
 
     #[test]
-    fn test_base_url_with_proxy() {
-        let manager = RemoteConfigManager::new(true);
-        assert_eq!(manager.base_url, MIRROR_BASE_URL);
-    }
-
-    #[test]
     fn test_merge_configs_deduplication() {
-        let manager = RemoteConfigManager::new(false);
+        let manager = RemoteConfigManager::new();
 
         let config1 = vec![ConfigItem {
             tech: "vue".to_string(),
             name: "vue-starter".to_string(),
             desc: "Vue starter".to_string(),
             repo: "https://github.com/user/vue-starter".to_string(),
-            mirror: "".to_string(),
-            source: TemplateSource::Official,
         }];
 
         let config2 = vec![
@@ -288,16 +225,12 @@ mod tests {
                 name: "vue-starter".to_string(), // duplicate name
                 desc: "Another Vue starter".to_string(),
                 repo: "https://github.com/user/vue-starter-2".to_string(),
-                mirror: "".to_string(),
-                source: TemplateSource::Community,
             },
             ConfigItem {
                 tech: "react".to_string(),
                 name: "react-starter".to_string(),
                 desc: "React starter".to_string(),
                 repo: "https://github.com/user/react-starter".to_string(),
-                mirror: "".to_string(),
-                source: TemplateSource::Community,
             },
         ];
 
@@ -306,7 +239,6 @@ mod tests {
         // Should only have 2 items (vue-starter from config1, react-starter from config2)
         assert_eq!(merged.len(), 2);
         assert_eq!(merged[0].name, "vue-starter");
-        assert_eq!(merged[0].source, TemplateSource::Official);
         assert_eq!(merged[1].name, "react-starter");
     }
 }

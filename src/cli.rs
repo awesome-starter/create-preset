@@ -36,13 +36,6 @@ pub enum Commands {
         tech: bool,
     },
 
-    /// Use proxy to download template
-    #[command(alias = "p")]
-    Proxy {
-        #[command(subcommand)]
-        action: ProxyAction,
-    },
-
     /// Update to the latest version
     #[command(alias = "u")]
     Upgrade,
@@ -63,15 +56,6 @@ pub enum ConfigAction {
     Remove,
 }
 
-#[derive(Subcommand)]
-pub enum ProxyAction {
-    /// Turn on proxy
-    On,
-
-    /// Turn off proxy
-    Off,
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -89,5 +73,11 @@ mod tests {
     fn accepts_tech_flag_before_and_after_subcommand() {
         assert!(Cli::try_parse_from(["preset", "config", "--tech", "get"]).is_ok());
         assert!(Cli::try_parse_from(["preset", "config", "get", "--tech"]).is_ok());
+    }
+
+    #[test]
+    fn rejects_removed_proxy_commands() {
+        assert!(Cli::try_parse_from(["preset", "proxy", "on"]).is_err());
+        assert!(Cli::try_parse_from(["preset", "p", "on"]).is_err());
     }
 }

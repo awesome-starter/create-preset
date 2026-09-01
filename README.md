@@ -60,6 +60,8 @@ For copy-ready local build and E2E commands, see [Local debugging](docs/local-de
 
 Version 2 no longer downloads or maintains the remote `official` and `community` starter lists. When an old template name is passed with `--template`, the CLI explains that the starter repository was retired and presents the new choices. Your local preset file remains supported.
 
+The `preset proxy` command and `mirror` field were also removed. Official generators use your package manager's registry configuration; private presets should set `repo` to a repository URL accessible in your environment.
+
 ## Global Usage
 
 It is recommended to install globally for easier usage, Please install it globally first:

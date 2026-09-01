@@ -56,11 +56,6 @@ impl RuntimeConfigManager {
         Ok(())
     }
 
-    /// Check if proxy is enabled
-    pub fn is_proxy_on(&self) -> Result<bool> {
-        self.read().map(|config| config.proxy == "on")
-    }
-
     /// Get local tech config path
     pub fn get_local_tech_path(&self) -> Result<Option<PathBuf>> {
         self.read().map(|config| {
@@ -80,17 +75,6 @@ impl RuntimeConfigManager {
             } else {
                 Some(resolve_config_path(config.local_preset))
             }
-        })
-    }
-
-    /// Set proxy status
-    pub fn set_proxy(&self, enabled: bool) -> Result<()> {
-        self.update(|config| {
-            config.proxy = if enabled {
-                "on".to_string()
-            } else {
-                "off".to_string()
-            };
         })
     }
 
@@ -143,7 +127,6 @@ mod tests {
     #[test]
     fn test_runtime_config_serialization() {
         let config = RuntimeConfig {
-            proxy: "on".to_string(),
             local_tech: "/path/to/tech.json".to_string(),
             local_preset: "/path/to/preset.json".to_string(),
         };
@@ -151,7 +134,6 @@ mod tests {
         let json = serde_json::to_string(&config).unwrap();
         let deserialized: RuntimeConfig = serde_json::from_str(&json).unwrap();
 
-        assert_eq!(config.proxy, deserialized.proxy);
         assert_eq!(config.local_tech, deserialized.local_tech);
         assert_eq!(config.local_preset, deserialized.local_preset);
     }
@@ -159,8 +141,14 @@ mod tests {
     #[test]
     fn test_default_runtime_config() {
         let config = RuntimeConfig::default();
-        assert_eq!(config.proxy, "");
         assert_eq!(config.local_tech, "");
         assert_eq!(config.local_preset, "");
+    }
+
+    #[test]
+    fn ignores_legacy_proxy_field() {
+        let config: RuntimeConfig =
+            serde_json::from_str(r#"{"proxy":"on","localPreset":"/path/to/preset.json"}"#).unwrap();
+        assert_eq!(config.local_preset, "/path/to/preset.json");
     }
 }

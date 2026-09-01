@@ -23,21 +23,13 @@ pub fn format_download_url(repo: &str) -> String {
     repo.to_string()
 }
 
-pub fn get_download_url(
-    template: &str,
-    variants: &[ConfigItem],
-    use_proxy: bool,
-) -> Result<String> {
+pub fn get_download_url(template: &str, variants: &[ConfigItem]) -> Result<String> {
     let target = variants
         .iter()
         .find(|item| item.name == template || crate::utils::ellipsis(&item.name, 20) == template)
         .ok_or_else(|| PresetError::ValidationError(format!("Unknown template: {}", template)))?;
 
-    let repo = if use_proxy && is_valid_download_url(&target.mirror) {
-        &target.mirror
-    } else {
-        &target.repo
-    };
+    let repo = &target.repo;
 
     if !is_valid_download_url(repo) {
         return Err(PresetError::ValidationError(format!(
@@ -119,22 +111,16 @@ mod tests {
     }
 
     #[test]
-    fn selects_proxy_and_preserves_branch() {
+    fn selects_repo_and_preserves_branch() {
         let variants = vec![ConfigItem {
             tech: "vue".to_string(),
             name: "starter".to_string(),
             desc: String::new(),
             repo: "https://github.com/example/starter#main".to_string(),
-            mirror: "https://gitee.com/example/starter#mirror".to_string(),
-            source: crate::types::TemplateSource::Official,
         }];
         assert_eq!(
-            get_download_url("starter", &variants, false).unwrap(),
+            get_download_url("starter", &variants).unwrap(),
             "github:example/starter#main"
-        );
-        assert_eq!(
-            get_download_url("starter", &variants, true).unwrap(),
-            "direct:https://gitee.com/example/starter#mirror"
         );
     }
 }

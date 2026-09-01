@@ -1,10 +1,6 @@
 /// Default base URL for remote config
 pub const DEFAULT_BASE_URL: &str = "https://preset.js.org/config";
 
-/// Mirror base URL for proxy mode (China)
-pub const MIRROR_BASE_URL: &str =
-    "https://gitee.com/awesome-starter/website/raw/main/docs/public/config";
-
 /// Runtime config file name
 pub const RC_FILE_NAME: &str = ".presetrc";
 

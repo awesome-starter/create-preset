@@ -3,9 +3,6 @@ use serde::{Deserialize, Serialize};
 /// Runtime config file content (~/.presetrc)
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct RuntimeConfig {
-    #[serde(default)]
-    pub proxy: String,
-
     #[serde(default, rename = "localTech")]
     pub local_tech: String,
 
@@ -27,7 +24,6 @@ pub struct VariantItem {
     pub name: String,
     pub desc: String,
     pub repo: String,
-    pub mirror: String,
 }
 
 /// Tech stack with variants
@@ -65,18 +61,7 @@ pub struct OriginConfigItem {
     pub desc: String,
     pub repo: String,
     #[serde(default)]
-    pub mirror: String,
-    #[serde(default)]
     pub r#type: String,
-}
-
-/// Template source type
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TemplateSource {
-    Official,
-    #[allow(dead_code)]
-    Community,
-    Local,
 }
 
 /// Config item with source information
@@ -86,8 +71,6 @@ pub struct ConfigItem {
     pub name: String,
     pub desc: String,
     pub repo: String,
-    pub mirror: String,
-    pub source: TemplateSource,
 }
 
 impl From<OriginConfigItem> for ConfigItem {
@@ -97,8 +80,6 @@ impl From<OriginConfigItem> for ConfigItem {
             name: origin.name,
             desc: origin.desc,
             repo: origin.repo,
-            mirror: origin.mirror,
-            source: TemplateSource::Official,
         }
     }
 }
@@ -143,6 +124,5 @@ mod tests {
         )
         .unwrap();
         assert_eq!(item.desc, "");
-        assert_eq!(item.mirror, "");
     }
 }

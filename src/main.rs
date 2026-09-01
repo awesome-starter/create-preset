@@ -30,9 +30,6 @@ fn run() -> Result<()> {
         Some(Commands::Config { action, tech }) => {
             commands::config_command(action, tech)?;
         }
-        Some(Commands::Proxy { action }) => {
-            commands::proxy_command(action)?;
-        }
         Some(Commands::Upgrade) => {
             commands::upgrade_command()?;
         }

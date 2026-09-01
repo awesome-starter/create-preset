@@ -1,3 +1,10 @@
+## Unreleased
+
+- Breaking: delegate project creation to official CLI generators and prioritize private presets.
+- Breaking: remove the `proxy` command and private preset `mirror` field; package manager registry and repository access are now user-managed.
+- Remove remote community and official starter lists from the default creation flow.
+- Retire the maintained starter-template model in favor of future extensible presets.
+
 ## [0.13.1](https://github.com/awesome-starter/create-preset/compare/v0.13.0...v0.13.1) (2023-03-14)
 
 
@@ -159,8 +166,3 @@ Commands:
 # 0.1.0 (2021-12-27)
 
 The basic version, powered by [create-vite](https://github.com/vitejs/vite/tree/main/packages/create-vite)
-## Unreleased
-
-- Breaking: delegate project creation to official CLI generators and prioritize private presets.
-- Remove remote community and official starter lists from the default creation flow.
-- Retire the maintained starter-template model in favor of future extensible presets.
