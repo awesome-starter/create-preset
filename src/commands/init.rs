@@ -20,15 +20,7 @@ pub fn init_command(app_name: Option<String>, template: Option<String>) -> Resul
     let remote = RemoteConfigManager::new(use_proxy);
 
     remote.display_welcome();
-    remote.display_proxy_tip();
-
-    let config_spinner = spinner("Fetching the latest config...");
     let (tech_configs, all_templates) = remote.load(&runtime)?;
-    config_spinner.finish_with_message(
-        style("Get the latest config successfully.")
-            .green()
-            .to_string(),
-    );
 
     let tech_stacks = remote.build_tech_stacks(tech_configs, all_templates.clone());
     let target_dir = prompt_target_dir(app_name)?;

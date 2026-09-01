@@ -8,7 +8,6 @@ use std::collections::HashMap;
 /// Remote config manager for fetching tech stacks and templates
 pub struct RemoteConfigManager {
     base_url: String,
-    use_proxy: bool,
     client: reqwest::blocking::Client,
 }
 
@@ -23,7 +22,6 @@ impl RemoteConfigManager {
 
         Self {
             base_url,
-            use_proxy,
             client: reqwest::blocking::Client::new(),
         }
     }
@@ -234,20 +232,8 @@ impl RemoteConfigManager {
         println!("{}", style("create-preset").cyan().bold());
         println!(
             "{}",
-            style("Provides the ability to quickly create preset projects.").dim()
+            style("Create projects with official generators and private presets.").dim()
         );
-    }
-
-    /// Display proxy tip
-    pub fn display_proxy_tip(&self) {
-        if !self.use_proxy {
-            println!();
-            println!("{}", style("💡 Tip:").yellow());
-            println!(
-                "  If you are in China and experiencing slow downloads, try: {}",
-                style("preset proxy on").cyan()
-            );
-        }
     }
 }
 
