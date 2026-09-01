@@ -1,0 +1,137 @@
+name: Build Binaries
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }}-${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          # macOS
+          - os: darwin
+            arch: arm64
+            runner: macos-latest
+            target: aarch64-apple-darwin
+          - os: darwin
+            arch: x64
+            runner: macos-latest
+            target: x86_64-apple-darwin
+
+          # Linux
+          - os: linux
+            arch: x64
+            runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os: linux
+            arch: arm64
+            runner: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+
+          # Windows
+          - os: win
+            arch: x64
+            runner: windows-latest
+            target: x86_64-pc-windows-msvc
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate release version
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          NPM_VERSION="$(node -p "require('./package.json').version")"
+          CARGO_VERSION="$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].version')"
+          test "$TAG_VERSION" = "$NPM_VERSION"
+          test "$TAG_VERSION" = "$CARGO_VERSION"
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+
+      - name: Install cross-compilation tools (Linux ARM64)
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Build binary
+        env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Prepare binary (Unix)
+        if: matrix.os != 'win'
+        run: |
+          mkdir -p binaries
+          cp target/${{ matrix.target }}/release/preset binaries/preset-${{ matrix.os }}-${{ matrix.arch }}
+          chmod +x binaries/preset-${{ matrix.os }}-${{ matrix.arch }}
+
+      - name: Prepare binary (Windows)
+        if: matrix.os == 'win'
+        run: |
+          mkdir -p binaries
+          cp target/${{ matrix.target }}/release/preset.exe binaries/preset-${{ matrix.os }}-${{ matrix.arch }}.exe
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: preset-${{ matrix.os }}-${{ matrix.arch }}
+          path: binaries/*
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: binaries
+
+      - name: Organize binaries
+        run: |
+          mkdir -p dist/binaries
+          find binaries -type f -exec cp {} dist/binaries/ \;
+          ls -lh dist/binaries/
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Copy files for npm
+        run: |
+          cp -r bin dist/
+          cp package.json dist/
+          cp README.md dist/ || true
+
+      - name: Publish to npm
+        working-directory: dist
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/binaries/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

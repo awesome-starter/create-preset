@@ -1,0 +1,28 @@
+[package]
+edition = "2021"
+name = "create-preset"
+version = "1.0.0"
+authors = ["chengpeiquan <chengpeiquan@chengpeiquan.com>"]
+description = "Provides the ability to quickly create preset projects"
+license = "MIT"
+homepage = "https://preset.js.org"
+repository = "https://github.com/awesome-starter/create-preset"
+
+[[bin]]
+name = "preset"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+console = "0.16.1"
+dialoguer = "0.12.0"
+indicatif = "0.18.1"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+regex = "1.11"
+dirs = "5.0"
+semver = "1.0"
+
+[dev-dependencies]
+tempfile = "3.23"
