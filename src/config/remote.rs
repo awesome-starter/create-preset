@@ -163,6 +163,7 @@ impl RemoteConfigManager {
             .into_iter()
             .map(|tech| crate::types::TechStack {
                 name: tech.name,
+                color: tech.color,
                 variants: Vec::new(),
             })
             .collect();

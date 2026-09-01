@@ -34,6 +34,7 @@ pub struct VariantItem {
 #[derive(Debug, Clone)]
 pub struct TechStack {
     pub name: String,
+    pub color: String,
     pub variants: Vec<VariantItem>,
 }
 

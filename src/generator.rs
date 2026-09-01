@@ -33,9 +33,10 @@ fn command(tech: &str, id: &str, name: &str, args: &[&str]) -> GeneratorConfig {
 pub fn official_generators() -> Vec<GeneratorConfig> {
     vec![
         command("vue", "vue", "Official Vue Starter", &["{project}"]),
+        command("vue", "nuxt", "Nuxt", &["{project}"]),
         command("vite", "vite", "Official Vite CLI", &["{project}"]),
         command(
-            "next",
+            "react",
             "next-app",
             "Official Next.js Starter",
             &["{project}"],

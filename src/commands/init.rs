@@ -197,7 +197,10 @@ fn choose_starter(
             "No templates are currently available".to_string(),
         ));
     }
-    let names: Vec<&str> = available.iter().map(|stack| stack.name.as_str()).collect();
+    let names: Vec<String> = available
+        .iter()
+        .map(|stack| colorize(&stack.name, &stack.color))
+        .collect();
     let tech_index = Select::new()
         .with_prompt("Select a tech stack")
         .items(&names)
@@ -245,6 +248,24 @@ fn choose_starter(
             official[choice_index - private.len()].clone(),
         ))
     }
+}
+
+fn colorize(value: &str, hex: &str) -> String {
+    let hex = hex.trim_start_matches('#');
+    if hex.len() == 6 {
+        if let Ok(rgb) = u32::from_str_radix(hex, 16) {
+            let r = ((rgb >> 16) & 0xff) as u8;
+            let g = ((rgb >> 8) & 0xff) as u8;
+            let b = (rgb & 0xff) as u8;
+            return style(value).color256(rgb_to_ansi256(r, g, b)).to_string();
+        }
+    }
+    value.to_string()
+}
+
+fn rgb_to_ansi256(r: u8, g: u8, b: u8) -> u8 {
+    let channel = |value: u8| ((value as u16 * 5 + 127) / 255) as u8;
+    16 + 36 * channel(r) + 6 * channel(g) + channel(b)
 }
 
 fn clean_template(root: &Path) -> Result<()> {
