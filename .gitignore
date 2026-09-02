@@ -8,3 +8,4 @@ dist
 temp
 target/**
 binaries/
+.claude/settings.local.json
