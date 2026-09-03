@@ -65,13 +65,13 @@ official generators.
 
 ## Direct Generator Tests
 
-The `--preset` value can select an official generator directly. Use
+The `--from` value can select an official generator directly. Use
 `--package-manager` to make global CLI tests deterministic:
 
 ```bash
-"$PRESET_BIN" init test-vue --preset vue --package-manager pnpm
-"$PRESET_BIN" init test-vite --preset vite --package-manager pnpm
-"$PRESET_BIN" init test-next --preset next-app --package-manager pnpm
+"$PRESET_BIN" init test-vue --from vue --package-manager pnpm
+"$PRESET_BIN" init test-vite --from vite --package-manager pnpm
+"$PRESET_BIN" init test-next --from next-app --package-manager pnpm
 ```
 
 The selected official CLI owns all following prompts and output. Remove test
@@ -81,6 +81,27 @@ projects after checking them:
 rm -rf /tmp/create-preset-e2e/test-vue
 rm -rf /tmp/create-preset-e2e/test-vite
 rm -rf /tmp/create-preset-e2e/test-next
+```
+
+## Preset Config Test
+
+Preset authors can bypass the catalog while developing a local JSON file:
+
+```bash
+"$PRESET_BIN" init test-preset \
+  --from ../another-project/presets/docs-starter.json
+```
+
+The config declares a creation plan. Create Preset performs the repository
+checkout, selects any monorepo subdirectory, filters and writes files, applies
+text and JSON transformations, resolves `workspace:*` package versions, and
+resets the package name.
+
+Test the public delivery path with the project's HTTPS URL:
+
+```bash
+"$PRESET_BIN" init test-preset \
+  --from https://example.com/preset.json
 ```
 
 ## Private Preset Test

@@ -1,9 +1,10 @@
-use crate::catalog::{build_catalog, load_private_catalog};
+use crate::catalog::{build_catalog, load_private_catalog, PrivateCatalog};
 use crate::config::RuntimeConfigManager;
 use crate::constants::{DEFAULT_PROJECT_NAME, PRIVATE_PRESET_METADATA};
 use crate::download::download_repo;
 use crate::error::{PresetError, Result};
 use crate::generator::run_generator;
+use crate::preset::{load_preset_plan, materialize_preset_plan};
 use crate::types::{PackageManager, PrivatePreset, StarterChoice, TechStack};
 use crate::ui::{dialoguer_error, spinner};
 use crate::utils::{
@@ -12,35 +13,33 @@ use crate::utils::{
 use console::style;
 use dialoguer::{Confirm, Input, Select};
 use serde_json::Value;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub fn init_command(
     app_name: Option<String>,
-    preset: Option<String>,
+    source: Option<String>,
     legacy_template: Option<String>,
     package_manager: Option<PackageManager>,
 ) -> Result<()> {
     display_welcome();
-    let requested = resolve_requested_preset(preset, legacy_template)?;
-    let runtime = RuntimeConfigManager::new()?;
-    let private = runtime
-        .get_local_preset_path()?
-        .map(|path| load_private_catalog(&path))
-        .transpose()?;
-    let catalog = build_catalog(private);
+    let requested = resolve_requested_source(source, legacy_template)?;
     let target_dir = prompt_target_dir(app_name)?;
+    if requested.as_deref().is_some_and(is_preset_config_reference) {
+        return create_direct_config(requested.as_deref().expect("checked source"), &target_dir);
+    }
+    let runtime = RuntimeConfigManager::new()?;
+    let private = load_bound_private_catalog(runtime.get_local_preset_path());
+    let catalog = build_catalog(private);
     let choice = choose_starter(requested.as_deref(), &catalog)?;
     let cwd = std::env::current_dir()?;
     let root = cwd.join(&target_dir);
     let target_existed = prepare_target(&root, matches!(choice, StarterChoice::Official(_)))?;
+    let package_manager = package_manager.unwrap_or_else(detect_package_manager);
 
     let result = match choice {
-        StarterChoice::Official(generator) => run_generator(
-            &generator,
-            &target_dir,
-            &cwd,
-            package_manager.unwrap_or_else(detect_package_manager),
-        ),
+        StarterChoice::Official(generator) => {
+            run_generator(&generator, &target_dir, &cwd, package_manager)
+        }
         StarterChoice::Private(preset) => create_private_preset(&preset, &root, &target_dir),
     };
     if let Err(error) = result {
@@ -50,19 +49,57 @@ pub fn init_command(
     Ok(())
 }
 
-fn resolve_requested_preset(
-    preset: Option<String>,
+fn load_bound_private_catalog(path: Result<Option<PathBuf>>) -> Option<PrivateCatalog> {
+    let result = match path {
+        Ok(Some(path)) => load_private_catalog(&path).map(Some),
+        Ok(None) => return None,
+        Err(error) => Err(error),
+    };
+    match result {
+        Ok(catalog) => catalog,
+        Err(error) => {
+            println!(
+                "\n{}",
+                style(format!(
+                    "Warning: Ignoring unavailable private presets: {}",
+                    error
+                ))
+                .yellow()
+            );
+            println!(
+                "{}\n",
+                style("Run `preset config remove` to clear the saved path.").dim()
+            );
+            None
+        }
+    }
+}
+
+fn create_direct_config(config: &str, target_dir: &str) -> Result<()> {
+    let cwd = std::env::current_dir()?;
+    let root = cwd.join(target_dir);
+    let target_existed = prepare_target(&root, false)?;
+    let result = create_config_preset(config, &root, target_dir);
+    if let Err(error) = result {
+        cleanup_failed_target(&root, target_existed);
+        return Err(error);
+    }
+    Ok(())
+}
+
+fn resolve_requested_source(
+    source: Option<String>,
     legacy_template: Option<String>,
 ) -> Result<Option<String>> {
-    match (preset, legacy_template) {
+    match (source, legacy_template) {
         (Some(_), Some(_)) => Err(PresetError::ValidationError(
-            "Use either --preset or the legacy --template option, not both".to_string(),
+            "Use either --from or the legacy --template option, not both".to_string(),
         )),
-        (Some(preset), None) => Ok(Some(preset)),
+        (Some(source), None) => Ok(Some(source)),
         (None, Some(template)) => {
             println!(
                 "\n{}",
-                style("--template is deprecated; use --preset instead.").yellow()
+                style("--template is deprecated; use --from instead.").yellow()
             );
             Ok(Some(template))
         }
@@ -70,12 +107,22 @@ fn resolve_requested_preset(
     }
 }
 
+fn is_preset_config_reference(source: &str) -> bool {
+    if source.starts_with("https://") || source.starts_with("http://") {
+        return true;
+    }
+    Path::new(source)
+        .extension()
+        .and_then(|extension| extension.to_str())
+        == Some("json")
+}
+
 fn display_welcome() {
     println!();
     println!("{}", style("create-preset").cyan().bold());
     println!(
         "{}",
-        style("Create projects with official generators and private presets.").dim()
+        style("Create projects with official generators and declarative presets.").dim()
     );
 }
 
@@ -222,15 +269,56 @@ fn prepare_target(root: &Path, delegated: bool) -> Result<bool> {
 }
 
 fn create_private_preset(preset: &PrivatePreset, root: &Path, target_dir: &str) -> Result<()> {
+    if let Some(config) = &preset.config {
+        return create_config_preset(config, root, target_dir);
+    }
+    let repo = preset
+        .repo
+        .as_deref()
+        .ok_or_else(|| PresetError::ConfigError(format!("Preset {} has no source", preset.name)))?;
     println!("\nCreating project in {}...", root.display());
     let download_spinner = spinner("Downloading private preset...");
-    let result = download_repo(&preset.repo, root)
+    let result = download_repo(repo, root)
         .and_then(|_| clean_private_preset(root))
         .and_then(|_| reset_package_name(root, target_dir));
     if result.is_ok() {
         download_spinner.finish_with_message(style("Created successfully.").green().to_string());
     } else {
         download_spinner.abandon_with_message(style("Creation failed.").red().to_string());
+    }
+    result
+}
+
+fn create_config_preset(config: &str, root: &Path, target_dir: &str) -> Result<()> {
+    println!("\nCreating project in {}...", root.display());
+    if config.starts_with("http://") {
+        println!(
+            "{}",
+            style(
+                "Warning: HTTP preset configs are unencrypted. Only use them on a trusted network."
+            )
+            .yellow()
+        );
+    }
+    let creation_spinner = spinner("Loading preset config...");
+    let result = load_preset_plan(config)
+        .and_then(|plan| {
+            if plan.source.repo.starts_with("http://") && !config.starts_with("http://") {
+                println!(
+                    "{}",
+                    style("Warning: This preset downloads its source over unencrypted HTTP.")
+                        .yellow()
+                );
+            }
+            creation_spinner.set_message("Applying preset config...");
+            materialize_preset_plan(&plan, root)
+        })
+        .and_then(|_| clean_private_preset(root))
+        .and_then(|_| reset_package_name(root, target_dir));
+    if result.is_ok() {
+        creation_spinner.finish_with_message(style("Created successfully.").green().to_string());
+    } else {
+        creation_spinner.abandon_with_message(style("Creation failed.").red().to_string());
     }
     result
 }
@@ -351,5 +439,31 @@ mod tests {
         assert!(!temp.path().join(".git").exists());
         assert!(temp.path().join("pnpm-lock.yaml").exists());
         assert!(temp.path().join(".github").exists());
+    }
+
+    #[test]
+    fn identifies_remote_and_local_json_sources() {
+        assert!(is_preset_config_reference(
+            "https://example.com/preset.json"
+        ));
+        assert!(is_preset_config_reference(
+            "http://192.168.1.10/preset.json"
+        ));
+        assert!(is_preset_config_reference("./preset.json"));
+        assert!(is_preset_config_reference("https://example.com/not-json"));
+        assert!(!is_preset_config_reference("vue"));
+        assert!(!is_preset_config_reference("company-docs"));
+    }
+
+    #[test]
+    fn ignores_an_unavailable_bound_private_catalog() {
+        assert!(load_bound_private_catalog(Ok(Some(PathBuf::from(
+            "/path/that/does/not/exist.json"
+        ))))
+        .is_none());
+        assert!(load_bound_private_catalog(Err(PresetError::ConfigError(
+            "broken runtime config".to_string()
+        )))
+        .is_none());
     }
 }

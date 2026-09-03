@@ -6,6 +6,7 @@ mod constants;
 mod download;
 mod error;
 mod generator;
+mod preset;
 mod types;
 mod ui;
 mod utils;
@@ -28,11 +29,11 @@ fn run() -> Result<()> {
     match cli.command {
         Some(Commands::Init {
             app_name,
-            preset,
+            source,
             template,
             package_manager,
         }) => {
-            commands::init_command(app_name, preset, template, package_manager)?;
+            commands::init_command(app_name, source, template, package_manager)?;
         }
         Some(Commands::Config { action }) => {
             commands::config_command(action)?;

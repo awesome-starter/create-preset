@@ -2,7 +2,7 @@ use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(name = "preset")]
-#[command(author, version, disable_version_flag = true, about = "Create projects with official generators and private presets.", long_about = None)]
+#[command(author, version, disable_version_flag = true, about = "Create projects with official generators and declarative presets.", long_about = None)]
 pub struct Cli {
     /// Output the version number
     #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
@@ -14,17 +14,17 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Create a project from an official generator or private preset
+    /// Create a project from an official generator or preset source
     Init {
         /// Project name
         app_name: Option<String>,
 
-        /// Select a preset or official generator
-        #[arg(short = 'p', long)]
-        preset: Option<String>,
+        /// Create from a registered name, preset.json URL, or local preset.json
+        #[arg(long = "from", conflicts_with = "template")]
+        source: Option<String>,
 
-        /// Legacy alias for --preset
-        #[arg(short = 't', long, hide = true)]
+        /// Legacy alias for --from
+        #[arg(long, hide = true)]
         template: Option<String>,
 
         /// Package manager used to run official generators
@@ -90,16 +90,30 @@ mod tests {
     }
 
     #[test]
-    fn accepts_preset_and_package_manager_options() {
+    fn accepts_a_registered_source_and_package_manager() {
         assert!(Cli::try_parse_from([
             "preset",
             "init",
             "demo",
-            "--preset",
+            "--from",
             "vue",
             "--package-manager",
             "pnpm",
         ])
         .is_ok());
+    }
+
+    #[test]
+    fn accepts_json_sources_and_rejects_removed_init_options() {
+        assert!(
+            Cli::try_parse_from(["preset", "init", "demo", "--from", "./preset.json",]).is_ok()
+        );
+        assert!(Cli::try_parse_from(["preset", "init", "demo", "--preset", "vue"]).is_err());
+        assert!(
+            Cli::try_parse_from(["preset", "init", "demo", "--config", "./preset.json"]).is_err()
+        );
+        assert!(Cli::try_parse_from(["preset", "init", "demo", "-c", "./preset.json"]).is_err());
+        assert!(Cli::try_parse_from(["preset", "init", "demo", "-p", "vue"]).is_err());
+        assert!(Cli::try_parse_from(["preset", "init", "demo", "-t", "vue"]).is_err());
     }
 }

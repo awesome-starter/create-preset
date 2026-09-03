@@ -22,7 +22,10 @@ pub struct PrivatePreset {
     pub name: String,
     #[serde(default)]
     pub desc: String,
-    pub repo: String,
+    #[serde(default)]
+    pub repo: Option<String>,
+    #[serde(default)]
+    pub config: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -44,6 +47,64 @@ pub struct GeneratorConfig {
     pub name: String,
     pub desc: String,
     pub commands: HashMap<PackageManager, Vec<String>>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+#[serde(rename_all = "camelCase")]
+pub struct PresetPlan {
+    #[serde(default, rename = "$schema")]
+    pub _schema: Option<String>,
+    pub version: u32,
+    pub source: PresetSource,
+    #[serde(default)]
+    pub exclude: Vec<String>,
+    #[serde(default)]
+    pub write: Vec<FileWrite>,
+    #[serde(default)]
+    pub replace: Vec<TextReplacement>,
+    #[serde(default)]
+    pub json: Vec<JsonMerge>,
+    #[serde(default)]
+    pub package_json: PresetPackageJson,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FileWrite {
+    pub path: String,
+    pub lines: Vec<String>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PresetSource {
+    pub repo: String,
+    #[serde(default)]
+    pub directory: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TextReplacement {
+    pub path: String,
+    pub from: String,
+    pub to: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct JsonMerge {
+    pub path: String,
+    pub value: serde_json::Value,
+}
+
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(deny_unknown_fields)]
+#[serde(rename_all = "camelCase")]
+pub struct PresetPackageJson {
+    #[serde(default)]
+    pub resolve_workspace: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -102,5 +163,24 @@ mod tests {
         )
         .unwrap();
         assert!(matches!(manifest, PrivatePresetFile::Manifest { .. }));
+    }
+
+    #[test]
+    fn reads_a_preset_plan_and_rejects_unknown_fields() {
+        let plan: PresetPlan = serde_json::from_str(
+            r#"{
+              "version": 1,
+              "source": {"repo": "https://example.com/repo", "directory": "apps/docs"},
+              "exclude": ["node_modules"],
+              "packageJson": {"resolveWorkspace": true}
+            }"#,
+        )
+        .unwrap();
+        assert_eq!(plan.source.directory, "apps/docs");
+        assert!(plan.package_json.resolve_workspace);
+        assert!(serde_json::from_str::<PresetPlan>(
+            r#"{"version":1,"source":{"repo":"https://example.com"},"typo":true}"#
+        )
+        .is_err());
     }
 }

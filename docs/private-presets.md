@@ -1,14 +1,18 @@
 # Private Presets
 
-Private presets let you create projects from repositories you control. Bind one
-JSON file globally:
+Private presets let you create projects from repositories or JSON configs you
+control. Bind one JSON file globally:
 
 ```bash
 preset config set /path/to/private-presets.json
 ```
 
 The file is validated before it is saved. It must exist, contain at least one
-preset, and use unique preset names and repository URLs.
+preset, and use unique preset names and sources.
+
+If the bound file is later moved, deleted, or becomes invalid, `preset init`
+prints a warning and continues with the built-in generators. Use
+`preset config remove` to clear the stale path.
 
 ## Simple Format
 
@@ -36,6 +40,28 @@ display label, for example `company_backend` becomes `Company Backend`.
 
 Private presets are listed before built-in official generators in the same
 technology stack.
+
+Each preset defines exactly one source:
+
+- `repo` clones a repository directly with the existing lightweight behavior.
+- `config` loads a local or HTTP(S) `preset.json` through the Create Preset
+  runtime.
+
+Relative config paths are resolved from the JSON manifest directory:
+
+```json
+[
+  {
+    "tech": "react",
+    "name": "company-docs",
+    "desc": "Company documentation site",
+    "config": "./company-docs.json"
+  }
+]
+```
+
+See [Preset configs](preset-configs.md) for the JSON contract and security
+boundary.
 
 ## Manifest Format
 
@@ -92,5 +118,5 @@ preset config get
 preset config set /path/to/private-presets.json
 preset config remove
 
-preset init my-project --preset company-fastapi
+preset init my-project --from company-fastapi
 ```

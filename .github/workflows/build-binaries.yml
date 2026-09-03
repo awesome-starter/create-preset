@@ -137,7 +137,7 @@ jobs:
 
       - name: Copy files for npm
         run: |
-          cp -r bin dist/
+          cp -r bin schema dist/
           cp package.json dist/
           cp README.md LICENSE dist/
 

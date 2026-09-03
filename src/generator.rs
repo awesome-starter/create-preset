@@ -126,6 +126,7 @@ mod tests {
         assert!(generators
             .iter()
             .any(|item| item.id == "next-app" && item.tech == "react"));
+        assert!(!generators.iter().any(|item| item.id == "blackwork"));
     }
 
     #[test]

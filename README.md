@@ -15,7 +15,7 @@
   <a href="https://www.npmjs.com/package/create-preset" target="__blank">
     <img src="https://img.shields.io/npm/dm/create-preset?color=10b981&label=" />
   </a>
-  <a href="https://preset.js.org/docs.html" target="__blank">
+  <a href="https://preset.js.org/guide/getting-started" target="__blank">
     <img src="https://img.shields.io/static/v1?label=&message=docs%20%26%20demos&color=10b981" />
   </a>
   <a href="https://github.com/awesome-starter/create-preset" target="__blank">
@@ -29,7 +29,7 @@ English | [简体中文](https://preset.js.org/zh/)
 
 Provides a unified CLI for creating and applying development presets.
 
-`create-preset` delegates project creation to official CLIs and keeps your private presets at the center of the workflow. A preset can grow beyond a starter project to include company-specific skills, `AGENTS.md`, and other repeatable development configuration.
+`create-preset` delegates framework-owned projects to official CLIs and lets projects distribute maintained starters as declarative JSON. A preset config describes its starter source and transformations; Create Preset owns prompts, downloads, file operations, dependency resolution, and rollback without executing third-party configuration code.
 
 If you find it useful, [Welcome to give it a Star](https://github.com/awesome-starter/create-preset) !
 
@@ -39,10 +39,11 @@ If you find it useful, [Welcome to give it a Star](https://github.com/awesome-st
 - 🛠 Multi-Tech Stacks - Provide commonly used multiple technology stack project support.
 - 🚀 Keep pace with the ecosystem - Let official CLIs own their templates and prompts.
 - 🔑 Private Presets - Put your local presets first and keep private repositories private.
+- 🧩 Declarative Presets - Distribute a starter with one `preset.json` instead of another CLI.
 
 ## Simply Usage
 
-Node.js and a package manager are required for official generators; Git is only required when using a private Git preset.
+Node.js and a package manager are required for official generators. Git is required for repository-backed presets.
 
 You can experience it through your package manager and choose an official generator or one of your private presets.
 
@@ -54,15 +55,21 @@ Then follow the prompts!
 
 For copy-ready local build and E2E commands, see [Local debugging](docs/local-debugging.md).
 
-`preset` currently supports official generators for Vue, Vite, and Next.js. Private presets configured with `preset config set <filePath>` are shown before official generators.
+`preset` currently supports official generators for Vue, Nuxt, Vite, and Next.js. Private presets configured with `preset config set <filePath>` are shown before official generators.
 
 Private presets can introduce any technology stack, including Python, Go, iOS, Android, or internal company stacks. See [Private presets](docs/private-presets.md) for the simple array and versioned manifest formats.
 
-### Migration from v1
+Projects can distribute a starter through a JSON preset config hosted on their own website. Blackwork's docs starter is the first showcase: its config selects a monorepo subdirectory, removes workspace-only files, and asks Create Preset to replace `workspace:*` dependencies with published versions. See [Preset configs](docs/preset-configs.md).
 
-Version 1.0 no longer downloads or maintains the remote `tech`, `official`, and `community` lists. Official generators and their brand colors are built in, while private presets can add arbitrary technology stacks. The legacy `--template` option prints a migration notice; use `--preset` instead.
+```bash
+preset init my-docs --from https://example.com/preset.json
+```
 
-The `preset proxy` command, `config --tech`, `localTech`, and `mirror` field were also removed. Official generators use your package manager's registry configuration; private presets should set `repo` to a repository URL accessible in your environment.
+### Migration to v1
+
+Version 1.0 no longer downloads or maintains the remote `tech`, `official`, and `community` lists. Official generators and their brand colors are built in, while private presets can add arbitrary technology stacks. The legacy `--template` option prints a migration notice; use `--from` instead.
+
+The `preset proxy` command, `config --tech`, `localTech`, and `mirror` field were also removed. Official generators use your package manager's registry configuration; private presets should set either `repo` or `config` to a source accessible in your environment.
 
 ## Global Usage
 
@@ -78,7 +85,7 @@ You can use the following command to check whether the installation was successf
 preset -v
 ```
 
-You can refer to [Upgrade](https://preset.js.org/guide.html#upgrade) to learn how to upgrade in the future.
+Run `preset upgrade` to update a global installation.
 
 ## Documentation
 

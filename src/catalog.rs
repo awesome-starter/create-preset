@@ -3,7 +3,7 @@ use crate::generator::{built_in_techs, official_generators};
 use crate::types::{PrivatePreset, PrivatePresetFile, StarterChoice, TechMetadata, TechStack};
 use crate::utils::is_valid_download_url;
 use std::collections::{HashMap, HashSet};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub struct PrivateCatalog {
     pub techs: HashMap<String, TechMetadata>,
@@ -22,7 +22,7 @@ pub fn load_private_catalog(path: &Path) -> Result<PrivateCatalog> {
     let file: PrivatePresetFile = serde_json::from_str(&content).map_err(|error| {
         PresetError::ConfigError(format!("Failed to parse private preset config: {}", error))
     })?;
-    let (techs, presets) = match file {
+    let (techs, mut presets) = match file {
         PrivatePresetFile::Presets(presets) => (HashMap::new(), presets),
         PrivatePresetFile::Manifest {
             version,
@@ -38,8 +38,26 @@ pub fn load_private_catalog(path: &Path) -> Result<PrivateCatalog> {
             (techs, presets)
         }
     };
+    resolve_config_paths(
+        &mut presets,
+        path.parent().unwrap_or_else(|| Path::new(".")),
+    );
     validate_private_presets(&presets)?;
     Ok(PrivateCatalog { techs, presets })
+}
+
+fn resolve_config_paths(presets: &mut [PrivatePreset], base: &Path) {
+    for preset in presets {
+        let Some(config) = preset.config.as_mut() else {
+            continue;
+        };
+        if !config.starts_with("https://") && !config.starts_with("http://") {
+            let path = PathBuf::from(&*config);
+            if !path.is_absolute() {
+                *config = base.join(path).to_string_lossy().into_owned();
+            }
+        }
+    }
 }
 
 fn validate_private_presets(presets: &[PrivatePreset]) -> Result<()> {
@@ -49,7 +67,7 @@ fn validate_private_presets(presets: &[PrivatePreset]) -> Result<()> {
         ));
     }
     let mut names = HashSet::new();
-    let mut repos = HashSet::new();
+    let mut sources = HashSet::new();
     for (index, preset) in presets.iter().enumerate() {
         let item = index + 1;
         if preset.tech.trim().is_empty() {
@@ -64,11 +82,42 @@ fn validate_private_presets(presets: &[PrivatePreset]) -> Result<()> {
                 item
             )));
         }
-        if !is_valid_download_url(&preset.repo) {
+        let repo = preset
+            .repo
+            .as_deref()
+            .filter(|value| !value.trim().is_empty());
+        let config = preset
+            .config
+            .as_deref()
+            .filter(|value| !value.trim().is_empty());
+        if repo.is_some() == config.is_some() {
+            return Err(PresetError::ValidationError(format!(
+                "Preset {} must define exactly one of repo or config",
+                preset.name
+            )));
+        }
+        if repo.is_some_and(|value| !is_valid_download_url(value)) {
             return Err(PresetError::ValidationError(format!(
                 "Preset {} has an invalid repository URL",
                 preset.name
             )));
+        }
+        if let Some(config) = config {
+            let is_remote = config.starts_with("https://") || config.starts_with("http://");
+            let is_json = if is_remote {
+                reqwest::Url::parse(config).is_ok_and(|url| url.path().ends_with(".json"))
+            } else {
+                Path::new(config)
+                    .extension()
+                    .and_then(|value| value.to_str())
+                    == Some("json")
+            };
+            if !is_json || (!is_remote && !Path::new(config).is_file()) {
+                return Err(PresetError::ValidationError(format!(
+                    "Preset {} has an invalid JSON config",
+                    preset.name
+                )));
+            }
         }
         if !names.insert(preset.name.clone()) {
             return Err(PresetError::ValidationError(format!(
@@ -76,10 +125,11 @@ fn validate_private_presets(presets: &[PrivatePreset]) -> Result<()> {
                 preset.name
             )));
         }
-        if !repos.insert(preset.repo.clone()) {
+        let source = repo.or(config).expect("validated preset source");
+        if !sources.insert(source.to_string()) {
             return Err(PresetError::ValidationError(format!(
-                "Duplicate preset repository: {}",
-                preset.repo
+                "Duplicate preset source: {}",
+                source
             )));
         }
     }
@@ -177,7 +227,8 @@ mod tests {
                 tech: "python".to_string(),
                 name: "company-api".to_string(),
                 desc: String::new(),
-                repo: "https://example.com/api".to_string(),
+                repo: Some("https://example.com/api".to_string()),
+                config: None,
             }],
         };
         let catalog = build_catalog(Some(private));
@@ -200,7 +251,8 @@ mod tests {
                 tech: "company_backend".to_string(),
                 name: "service".to_string(),
                 desc: String::new(),
-                repo: "https://example.com/service".to_string(),
+                repo: Some("https://example.com/service".to_string()),
+                config: None,
             }],
         };
         let catalog = build_catalog(Some(private));
@@ -210,6 +262,24 @@ mod tests {
             .unwrap();
         assert_eq!(stack.label, "Company Backend");
         assert_eq!(stack.color, "#123456");
+    }
+
+    #[test]
+    fn keeps_private_presets_before_official_generators() {
+        let private = PrivateCatalog {
+            techs: HashMap::new(),
+            presets: vec![PrivatePreset {
+                tech: "react".to_string(),
+                name: "company-react".to_string(),
+                desc: String::new(),
+                repo: Some("https://example.com/react".to_string()),
+                config: None,
+            }],
+        };
+        let catalog = build_catalog(Some(private));
+        let react = catalog.iter().find(|stack| stack.id == "react").unwrap();
+        assert!(matches!(react.choices[0], StarterChoice::Private(_)));
+        assert!(matches!(react.choices[1], StarterChoice::Official(_)));
     }
 
     #[test]
@@ -229,5 +299,20 @@ mod tests {
         )
         .unwrap();
         assert!(load_private_catalog(&duplicate).is_err());
+    }
+
+    #[test]
+    fn loads_relative_config_paths_from_the_manifest_directory() {
+        let temp = tempfile::tempdir().unwrap();
+        let config = temp.path().join("company.json");
+        fs::write(&config, r#"{"version":1}"#).unwrap();
+        let manifest = temp.path().join("presets.json");
+        fs::write(
+            &manifest,
+            r#"[{"tech":"go","name":"company-go","config":"company.json"}]"#,
+        )
+        .unwrap();
+        let catalog = load_private_catalog(&manifest).unwrap();
+        assert_eq!(catalog.presets[0].config.as_deref(), config.to_str());
     }
 }

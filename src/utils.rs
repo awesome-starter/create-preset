@@ -85,7 +85,10 @@ pub fn detect_package_manager() -> crate::types::PackageManager {
 /// Check if URL is a valid download URL
 pub fn is_valid_download_url(url: &str) -> bool {
     !url.is_empty()
-        && (url.starts_with("http://") || url.starts_with("https://") || url.starts_with("git@"))
+        && (url.starts_with("http://")
+            || url.starts_with("https://")
+            || url.starts_with("git@")
+            || url.starts_with("file://"))
 }
 
 #[cfg(test)]
@@ -117,6 +120,7 @@ mod tests {
         assert!(is_valid_download_url("https://github.com/user/repo"));
         assert!(is_valid_download_url("http://example.com"));
         assert!(is_valid_download_url("git@github.com:user/repo.git"));
+        assert!(is_valid_download_url("file:///tmp/local-preset"));
         assert!(!is_valid_download_url(""));
         assert!(!is_valid_download_url("invalid-url"));
     }
