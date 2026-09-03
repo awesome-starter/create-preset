@@ -71,6 +71,10 @@ Private presets can introduce any technology stack, including Python, Go, iOS, A
 
 Projects can distribute a starter through a JSON preset config hosted on their own website. Blackwork's docs starter is the first showcase: its config selects a monorepo subdirectory, removes workspace-only files, and asks Create Preset to replace `workspace:*` dependencies with published versions. See [Preset configs](docs/preset-configs.md).
 
+Workspace dependency resolution respects the user's npm configuration, including
+private registries and scoped registry rules. Presets can pin incompatible
+packages with `packageJson.workspaceVersions`.
+
 ```bash
 preset init my-docs --from https://example.com/preset.json
 ```

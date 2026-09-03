@@ -132,6 +132,15 @@
         "resolveWorkspace": {
           "type": "boolean",
           "default": false
+        },
+        "workspaceVersions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "default": {}
         }
       },
       "default": {}

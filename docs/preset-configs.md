@@ -38,8 +38,11 @@ Add `$schema` for editor completion and validation:
 - `write` creates or replaces text files from an array of lines.
 - `replace` makes exact text replacements in existing UTF-8 files.
 - `json` applies merge patches to JSON files. A `null` value removes a key.
-- `packageJson.resolveWorkspace` replaces `workspace:` dependencies with their
-  latest published npm versions.
+- `packageJson.resolveWorkspace` replaces `workspace:` dependencies with
+  published npm versions. The lookup uses the user's npm configuration, so
+  `.npmrc` scope registries and private registries are respected.
+- `packageJson.workspaceVersions` pins selected workspace dependencies to an
+  explicit version or range instead of querying the latest version.
 
 ```json
 {
@@ -79,9 +82,22 @@ Add `$schema` for editor completion and validation:
     }
   ],
   "packageJson": {
-    "resolveWorkspace": true
+    "resolveWorkspace": true,
+    "workspaceVersions": {
+      "vue": "3.4.38",
+      "@company/ui": "1.8.2"
+    }
   }
 }
+```
+
+When no pin is provided, Create Preset runs `npm view <package> version` and
+inherits the npm registry settings already configured by the user or CI. For
+example, an `.npmrc` can route only a company scope to a private registry:
+
+```ini
+registry=https://registry.npmjs.org/
+@company:registry=https://npm.company.example.com/
 ```
 
 ## Security Boundary

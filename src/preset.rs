@@ -135,7 +135,7 @@ pub fn materialize_preset_plan(plan: &PresetPlan, target: &Path) -> Result<()> {
     apply_replacements(target, &plan.replace)?;
     apply_json_merges(target, &plan.json)?;
     if plan.package_json.resolve_workspace {
-        resolve_workspace_dependencies(target)?;
+        resolve_workspace_dependencies(target, &plan.package_json.workspace_versions)?;
     }
     Ok(())
 }
@@ -330,7 +330,10 @@ fn merge_json(target: &mut Value, patch: &Value) {
     }
 }
 
-fn resolve_workspace_dependencies(target: &Path) -> Result<()> {
+fn resolve_workspace_dependencies(
+    target: &Path,
+    workspace_versions: &HashMap<String, String>,
+) -> Result<()> {
     let path = target.join("package.json");
     if !path.is_file() {
         return Err(PresetError::ValidationError(
@@ -339,7 +342,7 @@ fn resolve_workspace_dependencies(target: &Path) -> Result<()> {
     }
     let mut package: Value = serde_json::from_str(&fs::read_to_string(&path)?)?;
     let mut versions = HashMap::<String, String>::new();
-    replace_workspace_versions(&mut package, |name| {
+    replace_workspace_versions(&mut package, workspace_versions, |name| {
         if let Some(version) = versions.get(name) {
             return Ok(version.clone());
         }
@@ -351,7 +354,11 @@ fn resolve_workspace_dependencies(target: &Path) -> Result<()> {
     Ok(())
 }
 
-fn replace_workspace_versions<F>(package: &mut Value, mut resolve: F) -> Result<()>
+fn replace_workspace_versions<F>(
+    package: &mut Value,
+    overrides: &HashMap<String, String>,
+    mut resolve: F,
+) -> Result<()>
 where
     F: FnMut(&str) -> Result<String>,
 {
@@ -369,6 +376,10 @@ where
                 continue;
             };
             if !current.starts_with("workspace:") {
+                continue;
+            }
+            if let Some(version) = overrides.get(name) {
+                *requirement = Value::String(version.clone());
                 continue;
             }
             let prefix = if current.starts_with("workspace:~") {
@@ -472,7 +483,7 @@ mod tests {
             },
             "devDependencies": {"vitest": "^4.0.0"}
         });
-        replace_workspace_versions(&mut package, |name| {
+        replace_workspace_versions(&mut package, &HashMap::new(), |name| {
             Ok(match name {
                 "blackwork" => "0.12.2",
                 "@blackwork/docs" => "0.5.0",
@@ -484,6 +495,26 @@ mod tests {
         assert_eq!(package["dependencies"]["blackwork"], "^0.12.2");
         assert_eq!(package["dependencies"]["@blackwork/docs"], "~0.5.0");
         assert_eq!(package["devDependencies"]["vitest"], "^4.0.0");
+    }
+
+    #[test]
+    fn uses_explicit_workspace_version_overrides() {
+        let mut package = json!({
+            "dependencies": {
+                "vue": "workspace:*",
+                "@company/ui": "workspace:~"
+            }
+        });
+        let overrides = HashMap::from([
+            ("vue".to_string(), "3.4.38".to_string()),
+            ("@company/ui".to_string(), "1.8.2".to_string()),
+        ]);
+        replace_workspace_versions(&mut package, &overrides, |_| {
+            panic!("an explicit override should not query the registry")
+        })
+        .unwrap();
+        assert_eq!(package["dependencies"]["vue"], "3.4.38");
+        assert_eq!(package["dependencies"]["@company/ui"], "1.8.2");
     }
 
     #[test]

@@ -105,6 +105,8 @@ pub struct JsonMerge {
 pub struct PresetPackageJson {
     #[serde(default)]
     pub resolve_workspace: bool,
+    #[serde(default)]
+    pub workspace_versions: HashMap<String, String>,
 }
 
 #[derive(Debug, Clone)]
@@ -178,6 +180,7 @@ mod tests {
         .unwrap();
         assert_eq!(plan.source.directory, "apps/docs");
         assert!(plan.package_json.resolve_workspace);
+        assert!(plan.package_json.workspace_versions.is_empty());
         assert!(serde_json::from_str::<PresetPlan>(
             r#"{"version":1,"source":{"repo":"https://example.com"},"typo":true}"#
         )
