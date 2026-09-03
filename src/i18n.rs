@@ -33,6 +33,10 @@ pub struct Messages {
     pub official_vue_starter: String,
     pub official_vite_cli: String,
     pub official_next_starter: String,
+    pub official_react_router: String,
+    pub official_astro_starter: String,
+    pub official_expo_app: String,
+    pub official_sveltekit_starter: String,
     pub current_directory: String,
     pub target_directory: String,
     pub overwrite_directory: String,
@@ -83,6 +87,10 @@ pub fn generator_name<'a>(id: &str, fallback: &'a str) -> &'a str {
         "vue" => messages().official_vue_starter.as_str(),
         "vite" => messages().official_vite_cli.as_str(),
         "next-app" => messages().official_next_starter.as_str(),
+        "react-router" => messages().official_react_router.as_str(),
+        "astro" => messages().official_astro_starter.as_str(),
+        "expo-app" => messages().official_expo_app.as_str(),
+        "svelte" => messages().official_sveltekit_starter.as_str(),
         _ => fallback,
     }
 }

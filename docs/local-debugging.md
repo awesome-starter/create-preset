@@ -88,6 +88,10 @@ The `--from` value can select an official generator directly. Use
 "$PRESET_BIN" init test-vue --from vue --package-manager pnpm
 "$PRESET_BIN" init test-vite --from vite --package-manager pnpm
 "$PRESET_BIN" init test-next --from next-app --package-manager pnpm
+"$PRESET_BIN" init test-router --from react-router --package-manager pnpm
+"$PRESET_BIN" init test-astro --from astro --package-manager pnpm
+"$PRESET_BIN" init test-expo --from expo-app --package-manager pnpm
+"$PRESET_BIN" init test-svelte --from svelte --package-manager pnpm
 ```
 
 The selected official CLI owns all following prompts and output. Remove test
@@ -97,6 +101,10 @@ projects after checking them:
 rm -rf /tmp/create-preset-e2e/test-vue
 rm -rf /tmp/create-preset-e2e/test-vite
 rm -rf /tmp/create-preset-e2e/test-next
+rm -rf /tmp/create-preset-e2e/test-router
+rm -rf /tmp/create-preset-e2e/test-astro
+rm -rf /tmp/create-preset-e2e/test-expo
+rm -rf /tmp/create-preset-e2e/test-svelte
 ```
 
 ## Preset Config Test

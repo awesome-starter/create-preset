@@ -31,6 +31,45 @@ fn command(tech: &str, id: &str, name: &str, args: &[&str]) -> GeneratorConfig {
     }
 }
 
+fn sv_command() -> GeneratorConfig {
+    let mut commands = HashMap::new();
+    commands.insert(
+        PackageManager::Pnpm,
+        vec!["dlx", "sv", "create", "{project}"]
+            .into_iter()
+            .map(String::from)
+            .collect(),
+    );
+    commands.insert(
+        PackageManager::Npm,
+        vec!["exec", "sv", "create", "{project}"]
+            .into_iter()
+            .map(String::from)
+            .collect(),
+    );
+    commands.insert(
+        PackageManager::Yarn,
+        vec!["dlx", "sv", "create", "{project}"]
+            .into_iter()
+            .map(String::from)
+            .collect(),
+    );
+    commands.insert(
+        PackageManager::Bun,
+        vec!["x", "sv", "create", "{project}"]
+            .into_iter()
+            .map(String::from)
+            .collect(),
+    );
+    GeneratorConfig {
+        id: "svelte".to_string(),
+        tech: "svelte".to_string(),
+        name: "Official SvelteKit Starter".to_string(),
+        desc: String::new(),
+        commands,
+    }
+}
+
 pub fn official_generators() -> Vec<GeneratorConfig> {
     vec![
         command("vue", "vue", "Official Vue Starter", &["{project}"]),
@@ -42,6 +81,15 @@ pub fn official_generators() -> Vec<GeneratorConfig> {
             "Official Next.js Starter",
             &["{project}"],
         ),
+        command(
+            "react",
+            "react-router",
+            "Official React Router",
+            &["{project}"],
+        ),
+        command("astro", "astro", "Official Astro Starter", &["{project}"]),
+        command("react", "expo-app", "Official Expo App", &["{project}"]),
+        sv_command(),
     ]
 }
 
@@ -61,6 +109,11 @@ pub fn built_in_techs() -> Vec<BuiltInTech> {
             id: "vite",
             label: "Vite",
             color: "#787ffd",
+        },
+        BuiltInTech {
+            id: "svelte",
+            label: "Svelte",
+            color: "#ff3e00",
         },
     ]
 }
@@ -136,6 +189,18 @@ mod tests {
         assert!(generators
             .iter()
             .any(|item| item.id == "next-app" && item.tech == "react"));
+        assert!(generators
+            .iter()
+            .any(|item| item.id == "react-router" && item.tech == "react"));
+        assert!(generators
+            .iter()
+            .any(|item| item.id == "astro" && item.tech == "astro"));
+        assert!(generators
+            .iter()
+            .any(|item| item.id == "expo-app" && item.tech == "react"));
+        assert!(generators
+            .iter()
+            .any(|item| item.id == "svelte" && item.tech == "svelte"));
         assert!(!generators.iter().any(|item| item.id == "blackwork"));
     }
 
@@ -152,6 +217,41 @@ mod tests {
         assert_eq!(
             vue.commands[&PackageManager::Pnpm],
             ["create", "vue", "{project}"]
+        );
+    }
+
+    #[test]
+    fn builds_new_official_generator_commands() {
+        let generators = official_generators();
+        let astro = generators.iter().find(|item| item.id == "astro").unwrap();
+        assert_eq!(
+            astro.commands[&PackageManager::Pnpm],
+            ["create", "astro", "{project}"]
+        );
+        let expo = generators
+            .iter()
+            .find(|item| item.id == "expo-app")
+            .unwrap();
+        assert_eq!(
+            expo.commands[&PackageManager::Pnpm],
+            ["create", "expo-app", "{project}"]
+        );
+        let router = generators
+            .iter()
+            .find(|item| item.id == "react-router")
+            .unwrap();
+        assert_eq!(
+            router.commands[&PackageManager::Pnpm],
+            ["create", "react-router", "{project}"]
+        );
+        let svelte = generators.iter().find(|item| item.id == "svelte").unwrap();
+        assert_eq!(
+            svelte.commands[&PackageManager::Pnpm],
+            ["dlx", "sv", "create", "{project}"]
+        );
+        assert_eq!(
+            svelte.commands[&PackageManager::Npm],
+            ["exec", "sv", "create", "{project}"]
         );
     }
 }

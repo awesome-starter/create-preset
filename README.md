@@ -65,7 +65,7 @@ Official generators control their own prompts and language after delegation.
 
 For copy-ready local build and E2E commands, see [Local debugging](docs/local-debugging.md).
 
-`preset` currently supports official generators for Vue, Nuxt, Vite, and Next.js. Private presets configured with `preset config set <filePath>` are shown before official generators.
+`preset` currently supports official generators for Vue, Nuxt, Vite, Next.js, React Router, Astro, Expo, and SvelteKit. Private presets configured with `preset config set <filePath>` are shown before official generators.
 
 Private presets can introduce any technology stack, including Python, Go, iOS, Android, or internal company stacks. See [Private presets](docs/private-presets.md) for the simple array and versioned manifest formats.
 
