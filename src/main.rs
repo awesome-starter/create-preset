@@ -6,6 +6,7 @@ mod constants;
 mod download;
 mod error;
 mod generator;
+mod i18n;
 mod preset;
 mod types;
 mod ui;
@@ -15,10 +16,15 @@ use clap::Parser;
 use cli::{Cli, Commands};
 use console::style;
 use error::Result;
+use i18n::messages;
 
 fn main() {
     if let Err(error) = run() {
-        eprintln!("{} {}", style("Error:").red().bold(), error);
+        eprintln!(
+            "{} {}",
+            style(messages().error_label.as_str()).red().bold(),
+            error
+        );
         std::process::exit(1);
     }
 }

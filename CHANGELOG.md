@@ -13,6 +13,7 @@
 - Add declarative `preset.json` support for monorepo subdirectories, file filtering and transformation, JSON merge patches, and `workspace:*` dependency resolution.
 - Use `--from` for registered preset names and JSON sources, with long-form-only `init` options.
 - Ignore unavailable saved private preset files during `init` with a warning so built-in generators remain usable.
+- Localize the interactive CLI in English, Simplified Chinese, Traditional Chinese, and Japanese, with system detection and a `PRESET_LANG` override.
 - Add a published JSON Schema and strict runtime validation without executing third-party configuration code.
 - Add the Blackwork docs starter as the first showcase without a central URL registry or standalone project CLI.
 

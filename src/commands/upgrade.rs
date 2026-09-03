@@ -1,5 +1,6 @@
 use crate::constants::PACKAGE_NAME;
 use crate::error::{PresetError, Result};
+use crate::i18n::{format_message, messages};
 use crate::types::PackageManager;
 use crate::ui::{dialoguer_error, spinner};
 use console::style;
@@ -22,26 +23,36 @@ struct PackageUpgradeInfo {
 }
 
 pub fn upgrade_command() -> Result<()> {
-    let detection_spinner = spinner("Detecting upgrade information...");
+    let detection_spinner = spinner(messages().detecting_upgrade.as_str());
     let info = query_package_upgrade_info(env!("CARGO_PKG_VERSION"))?;
-    detection_spinner.finish_with_message(style("Detected successfully.").green().to_string());
+    detection_spinner.finish_with_message(
+        style(messages().detected_successfully.as_str())
+            .green()
+            .to_string(),
+    );
 
     println!();
     if !info.need_to_upgrade {
-        println!("  The current version is already the latest version, no need to upgrade.\n");
+        println!("  {}\n", messages().already_latest.as_str());
         return Ok(());
     }
 
     println!(
-        "  The current version: {}",
-        style(&info.current_version).cyan()
+        "  {}",
+        format_message(
+            messages().current_version.as_str(),
+            &[("version", &style(&info.current_version).cyan().to_string())],
+        )
     );
     println!(
-        "  The latest version: {}",
-        style(&info.latest_version).cyan()
+        "  {}",
+        format_message(
+            messages().latest_version.as_str(),
+            &[("version", &style(&info.latest_version).cyan().to_string())],
+        )
     );
     if !Confirm::new()
-        .with_prompt("Found a new version, do you need to upgrade?")
+        .with_prompt(messages().confirm_upgrade.as_str())
         .default(true)
         .interact()
         .map_err(dialoguer_error)?
@@ -57,7 +68,7 @@ pub fn upgrade_command() -> Result<()> {
     ];
     let labels: Vec<&str> = managers.iter().map(PackageManager::as_str).collect();
     let selected = Select::new()
-        .with_prompt("Please select your package manager for global installation")
+        .with_prompt(messages().select_package_manager.as_str())
         .items(&labels)
         .default(0)
         .interact()
@@ -84,19 +95,24 @@ pub fn upgrade_command() -> Result<()> {
         }
     };
 
-    let upgrade_spinner = spinner("Upgrading...");
+    let upgrade_spinner = spinner(messages().upgrading.as_str());
     let status = command.status().map_err(|error| {
         PresetError::IoError(format!("Failed to execute {}: {}", manager.as_str(), error))
     })?;
     if !status.success() {
-        upgrade_spinner.abandon_with_message(style("Upgrade failed.").red().to_string());
+        upgrade_spinner
+            .abandon_with_message(style(messages().upgrade_failed.as_str()).red().to_string());
         return Err(PresetError::IoError(format!(
             "{} exited with {}",
             manager.as_str(),
             status
         )));
     }
-    upgrade_spinner.finish_with_message(style("Upgraded successfully.").green().to_string());
+    upgrade_spinner.finish_with_message(
+        style(messages().upgraded_successfully.as_str())
+            .green()
+            .to_string(),
+    );
     Ok(())
 }
 

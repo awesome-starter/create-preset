@@ -53,6 +53,16 @@ npm create preset
 
 Then follow the prompts!
 
+Create Preset follows the system locale and currently includes English,
+Simplified Chinese, Traditional Chinese, and Japanese. Set `PRESET_LANG` to
+override automatic detection for this CLI:
+
+```bash
+PRESET_LANG=ja-JP preset init
+```
+
+Official generators control their own prompts and language after delegation.
+
 For copy-ready local build and E2E commands, see [Local debugging](docs/local-debugging.md).
 
 `preset` currently supports official generators for Vue, Nuxt, Vite, and Next.js. Private presets configured with `preset config set <filePath>` are shown before official generators.

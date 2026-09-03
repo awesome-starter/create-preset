@@ -1,4 +1,5 @@
 use crate::error::{PresetError, Result};
+use crate::i18n::{format_message, generator_name, messages};
 use crate::types::{BuiltInTech, GeneratorConfig, PackageManager};
 use std::collections::HashMap;
 use std::path::Path;
@@ -87,7 +88,16 @@ pub fn run_generator(
             }
         })
         .collect();
-    println!("\nRunning {} via {}...\n", generator.name, manager.as_str());
+    println!(
+        "\n{}\n",
+        format_message(
+            messages().running_generator.as_str(),
+            &[
+                ("name", generator_name(&generator.id, &generator.name)),
+                ("manager", manager.as_str()),
+            ],
+        )
+    );
     let status = Command::new(manager.as_str())
         .args(&args)
         .current_dir(cwd)

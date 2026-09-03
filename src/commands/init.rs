@@ -4,6 +4,7 @@ use crate::constants::{DEFAULT_PROJECT_NAME, PRIVATE_PRESET_METADATA};
 use crate::download::download_repo;
 use crate::error::{PresetError, Result};
 use crate::generator::run_generator;
+use crate::i18n::{format_message, generator_name, messages};
 use crate::preset::{load_preset_plan, materialize_preset_plan};
 use crate::types::{PackageManager, PrivatePreset, StarterChoice, TechStack};
 use crate::ui::{dialoguer_error, spinner};
@@ -50,6 +51,7 @@ pub fn init_command(
 }
 
 fn load_bound_private_catalog(path: Result<Option<PathBuf>>) -> Option<PrivateCatalog> {
+    let language = messages();
     let result = match path {
         Ok(Some(path)) => load_private_catalog(&path).map(Some),
         Ok(None) => return None,
@@ -60,16 +62,13 @@ fn load_bound_private_catalog(path: Result<Option<PathBuf>>) -> Option<PrivateCa
         Err(error) => {
             println!(
                 "\n{}",
-                style(format!(
-                    "Warning: Ignoring unavailable private presets: {}",
-                    error
+                style(format_message(
+                    language.bound_presets_warning.as_str(),
+                    &[("error", &error.to_string())],
                 ))
                 .yellow()
             );
-            println!(
-                "{}\n",
-                style("Run `preset config remove` to clear the saved path.").dim()
-            );
+            println!("{}\n", style(language.clear_saved_path.as_str()).dim());
             None
         }
     }
@@ -99,7 +98,7 @@ fn resolve_requested_source(
         (None, Some(template)) => {
             println!(
                 "\n{}",
-                style("--template is deprecated; use --from instead.").yellow()
+                style(messages().template_deprecated.as_str()).yellow()
             );
             Ok(Some(template))
         }
@@ -120,10 +119,7 @@ fn is_preset_config_reference(source: &str) -> bool {
 fn display_welcome() {
     println!();
     println!("{}", style("create-preset").cyan().bold());
-    println!(
-        "{}",
-        style("Create projects with official generators and declarative presets.").dim()
-    );
+    println!("{}", style(messages().app_description.as_str()).dim());
 }
 
 fn prompt_target_dir(app_name: Option<String>) -> Result<String> {
@@ -131,13 +127,13 @@ fn prompt_target_dir(app_name: Option<String>) -> Result<String> {
         let trimmed = name.trim();
         if trimmed.is_empty() {
             return Err(PresetError::ValidationError(
-                "Project name cannot be empty".to_string(),
+                messages().project_name_empty.as_str().to_string(),
             ));
         }
         return Ok(trimmed.to_string());
     }
     Input::<String>::new()
-        .with_prompt("Project name")
+        .with_prompt(messages().project_name.as_str())
         .default(DEFAULT_PROJECT_NAME.to_string())
         .interact_text()
         .map(|value| {
@@ -162,16 +158,16 @@ fn choose_starter(requested: Option<&str>, catalog: &[TechStack]) -> Result<Star
         }
         println!(
             "\n{}",
-            style(format!(
-                "\"{}\" is not a known preset. Please choose from below:",
-                name
+            style(format_message(
+                messages().unknown_preset.as_str(),
+                &[("source", name)],
             ))
             .yellow()
         );
     }
     if catalog.is_empty() {
         return Err(PresetError::ConfigError(
-            "No presets are currently available".to_string(),
+            messages().no_presets.as_str().to_string(),
         ));
     }
     let tech_names: Vec<String> = catalog
@@ -179,7 +175,7 @@ fn choose_starter(requested: Option<&str>, catalog: &[TechStack]) -> Result<Star
         .map(|stack| colorize(&stack.label, &stack.color))
         .collect();
     let tech_index = Select::new()
-        .with_prompt("Select a tech stack")
+        .with_prompt(messages().select_tech_stack.as_str())
         .items(&tech_names)
         .default(0)
         .interact()
@@ -187,7 +183,7 @@ fn choose_starter(requested: Option<&str>, catalog: &[TechStack]) -> Result<Star
     let stack = &catalog[tech_index];
     let labels: Vec<String> = stack.choices.iter().map(choice_label).collect();
     let choice_index = Select::new()
-        .with_prompt("Select a preset")
+        .with_prompt(messages().select_preset.as_str())
         .items(&labels)
         .default(0)
         .interact()
@@ -214,9 +210,10 @@ fn choice_label(choice: &StarterChoice) -> String {
         StarterChoice::Private(preset) => {
             with_description(format!("★ {}", preset.name), &preset.desc)
         }
-        StarterChoice::Official(generator) => {
-            with_description(format!("{} ↗", generator.name), &generator.desc)
-        }
+        StarterChoice::Official(generator) => with_description(
+            format!("{} ↗", generator_name(&generator.id, &generator.name)),
+            &generator.desc,
+        ),
     }
 }
 
@@ -232,19 +229,22 @@ fn prepare_target(root: &Path, delegated: bool) -> Result<bool> {
     let existed = root.exists();
     if existed && !is_dir_empty(root)? {
         let target = if root == std::env::current_dir()? {
-            "Current directory".to_string()
+            messages().current_directory.as_str().to_string()
         } else {
-            format!(
-                "Target directory \"{}\"",
-                root.file_name()
-                    .and_then(|name| name.to_str())
-                    .unwrap_or_default()
+            format_message(
+                messages().target_directory.as_str(),
+                &[(
+                    "name",
+                    root.file_name()
+                        .and_then(|name| name.to_str())
+                        .unwrap_or_default(),
+                )],
             )
         };
         let overwrite = Confirm::new()
-            .with_prompt(format!(
-                "{} is not empty. Remove existing files and continue?",
-                target
+            .with_prompt(format_message(
+                messages().overwrite_directory.as_str(),
+                &[("target", &target)],
             ))
             .default(false)
             .interact()
@@ -276,49 +276,67 @@ fn create_private_preset(preset: &PrivatePreset, root: &Path, target_dir: &str) 
         .repo
         .as_deref()
         .ok_or_else(|| PresetError::ConfigError(format!("Preset {} has no source", preset.name)))?;
-    println!("\nCreating project in {}...", root.display());
-    let download_spinner = spinner("Downloading private preset...");
+    println!(
+        "\n{}",
+        format_message(
+            messages().creating_project.as_str(),
+            &[("path", &root.display().to_string())],
+        )
+    );
+    let download_spinner = spinner(messages().downloading_private_preset.as_str());
     let result = download_repo(repo, root)
         .and_then(|_| clean_private_preset(root))
         .and_then(|_| reset_package_name(root, target_dir));
     if result.is_ok() {
-        download_spinner.finish_with_message(style("Created successfully.").green().to_string());
+        download_spinner.finish_with_message(
+            style(messages().created_successfully.as_str())
+                .green()
+                .to_string(),
+        );
     } else {
-        download_spinner.abandon_with_message(style("Creation failed.").red().to_string());
+        download_spinner
+            .abandon_with_message(style(messages().creation_failed.as_str()).red().to_string());
     }
     result
 }
 
 fn create_config_preset(config: &str, root: &Path, target_dir: &str) -> Result<()> {
-    println!("\nCreating project in {}...", root.display());
+    println!(
+        "\n{}",
+        format_message(
+            messages().creating_project.as_str(),
+            &[("path", &root.display().to_string())],
+        )
+    );
     if config.starts_with("http://") {
         println!(
             "{}",
-            style(
-                "Warning: HTTP preset configs are unencrypted. Only use them on a trusted network."
-            )
-            .yellow()
+            style(messages().http_config_warning.as_str()).yellow()
         );
     }
-    let creation_spinner = spinner("Loading preset config...");
+    let creation_spinner = spinner(messages().loading_preset_config.as_str());
     let result = load_preset_plan(config)
         .and_then(|plan| {
             if plan.source.repo.starts_with("http://") && !config.starts_with("http://") {
                 println!(
                     "{}",
-                    style("Warning: This preset downloads its source over unencrypted HTTP.")
-                        .yellow()
+                    style(messages().http_source_warning.as_str()).yellow()
                 );
             }
-            creation_spinner.set_message("Applying preset config...");
+            creation_spinner.set_message(messages().applying_preset_config.as_str());
             materialize_preset_plan(&plan, root)
         })
         .and_then(|_| clean_private_preset(root))
         .and_then(|_| reset_package_name(root, target_dir));
     if result.is_ok() {
-        creation_spinner.finish_with_message(style("Created successfully.").green().to_string());
+        creation_spinner.finish_with_message(
+            style(messages().created_successfully.as_str())
+                .green()
+                .to_string(),
+        );
     } else {
-        creation_spinner.abandon_with_message(style("Creation failed.").red().to_string());
+        creation_spinner
+            .abandon_with_message(style(messages().creation_failed.as_str()).red().to_string());
     }
     result
 }
@@ -356,13 +374,13 @@ fn reset_package_name(root: &Path, target_dir: &str) -> Result<()> {
         inferred
     } else {
         Input::<String>::new()
-            .with_prompt("Package name")
+            .with_prompt(messages().package_name.as_str())
             .default(to_valid_package_name(&inferred))
             .validate_with(|value: &String| -> std::result::Result<(), &str> {
                 if is_valid_package_name(value) {
                     Ok(())
                 } else {
-                    Err("Invalid package.json name")
+                    Err(messages().invalid_package_name.as_str())
                 }
             })
             .interact_text()

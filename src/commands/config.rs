@@ -3,6 +3,7 @@ use crate::cli::ConfigAction;
 use crate::config::runtime::resolve_config_path;
 use crate::config::RuntimeConfigManager;
 use crate::error::{PresetError, Result};
+use crate::i18n::{format_message, messages};
 use console::style;
 
 pub fn config_command(action: ConfigAction) -> Result<()> {
@@ -20,7 +21,7 @@ pub fn config_command(action: ConfigAction) -> Result<()> {
             manager.set_local_preset_path(file_path)?;
             println!(
                 "\n  {}\n",
-                style("Saved private preset configuration successfully.").green()
+                style(messages().saved_private_config.as_str()).green()
             );
             Ok(())
         }
@@ -31,7 +32,7 @@ pub fn config_command(action: ConfigAction) -> Result<()> {
             manager.remove_local_preset_path()?;
             println!(
                 "\n  {}\n",
-                style("Removed private preset configuration successfully.").green()
+                style(messages().removed_private_config.as_str()).green()
             );
             Ok(())
         }
@@ -41,13 +42,19 @@ pub fn config_command(action: ConfigAction) -> Result<()> {
 fn display_config(manager: &RuntimeConfigManager) -> Result<()> {
     println!();
     if let Some(path) = manager.get_local_preset_path()? {
-        println!("  Private preset configuration:");
+        println!("  {}", messages().private_config.as_str());
         println!("  {}\n", style(path.display()).cyan());
     } else {
-        println!("  There is currently no private preset configuration.\n");
+        println!("  {}\n", messages().no_private_config.as_str());
         println!(
-            "  Run {} to bind one.\n",
-            style("preset config set <filePath>").cyan()
+            "  {}\n",
+            format_message(
+                messages().bind_private_config.as_str(),
+                &[(
+                    "command",
+                    &style("preset config set <filePath>").cyan().to_string(),
+                )],
+            )
         );
     }
     Ok(())

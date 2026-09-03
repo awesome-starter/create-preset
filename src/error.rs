@@ -1,3 +1,4 @@
+use crate::i18n::messages;
 use std::fmt;
 
 #[derive(Debug)]
@@ -13,14 +14,19 @@ pub enum PresetError {
 
 impl fmt::Display for PresetError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let language = messages();
         match self {
-            PresetError::ConfigError(msg) => write!(f, "Config error: {}", msg),
-            PresetError::NetworkError(msg) => write!(f, "Network error: {}", msg),
-            PresetError::IoError(msg) => write!(f, "IO error: {}", msg),
-            PresetError::ValidationError(msg) => write!(f, "Validation error: {}", msg),
-            PresetError::DownloadError(msg) => write!(f, "Download error: {}", msg),
-            PresetError::GeneratorError(msg) => write!(f, "Generator error: {}", msg),
-            PresetError::UserCancelled => write!(f, "Operation cancelled"),
+            PresetError::ConfigError(msg) => write!(f, "{}: {}", language.config_error, msg),
+            PresetError::NetworkError(msg) => write!(f, "{}: {}", language.network_error, msg),
+            PresetError::IoError(msg) => write!(f, "{}: {}", language.io_error, msg),
+            PresetError::ValidationError(msg) => {
+                write!(f, "{}: {}", language.validation_error, msg)
+            }
+            PresetError::DownloadError(msg) => write!(f, "{}: {}", language.download_error, msg),
+            PresetError::GeneratorError(msg) => {
+                write!(f, "{}: {}", language.generator_error, msg)
+            }
+            PresetError::UserCancelled => write!(f, "{}", language.operation_cancelled),
         }
     }
 }

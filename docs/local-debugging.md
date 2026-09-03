@@ -59,6 +59,22 @@ Select a tech stack
 Select a preset
 ```
 
+## Locale Test
+
+Create Preset detects the system locale. Use `PRESET_LANG` to test its four
+built-in translations without changing system settings:
+
+```bash
+PRESET_LANG=en-US "$PRESET_BIN"
+PRESET_LANG=zh-CN "$PRESET_BIN"
+PRESET_LANG=zh-HK "$PRESET_BIN"
+PRESET_LANG=ja-JP "$PRESET_BIN"
+```
+
+`zh-CN` and `zh-SG` use Simplified Chinese. `zh-HK`, `zh-TW`, and `zh-MO`
+use Traditional Chinese. Unsupported locales fall back to English. Once an
+official generator starts, it owns its own prompts and locale detection.
+
 Official technology stack colors are built into the CLI. Custom technology
 stacks come from the private preset configuration. Private presets appear before
 official generators.
