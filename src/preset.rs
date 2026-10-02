@@ -1,5 +1,7 @@
 use crate::download::download_repo;
 use crate::error::{PresetError, Result};
+use crate::process::package_manager_command;
+use crate::types::PackageManager;
 use crate::types::PresetPlan;
 use crate::utils::is_valid_download_url;
 use serde_json::{json, Value};
@@ -7,7 +9,6 @@ use std::collections::HashMap;
 use std::fs;
 use std::io::Read;
 use std::path::{Component, Path, PathBuf};
-use std::process::Command;
 use std::time::Duration;
 
 const MAX_CONFIG_BYTES: usize = 1024 * 1024;
@@ -394,7 +395,7 @@ where
 }
 
 fn resolve_npm_version(package: &str) -> Result<String> {
-    let output = Command::new("npm")
+    let output = package_manager_command(PackageManager::Npm)?
         .args(["view", package, "version", "--json"])
         .output()
         .map_err(|error| {

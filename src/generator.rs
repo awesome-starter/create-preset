@@ -1,9 +1,10 @@
 use crate::error::{PresetError, Result};
 use crate::i18n::{format_message, generator_name, messages};
+use crate::process::package_manager_command;
 use crate::types::{BuiltInTech, GeneratorConfig, PackageManager};
 use std::collections::HashMap;
 use std::path::Path;
-use std::process::{Command, Stdio};
+use std::process::Stdio;
 
 fn command(tech: &str, id: &str, name: &str, args: &[&str]) -> GeneratorConfig {
     let mut commands = HashMap::new();
@@ -118,12 +119,11 @@ pub fn built_in_techs() -> Vec<BuiltInTech> {
     ]
 }
 
-pub fn run_generator(
+pub fn generator_arguments(
     generator: &GeneratorConfig,
     project: &str,
-    cwd: &Path,
     manager: PackageManager,
-) -> Result<()> {
+) -> Result<Vec<String>> {
     let args = generator.commands.get(&manager).ok_or_else(|| {
         PresetError::ValidationError(format!(
             "No {} command configured for {}",
@@ -131,7 +131,7 @@ pub fn run_generator(
             generator.name
         ))
     })?;
-    let args: Vec<String> = args
+    Ok(args
         .iter()
         .map(|arg| {
             if arg == "{project}" {
@@ -140,7 +140,18 @@ pub fn run_generator(
                 arg.clone()
             }
         })
-        .collect();
+        .collect())
+}
+
+pub fn run_generator(
+    generator: &GeneratorConfig,
+    project: &str,
+    cwd: &Path,
+    manager: PackageManager,
+) -> Result<()> {
+    let args = generator_arguments(generator, project, manager)?;
+    // Resolve Windows shims before any child process is started.
+    let mut command = package_manager_command(manager)?;
     println!(
         "\n{}\n",
         format_message(
@@ -151,7 +162,7 @@ pub fn run_generator(
             ],
         )
     );
-    let status = Command::new(manager.as_str())
+    let status = command
         .args(&args)
         .current_dir(cwd)
         .stdin(Stdio::inherit())

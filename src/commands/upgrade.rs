@@ -1,13 +1,13 @@
 use crate::constants::PACKAGE_NAME;
 use crate::error::{PresetError, Result};
 use crate::i18n::{format_message, messages};
+use crate::process::package_manager_command;
 use crate::types::PackageManager;
 use crate::ui::{dialoguer_error, spinner};
 use console::style;
 use dialoguer::{Confirm, Select};
 use semver::Version;
 use serde::Deserialize;
-use std::process::Command;
 
 #[derive(Deserialize)]
 struct RegistryPackage {
@@ -75,7 +75,7 @@ pub fn upgrade_command() -> Result<()> {
         .map_err(dialoguer_error)?;
 
     let manager = managers[selected];
-    let mut command = Command::new(manager.as_str());
+    let mut command = package_manager_command(manager)?;
     match manager {
         PackageManager::Npm => command.args([
             "install",

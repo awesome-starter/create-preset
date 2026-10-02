@@ -8,6 +8,7 @@ mod error;
 mod generator;
 mod i18n;
 mod preset;
+mod process;
 mod types;
 mod ui;
 mod utils;
