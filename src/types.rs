@@ -49,7 +49,7 @@ pub struct GeneratorConfig {
     pub commands: HashMap<PackageManager, Vec<String>>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "camelCase")]
 pub struct PresetPlan {
@@ -69,14 +69,14 @@ pub struct PresetPlan {
     pub package_json: PresetPackageJson,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct FileWrite {
     pub path: String,
     pub lines: Vec<String>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct PresetSource {
     pub repo: String,
@@ -84,7 +84,7 @@ pub struct PresetSource {
     pub directory: String,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct TextReplacement {
     pub path: String,
@@ -92,14 +92,14 @@ pub struct TextReplacement {
     pub to: String,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct JsonMerge {
     pub path: String,
     pub value: serde_json::Value,
 }
 
-#[derive(Debug, Clone, Deserialize, Default)]
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "camelCase")]
 pub struct PresetPackageJson {

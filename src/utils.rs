@@ -44,8 +44,8 @@ pub fn is_dir_empty<P: AsRef<Path>>(path: P) -> std::io::Result<bool> {
         return Ok(true);
     }
 
-    let entries = std::fs::read_dir(path)?;
-    Ok(entries.count() == 0)
+    let mut entries = std::fs::read_dir(path)?;
+    Ok(entries.next().transpose()?.is_none())
 }
 
 /// Empty a directory (remove all contents but keep the directory)

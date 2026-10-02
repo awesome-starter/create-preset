@@ -13,7 +13,7 @@
   "templateDeprecated": "--template 已棄用，請改用 --from。",
   "projectName": "專案名稱",
   "projectNameEmpty": "專案名稱不能為空",
-  "unknownPreset": "無法識別 Preset「{source}」，請從下列選項中選擇：",
+  "unknownPreset": "未知預設「{source}」。執行 `preset --list` 查看可用 ID。",
   "noPresets": "目前沒有可用的 Preset",
   "selectTechStack": "選擇技術棧",
   "selectPreset": "選擇 Preset",

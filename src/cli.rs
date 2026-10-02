@@ -2,11 +2,16 @@ use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(name = "preset")]
+#[command(args_conflicts_with_subcommands = true)]
 #[command(author, version, disable_version_flag = true, about = "Create projects with official generators and declarative presets.", long_about = None)]
 pub struct Cli {
     /// Output the version number
     #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
     pub version: Option<bool>,
+
+    /// List registered official generators and private presets
+    #[arg(long)]
+    pub list: bool,
 
     #[command(subcommand)]
     pub command: Option<Commands>,
@@ -30,6 +35,14 @@ pub enum Commands {
         /// Package manager used to run official generators
         #[arg(long, value_enum)]
         package_manager: Option<crate::types::PackageManager>,
+
+        /// Show the creation plan without running a generator or modifying files
+        #[arg(long)]
+        dry_run: bool,
+
+        /// Replace existing target files without asking for confirmation
+        #[arg(long)]
+        yes: bool,
     },
 
     /// Manage the private preset configuration

@@ -3,50 +3,215 @@ use crate::config::RuntimeConfigManager;
 use crate::constants::{DEFAULT_PROJECT_NAME, PRIVATE_PRESET_METADATA};
 use crate::download::download_repo;
 use crate::error::{PresetError, Result};
-use crate::generator::run_generator;
+use crate::generator::{generator_arguments, run_generator};
 use crate::i18n::{format_message, generator_name, messages};
 use crate::preset::{load_preset_plan, materialize_preset_plan};
-use crate::types::{PackageManager, PrivatePreset, StarterChoice, TechStack};
+use crate::target::{staging_directory, validate_target, TargetTransaction};
+use crate::types::{GeneratorConfig, PackageManager, PresetPlan, StarterChoice, TechStack};
 use crate::ui::{dialoguer_error, spinner};
 use crate::utils::{
-    detect_package_manager, empty_dir, is_dir_empty, is_valid_package_name, to_valid_package_name,
+    detect_package_manager, is_dir_empty, is_valid_package_name, to_valid_package_name,
 };
 use console::style;
 use dialoguer::{Confirm, Input, Select};
-use serde_json::Value;
+use serde_json::{json, Value};
 use std::path::{Path, PathBuf};
+
+enum CreationSource {
+    Official(GeneratorConfig),
+    Repository(String),
+    Config(PresetPlan),
+}
+
+pub fn list_command() -> Result<()> {
+    for stack in registered_catalog()? {
+        println!("{}", stack.label);
+        for choice in stack.choices {
+            println!("  {:<20} {}", choice_id(&choice), choice_label(&choice));
+        }
+    }
+    Ok(())
+}
+
+fn registered_catalog() -> Result<Vec<TechStack>> {
+    let runtime = RuntimeConfigManager::new()?;
+    Ok(build_catalog(load_bound_private_catalog(
+        runtime.get_local_preset_path(),
+    )))
+}
 
 pub fn init_command(
     app_name: Option<String>,
     source: Option<String>,
     legacy_template: Option<String>,
     package_manager: Option<PackageManager>,
+    dry_run: bool,
+    yes: bool,
 ) -> Result<()> {
-    display_welcome();
+    if !dry_run {
+        display_welcome();
+    }
     let requested = resolve_requested_source(source, legacy_template)?;
-    let target_dir = prompt_target_dir(app_name)?;
-    if requested.as_deref().is_some_and(is_preset_config_reference) {
-        return create_direct_config(requested.as_deref().expect("checked source"), &target_dir);
-    }
-    let runtime = RuntimeConfigManager::new()?;
-    let private = load_bound_private_catalog(runtime.get_local_preset_path());
-    let catalog = build_catalog(private);
-    let choice = choose_starter(requested.as_deref(), &catalog)?;
-    let cwd = std::env::current_dir()?;
-    let root = cwd.join(&target_dir);
-    let target_existed = prepare_target(&root, matches!(choice, StarterChoice::Official(_)))?;
-    let package_manager = package_manager.unwrap_or_else(detect_package_manager);
-
-    let result = match choice {
-        StarterChoice::Official(generator) => {
-            run_generator(&generator, &target_dir, &cwd, package_manager)
-        }
-        StarterChoice::Private(preset) => create_private_preset(&preset, &root, &target_dir),
+    // Keep the familiar project-name-first order in the interactive flow.
+    let target_dir = if requested.is_none() {
+        Some(prompt_target_dir(app_name.clone())?)
+    } else {
+        None
     };
-    if let Err(error) = result {
-        cleanup_failed_target(&root, target_existed);
-        return Err(error);
+    // Resolve and validate local configs before asking to replace their directory.
+    let creation = if let Some(config) = requested
+        .as_deref()
+        .filter(|value| is_preset_config_reference(value))
+    {
+        CreationSource::Config(load_config(config)?)
+    } else {
+        match choose_starter(requested.as_deref(), &registered_catalog()?)? {
+            StarterChoice::Official(generator) => CreationSource::Official(generator),
+            StarterChoice::Private(preset) => match (preset.repo, preset.config) {
+                (_, Some(config)) => CreationSource::Config(load_config(&config)?),
+                (Some(repo), None) => CreationSource::Repository(repo),
+                (None, None) => {
+                    return Err(PresetError::ConfigError(
+                        "Private preset has no source".to_string(),
+                    ))
+                }
+            },
+        }
+    };
+    let target_dir = match target_dir {
+        Some(target) => target,
+        None => prompt_target_dir(app_name)?,
+    };
+    let cwd = std::fs::canonicalize(std::env::current_dir()?)?;
+    let root = resolve_target(&cwd, &target_dir)?;
+    let package_manager = package_manager.unwrap_or_else(detect_package_manager);
+    let project = if root == cwd { "." } else { &target_dir };
+    if dry_run {
+        return preview_creation(&creation, &root, project, package_manager);
     }
+    if !yes {
+        confirm_target(&root)?;
+    }
+
+    match creation {
+        CreationSource::Official(generator) => {
+            let transaction = TargetTransaction::begin(&root, true)?;
+            let result = run_generator(&generator, project, &cwd, package_manager).and_then(|_| {
+                validate_target(&root)?;
+                // Some generators treat cancellation as exit 0. Do not discard
+                // the backup unless a project was actually created at the target.
+                if !root.is_dir() || is_dir_empty(&root)? {
+                    return Err(PresetError::GeneratorError(
+                        "The generator exited without creating a project at the target".to_string(),
+                    ));
+                }
+                Ok(())
+            });
+            if let Err(error) = result {
+                return Err(transaction.fail(error));
+            }
+            transaction.commit();
+        }
+        source => {
+            // Complete downloads and transformations before touching old files.
+            let staged = staging_directory(&root)?;
+            let output = staged.path().join("project");
+            match source {
+                CreationSource::Repository(repo) => {
+                    create_repository_preset(&repo, &output, &target_dir, &root)?
+                }
+                CreationSource::Config(plan) => {
+                    create_config_preset(&plan, &output, &target_dir, &root)?
+                }
+                CreationSource::Official(_) => unreachable!(),
+            }
+            let transaction = TargetTransaction::begin(&root, false)?;
+            if let Err(error) = transaction.publish(&output) {
+                return Err(transaction.fail(error));
+            }
+            transaction.commit();
+            println!(
+                "{}",
+                style(messages().created_successfully.as_str()).green()
+            );
+        }
+    }
+    Ok(())
+}
+
+fn load_config(reference: &str) -> Result<PresetPlan> {
+    if reference.starts_with("http://") {
+        eprintln!(
+            "{}",
+            style(messages().http_config_warning.as_str()).yellow()
+        );
+    }
+    let progress = spinner(messages().loading_preset_config.as_str());
+    let result = load_preset_plan(reference);
+    finish_creation_progress(progress, &result);
+    let plan = result?;
+    if plan.source.repo.starts_with("http://") && !reference.starts_with("http://") {
+        eprintln!(
+            "{}",
+            style(messages().http_source_warning.as_str()).yellow()
+        );
+    }
+    Ok(plan)
+}
+
+fn resolve_target(cwd: &Path, target: &str) -> Result<PathBuf> {
+    let requested = cwd.join(target);
+    validate_target(&requested)?;
+    let mut missing = Vec::new();
+    let mut ancestor = requested.as_path();
+    while !ancestor.exists() {
+        missing.push(ancestor.file_name().ok_or_else(|| {
+            PresetError::ValidationError("Invalid project target path".to_string())
+        })?);
+        ancestor = ancestor.parent().ok_or_else(|| {
+            PresetError::ValidationError("Invalid project target path".to_string())
+        })?;
+    }
+    let mut root = std::fs::canonicalize(ancestor)?;
+    for name in missing.into_iter().rev() {
+        root.push(name);
+    }
+    validate_target(&root)?;
+    if cwd != root && cwd.starts_with(&root) {
+        return Err(PresetError::ValidationError(
+            "The project target cannot contain the current working directory".to_string(),
+        ));
+    }
+    Ok(root)
+}
+
+fn preview_creation(
+    source: &CreationSource,
+    root: &Path,
+    project: &str,
+    manager: PackageManager,
+) -> Result<()> {
+    let private = !matches!(source, CreationSource::Official(_));
+    let source = match source {
+        CreationSource::Official(generator) => json!({
+            "type": "official",
+            "id": generator.id,
+            "command": { "program": manager.as_str(), "args": generator_arguments(generator, project, manager)? }
+        }),
+        CreationSource::Repository(repo) => json!({"type": "repository", "repo": repo}),
+        CreationSource::Config(plan) => json!({"type": "config", "plan": plan}),
+    };
+    println!(
+        "{}",
+        serde_json::to_string_pretty(&json!({
+            "target": root,
+            "targetExists": root.exists(),
+            "replacesExistingFiles": root.exists() && !is_dir_empty(root)?,
+            "source": source,
+            "cleanup": if private { PRIVATE_PRESET_METADATA } else { &[][..] },
+            "resetPackageName": private
+        }))?
+    );
     Ok(())
 }
 
@@ -60,7 +225,7 @@ fn load_bound_private_catalog(path: Result<Option<PathBuf>>) -> Option<PrivateCa
     match result {
         Ok(catalog) => catalog,
         Err(error) => {
-            println!(
+            eprintln!(
                 "\n{}",
                 style(format_message(
                     language.bound_presets_warning.as_str(),
@@ -68,22 +233,10 @@ fn load_bound_private_catalog(path: Result<Option<PathBuf>>) -> Option<PrivateCa
                 ))
                 .yellow()
             );
-            println!("{}\n", style(language.clear_saved_path.as_str()).dim());
+            eprintln!("{}\n", style(language.clear_saved_path.as_str()).dim());
             None
         }
     }
-}
-
-fn create_direct_config(config: &str, target_dir: &str) -> Result<()> {
-    let cwd = std::env::current_dir()?;
-    let root = cwd.join(target_dir);
-    let target_existed = prepare_target(&root, false)?;
-    let result = create_config_preset(config, &root, target_dir);
-    if let Err(error) = result {
-        cleanup_failed_target(&root, target_existed);
-        return Err(error);
-    }
-    Ok(())
 }
 
 fn resolve_requested_source(
@@ -96,7 +249,7 @@ fn resolve_requested_source(
         )),
         (Some(source), None) => Ok(Some(source)),
         (None, Some(template)) => {
-            println!(
+            eprintln!(
                 "\n{}",
                 style(messages().template_deprecated.as_str()).yellow()
             );
@@ -156,14 +309,10 @@ fn choose_starter(requested: Option<&str>, catalog: &[TechStack]) -> Result<Star
         {
             return Ok(choice.clone());
         }
-        println!(
-            "\n{}",
-            style(format_message(
-                messages().unknown_preset.as_str(),
-                &[("source", name)],
-            ))
-            .yellow()
-        );
+        return Err(PresetError::ValidationError(format_message(
+            messages().unknown_preset.as_str(),
+            &[("source", name)],
+        )));
     }
     if catalog.is_empty() {
         return Err(PresetError::ConfigError(
@@ -225,10 +374,10 @@ fn with_description(name: String, description: &str) -> String {
     }
 }
 
-fn prepare_target(root: &Path, delegated: bool) -> Result<bool> {
-    let existed = root.exists();
-    if existed && !is_dir_empty(root)? {
-        let target = if root == std::env::current_dir()? {
+fn confirm_target(root: &Path) -> Result<()> {
+    validate_target(root)?;
+    if root.exists() && !is_dir_empty(root)? {
+        let target = if root == std::fs::canonicalize(std::env::current_dir()?)? {
             messages().current_directory.as_str().to_string()
         } else {
             format_message(
@@ -254,91 +403,73 @@ fn prepare_target(root: &Path, delegated: bool) -> Result<bool> {
         }
     }
 
-    if delegated && root != std::env::current_dir()? {
-        if root.exists() {
-            std::fs::remove_dir_all(root)?;
-        }
-    } else {
-        if root.exists() {
-            empty_dir(root)?;
-        } else {
-            std::fs::create_dir_all(root)?;
-        }
-    }
-    Ok(existed)
+    Ok(())
 }
 
-fn create_private_preset(preset: &PrivatePreset, root: &Path, target_dir: &str) -> Result<()> {
-    if let Some(config) = &preset.config {
-        return create_config_preset(config, root, target_dir);
-    }
-    let repo = preset
-        .repo
-        .as_deref()
-        .ok_or_else(|| PresetError::ConfigError(format!("Preset {} has no source", preset.name)))?;
+fn create_repository_preset(
+    repo: &str,
+    root: &Path,
+    target_dir: &str,
+    destination: &Path,
+) -> Result<()> {
     println!(
         "\n{}",
         format_message(
             messages().creating_project.as_str(),
-            &[("path", &root.display().to_string())],
+            &[("path", &destination.display().to_string())]
         )
     );
-    let download_spinner = spinner(messages().downloading_private_preset.as_str());
+    let progress = spinner(messages().downloading_private_preset.as_str());
     let result = download_repo(repo, root)
         .and_then(|_| clean_private_preset(root))
-        .and_then(|_| reset_package_name(root, target_dir));
-    if result.is_ok() {
-        download_spinner.finish_with_message(
-            style(messages().created_successfully.as_str())
-                .green()
-                .to_string(),
-        );
-    } else {
-        download_spinner
-            .abandon_with_message(style(messages().creation_failed.as_str()).red().to_string());
-    }
+        .and_then(|_| {
+            reset_package_name(
+                root,
+                destination
+                    .file_name()
+                    .and_then(|name| name.to_str())
+                    .unwrap_or(target_dir),
+            )
+        });
+    finish_creation_progress(progress, &result);
     result
 }
 
-fn create_config_preset(config: &str, root: &Path, target_dir: &str) -> Result<()> {
+fn create_config_preset(
+    plan: &PresetPlan,
+    root: &Path,
+    target_dir: &str,
+    destination: &Path,
+) -> Result<()> {
     println!(
         "\n{}",
         format_message(
             messages().creating_project.as_str(),
-            &[("path", &root.display().to_string())],
+            &[("path", &destination.display().to_string())]
         )
     );
-    if config.starts_with("http://") {
-        println!(
-            "{}",
-            style(messages().http_config_warning.as_str()).yellow()
-        );
-    }
-    let creation_spinner = spinner(messages().loading_preset_config.as_str());
-    let result = load_preset_plan(config)
-        .and_then(|plan| {
-            if plan.source.repo.starts_with("http://") && !config.starts_with("http://") {
-                println!(
-                    "{}",
-                    style(messages().http_source_warning.as_str()).yellow()
-                );
-            }
-            creation_spinner.set_message(messages().applying_preset_config.as_str());
-            materialize_preset_plan(&plan, root)
-        })
+    let progress = spinner(messages().applying_preset_config.as_str());
+    let result = materialize_preset_plan(plan, root)
         .and_then(|_| clean_private_preset(root))
-        .and_then(|_| reset_package_name(root, target_dir));
-    if result.is_ok() {
-        creation_spinner.finish_with_message(
-            style(messages().created_successfully.as_str())
-                .green()
-                .to_string(),
-        );
-    } else {
-        creation_spinner
-            .abandon_with_message(style(messages().creation_failed.as_str()).red().to_string());
-    }
+        .and_then(|_| {
+            reset_package_name(
+                root,
+                destination
+                    .file_name()
+                    .and_then(|name| name.to_str())
+                    .unwrap_or(target_dir),
+            )
+        });
+    finish_creation_progress(progress, &result);
     result
+}
+
+fn finish_creation_progress<T>(progress: indicatif::ProgressBar, result: &Result<T>) {
+    if result.is_ok() {
+        progress.finish_and_clear();
+    } else {
+        progress.abandon_with_message(style(messages().creation_failed.as_str()).red().to_string());
+    }
 }
 
 fn clean_private_preset(root: &Path) -> Result<()> {
@@ -355,6 +486,11 @@ fn clean_private_preset(root: &Path) -> Result<()> {
 
 fn reset_package_name(root: &Path, target_dir: &str) -> Result<()> {
     let path = root.join("package.json");
+    if std::fs::symlink_metadata(&path).is_ok_and(|metadata| metadata.file_type().is_symlink()) {
+        return Err(PresetError::ValidationError(
+            "Private preset package.json cannot be a symbolic link".to_string(),
+        ));
+    }
     if !path.exists() {
         return Ok(());
     }
@@ -394,17 +530,6 @@ fn reset_package_name(root: &Path, target_dir: &str) -> Result<()> {
     object.insert("name".to_string(), Value::String(package_name));
     std::fs::write(path, serde_json::to_string_pretty(&package)? + "\n")?;
     Ok(())
-}
-
-fn cleanup_failed_target(root: &Path, target_existed: bool) {
-    if !root.exists() {
-        return;
-    }
-    if target_existed {
-        let _ = empty_dir(root);
-    } else {
-        let _ = std::fs::remove_dir_all(root);
-    }
 }
 
 fn colorize(value: &str, hex: &str) -> String {

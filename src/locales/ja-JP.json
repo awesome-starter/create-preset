@@ -13,7 +13,7 @@
   "templateDeprecated": "--template は非推奨です。--from を使用してください。",
   "projectName": "プロジェクト名",
   "projectNameEmpty": "プロジェクト名は空にできません",
-  "unknownPreset": "プリセット「{source}」が見つかりません。以下から選択してください:",
+  "unknownPreset": "プリセット「{source}」が見つかりません。`preset --list` で利用可能な ID を確認してください。",
   "noPresets": "利用できるプリセットがありません",
   "selectTechStack": "技術スタックを選択してください",
   "selectPreset": "プリセットを選択してください",

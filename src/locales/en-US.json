@@ -13,7 +13,7 @@
   "templateDeprecated": "--template is deprecated; use --from instead.",
   "projectName": "Project name",
   "projectNameEmpty": "Project name cannot be empty",
-  "unknownPreset": "\"{source}\" is not a known preset. Please choose from below:",
+  "unknownPreset": "\"{source}\" is not a known preset. Run `preset --list` to see available IDs.",
   "noPresets": "No presets are currently available",
   "selectTechStack": "Select a tech stack",
   "selectPreset": "Select a preset",
