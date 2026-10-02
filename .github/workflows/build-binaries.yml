@@ -9,7 +9,11 @@ on:
 jobs:
   validate:
     name: Validate release source
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -20,10 +24,18 @@ jobs:
           components: rustfmt, clippy
       - name: Check formatting
         run: cargo fmt -- --check
+      - name: Setup Node.js for CLI regressions
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
       - name: Run Clippy
         run: cargo clippy --all-targets -- -D warnings
       - name: Run tests
         run: cargo test --all-targets
+      - name: Build npm host package
+        run: npm run build
+      - name: Verify packed package and installed commands
+        run: npm run test:package
 
   build:
     name: Build ${{ matrix.os }}-${{ matrix.arch }}
@@ -123,23 +135,14 @@ jobs:
         with:
           path: binaries
 
-      - name: Organize binaries
-        run: |
-          mkdir -p dist/binaries
-          find binaries -type f -exec cp {} dist/binaries/ \;
-          ls -lh dist/binaries/
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Copy files for npm
-        run: |
-          cp -r bin schema dist/
-          cp package.json dist/
-          cp README.md LICENSE dist/
+      - name: Prepare npm distribution and restore executable permissions
+        run: node scripts/prepare-release.js
 
       - name: Verify npm package
         working-directory: dist
