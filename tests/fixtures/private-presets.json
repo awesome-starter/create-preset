@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "techs": {
+    "python": {
+      "label": "Python",
+      "color": "#3776ab"
+    }
+  },
+  "presets": [
+    {
+      "tech": "python",
+      "name": "python-service",
+      "desc": "Private preset fixture",
+      "repo": "https://example.com/python-service.git"
+    }
+  ]
+}

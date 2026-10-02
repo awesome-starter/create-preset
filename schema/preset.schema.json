@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://preset.js.org/schema/preset.schema.json",
+  "title": "Create Preset configuration",
+  "description": "A declarative starter plan consumed by Create Preset.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "source"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "version": {
+      "const": 1
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "exclude": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "$ref": "#/$defs/relativePath"
+      },
+      "default": []
+    },
+    "write": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "$ref": "#/$defs/write"
+      },
+      "default": []
+    },
+    "replace": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "$ref": "#/$defs/replacement"
+      },
+      "default": []
+    },
+    "json": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "$ref": "#/$defs/jsonMerge"
+      },
+      "default": []
+    },
+    "packageJson": {
+      "$ref": "#/$defs/packageJson"
+    }
+  },
+  "$defs": {
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo"],
+      "properties": {
+        "repo": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "directory": {
+          "type": "string",
+          "maxLength": 512,
+          "default": ""
+        }
+      }
+    },
+    "write": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "lines"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "lines": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "type": "string",
+            "maxLength": 10000,
+            "pattern": "^[^\\r\\n]*$"
+          }
+        }
+      }
+    },
+    "replacement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "from", "to"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "from": {
+          "type": "string",
+          "minLength": 1
+        },
+        "to": {
+          "type": "string"
+        }
+      }
+    },
+    "jsonMerge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "value"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "value": {
+          "type": "object"
+        }
+      }
+    },
+    "packageJson": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "resolveWorkspace": {
+          "type": "boolean",
+          "default": false
+        },
+        "workspaceVersions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "default": {}
+        }
+      },
+      "default": {}
+    }
+  }
+}
