@@ -1,22 +1,32 @@
-# Private Presets
+# Private presets
 
-Private presets let you create projects from repositories or JSON configs you
-control. Bind one JSON file globally:
+Private presets add repository starters or `preset.json` configs to the
+interactive catalog. A manifest is validated before the path is saved.
+
+## Bind a manifest
 
 ```bash
 preset config set /path/to/private-presets.json
 ```
 
-The file is validated before it is saved. It must exist, contain at least one
-preset, and use unique preset names and sources.
+The path is stored in the user runtime config. Inspect or clear it with:
 
-If the bound file is later moved, deleted, or becomes invalid, `preset init`
-prints a warning and continues with the built-in generators. Use
-`preset config remove` to clear the stale path.
+```bash
+preset config get
+preset config remove
+```
 
-## Simple Format
+The manifest must be a JSON file with at least one preset. Preset names and
+sources must be unique, and every preset must define exactly one of `repo` or
+`config`.
 
-The array format is the smallest configuration:
+If the saved file is missing or invalid during a later `preset init`, a warning
+is printed and built-in generators remain available. Run `preset config remove`
+to clear the stale path.
+
+## Simple format
+
+Use an array when each entry points directly to a repository or config:
 
 ```json
 [
@@ -30,27 +40,7 @@ The array format is the smallest configuration:
     "tech": "ios",
     "name": "company-ios",
     "repo": "https://github.com/company/ios-preset.git#main"
-  }
-]
-```
-
-Every `tech` value automatically becomes a selectable technology stack. It does
-not need to be registered separately. Unknown identifiers are converted to a
-display label, for example `company_backend` becomes `Company Backend`.
-
-Private presets are listed before built-in official generators in the same
-technology stack.
-
-Each preset defines exactly one source:
-
-- `repo` clones a repository directly with the existing lightweight behavior.
-- `config` loads a local or HTTP(S) `preset.json` through the Create Preset
-  runtime.
-
-Relative config paths are resolved from the JSON manifest directory:
-
-```json
-[
+  },
   {
     "tech": "react",
     "name": "company-docs",
@@ -60,13 +50,20 @@ Relative config paths are resolved from the JSON manifest directory:
 ]
 ```
 
-See [Preset configs](preset-configs.md) for the JSON contract and security
-boundary.
+Relative `config` paths are resolved from the manifest directory. Repository
+sources may use `https://`, `http://`, `git@`, or `file://`; append `#branch`
+to select a branch. A remote `config` must be an HTTP(S) URL ending in
+`.json`.
 
-## Manifest Format
+Every `tech` value becomes a selectable technology stack. No separate
+registration is required. Unknown IDs are converted to display labels, so
+`company_backend` becomes `Company Backend`. Private entries appear before
+built-in official generators in the same stack.
 
-Use the manifest format when a custom technology stack needs a specific label
-or brand color:
+## Versioned manifest
+
+Use the manifest format when a custom stack needs a specific label or brand
+color:
 
 ```json
 {
@@ -92,31 +89,28 @@ or brand color:
 }
 ```
 
-Colors use six-digit hexadecimal values. Invalid or missing colors fall back to
-the terminal default without blocking project creation.
+`version` must be `1`. Colors use six-digit hexadecimal values. An invalid or
+missing color falls back to the terminal default without blocking project
+creation.
 
-## Repository Rules
+## Create a project
 
-Supported repository URLs start with `https://`, `http://`, or `git@`. Append a
-branch with `#branch-name` when needed:
-
-```json
-{
-  "repo": "https://github.com/company/project-preset.git#develop"
-}
-```
-
-When a project is created, `create-preset` removes only the cloned `.git`
-directory. Files owned by the preset, including lockfiles, `LICENSE`, and
-`.github` workflows, are preserved. If a `package.json` exists, only its `name`
-is updated to match the target directory.
-
-## Commands
+Start the interactive flow after binding the manifest:
 
 ```bash
-preset config get
-preset config set /path/to/private-presets.json
-preset config remove
-
-preset init my-project --from company-fastapi
+preset init company-service
 ```
+
+The private preset name can also be selected directly:
+
+```bash
+preset init company-service --from company-fastapi
+```
+
+For a repository preset, Create Preset clones the source, removes the cloned
+`.git` directory, and updates `package.json.name` when `package.json` exists.
+Other files, including lockfiles, `LICENSE`, and `.github` workflows, are
+preserved.
+
+For a `config` entry, the referenced plan controls the checkout and file
+transformations. See [Preset configs](preset-configs.md).

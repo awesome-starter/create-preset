@@ -1,23 +1,51 @@
-# Preset Configs
+# Preset configs
 
-A project can distribute a maintained starter without building another CLI.
-It hosts a declarative `preset.json`; Create Preset owns user interaction,
-repository downloads, file operations, dependency resolution, and rollback.
+A `preset.json` describes how to turn a maintained repository starter into a
+new project. Create Preset performs the checkout, file operations, dependency
+resolution, and rollback; no second CLI is required.
 
-Create Preset does not maintain a central URL registry. Each project publishes
-and documents its own config URL:
+Publish the file at a URL ending in `.json`:
 
 ```bash
-preset init my-app --from https://example.com/preset.json
+preset init my-docs --from https://example.com/preset.json
 ```
 
 Local files use the same contract:
 
 ```bash
-preset init my-app --from ./preset.json
+preset init my-docs --from ./preset.json
 ```
 
-## Minimal Config
+## Preview and replacement
+
+Preview the validated plan before creating a project:
+
+```bash
+preset init my-docs --from ./preset.json --dry-run
+```
+
+The JSON output includes the target directory, whether existing files would be
+replaced, the repository source, all configured operations, and the final
+metadata cleanup. Remote configs are fetched for validation, but previewing
+never clones the source, resolves package versions, or changes files.
+
+Config files are loaded before any target changes, so this also works:
+
+```bash
+preset init . --from ./preset.json
+```
+
+Generation and transformations finish in a temporary directory first. If they
+fail, existing target files stay intact. When replacing files, a backup remains
+available until publication completes. Normal errors restore originals; if
+restoration itself fails, the error reports where the backup was retained.
+This is filesystem rollback for the target directory, not recovery from a
+forced process kill or a system crash.
+
+Use `--yes` to explicitly allow replacing target files in scripts. Without it,
+replacing a nonempty directory still requires confirmation.
+
+## Minimal config
 
 Add `$schema` for editor completion and validation:
 
@@ -32,17 +60,24 @@ Add `$schema` for editor completion and validation:
 }
 ```
 
+`version` must be `1`. `source.repo` is required. `source.directory` selects a
+subdirectory inside the cloned repository and defaults to the repository root.
+
 ## Operations
 
-- `exclude` removes repository paths before they reach the new project.
-- `write` creates or replaces text files from an array of lines.
-- `replace` makes exact text replacements in existing UTF-8 files.
-- `json` applies merge patches to JSON files. A `null` value removes a key.
-- `packageJson.resolveWorkspace` replaces `workspace:` dependencies with
-  published npm versions. The lookup uses the user's npm configuration, so
-  `.npmrc` scope registries and private registries are respected.
+After selecting the source directory, Create Preset copies its files with
+`exclude` applied, then runs the remaining operations:
+
+- `exclude` skips repository paths before copying.
+- `write` creates or replaces a UTF-8 text file from an array of lines.
+- `replace` replaces every exact text match in an existing UTF-8 file.
+- `json` applies a recursive merge patch to an existing JSON object. A `null`
+  value removes a key.
+- `packageJson.resolveWorkspace` replaces `workspace:` dependencies in
+  `dependencies`, `devDependencies`, `peerDependencies`, and
+  `optionalDependencies` with published npm versions.
 - `packageJson.workspaceVersions` pins selected workspace dependencies to an
-  explicit version or range instead of querying the latest version.
+  explicit version or range and skips the registry lookup for those entries.
 
 ```json
 {
@@ -91,29 +126,40 @@ Add `$schema` for editor completion and validation:
 }
 ```
 
-When no pin is provided, Create Preset runs `npm view <package> version` and
-inherits the npm registry settings already configured by the user or CI. For
-example, an `.npmrc` can route only a company scope to a private registry:
+When no pin is provided, the runtime invokes `npm view <package> version`.
+The lookup inherits the npm registry settings from the environment, including
+`.npmrc` scope registries and private registries:
 
 ```ini
 registry=https://registry.npmjs.org/
 @company:registry=https://npm.company.example.com/
 ```
 
-## Security Boundary
+`resolveWorkspace` requires a `package.json` in the generated project. A
+`workspace:*` dependency becomes `^<published-version>`; `workspace:~` becomes
+`~<published-version>`.
 
-Remote configs should use HTTPS and are limited to 1 MiB. HTTP is accepted for
-trusted private networks with a visible warning. A remotely loaded config may
-only clone an HTTP(S) repository, never a local file or SSH URL. The runtime rejects unknown fields,
-unsupported versions, unsafe relative paths, symlinks in starter sources, and
-more than 1,000 operations. It never evaluates JavaScript or invokes a shell
-from config values.
+## Security and limits
 
-The schema is published with both the npm package and the website. Runtime
-validation remains authoritative because editors do not always apply schemas.
+Use HTTPS for public config URLs and repository sources. HTTP is accepted for
+trusted private networks and prints a warning. A remote config may reference
+only an HTTP(S) repository; local paths, `file://`, and SSH URLs are rejected
+in that case.
+
+The runtime enforces these boundaries:
+
+- remote and local config files are limited to 1 MiB;
+- config operation counts are limited to 1,000;
+- unknown fields and unsupported versions are rejected;
+- paths must stay relative to the generated project;
+- source symlinks are rejected;
+- config values never evaluate JavaScript or invoke a shell.
+
+The published schema supports editor tooling. Runtime validation remains
+authoritative when a schema-aware editor is unavailable or incomplete.
 
 ## Showcase
 
 Blackwork keeps its documentation starter in the Blackwork monorepo. Its
-`preset.json` selects `apps/docs-starter`, excludes workspace-only files,
-rewrites package metadata, and resolves published Blackwork package versions.
+config selects `apps/docs-starter`, excludes workspace-only files, rewrites
+package metadata, and resolves published Blackwork package versions.

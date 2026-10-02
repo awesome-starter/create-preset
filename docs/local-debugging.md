@@ -1,31 +1,32 @@
-# Local Debugging
+# Local verification
 
-These commands test the Rust `preset` binary without modifying the repository.
-Use a temporary directory for generated projects.
+These commands exercise the Rust `preset` binary without changing the
+repository. Run project creation in a temporary directory so generated files
+stay outside the checkout.
 
 ## Prerequisites
 
-Official generators need Node.js and a package manager. Git is only needed for
-private Git presets.
-
-Use the package manager already installed on your machine. There is no need to
-force pnpm 11 for normal testing; the generator command is delegated to the
-package manager detected from `npm_config_user_agent`.
+Official generators require Node.js and one supported package manager. Git is
+required for repository-backed private presets and preset configs.
 
 ```bash
 node --version
-pnpm --version
+npm --version
 git --version
 ```
 
-When a reproducible pnpm 11 run is required, invoke it explicitly with Corepack:
+Create Preset detects the package manager from `npm_config_user_agent`. Pass
+`--package-manager npm|yarn|pnpm|bun` when a test must use a specific manager.
+Check the selected manager separately when needed, for example
+`pnpm --version`.
+For a reproducible pnpm 11 run, invoke Corepack explicitly:
 
 ```bash
 corepack pnpm@11 --version
 corepack pnpm@11 create vite
 ```
 
-## Build The Binary
+## Build the binary
 
 Run from the repository root:
 
@@ -39,7 +40,22 @@ The binary is:
 target/release/preset
 ```
 
-## Interactive Test
+## Catalog and preview
+
+```bash
+target/release/preset --list
+target/release/preset init demo --from vite --dry-run
+target/release/preset init demo --from ./preset.json --dry-run
+```
+
+`--dry-run` prints the creation plan as JSON and does not run external commands
+or modify the target. Remote config URLs are fetched and validated. Unknown
+`--from` values fail immediately instead of starting an interactive fallback.
+
+`--yes` explicitly allows replacing existing target files without the overwrite
+prompt. It does not answer prompts owned by an official generator.
+
+## Interactive flow
 
 ```bash
 PRESET_ROOT="$(git rev-parse --show-toplevel)"
@@ -47,11 +63,10 @@ PRESET_BIN="$PRESET_ROOT/target/release/preset"
 
 mkdir -p /tmp/create-preset-e2e
 cd /tmp/create-preset-e2e
-
 "$PRESET_BIN"
 ```
 
-Expected flow:
+The initial prompts are:
 
 ```text
 Project name
@@ -59,10 +74,10 @@ Select a tech stack
 Select a preset
 ```
 
-## Locale Test
+## Locale
 
-Create Preset detects the system locale. Use `PRESET_LANG` to test its four
-built-in translations without changing system settings:
+Create Preset detects the system locale. Set `PRESET_LANG` to test the bundled
+translations without changing system settings:
 
 ```bash
 PRESET_LANG=en-US "$PRESET_BIN"
@@ -71,18 +86,18 @@ PRESET_LANG=zh-HK "$PRESET_BIN"
 PRESET_LANG=ja-JP "$PRESET_BIN"
 ```
 
-`zh-CN` and `zh-SG` use Simplified Chinese. `zh-HK`, `zh-TW`, and `zh-MO`
-use Traditional Chinese. Unsupported locales fall back to English. Once an
-official generator starts, it owns its own prompts and locale detection.
+`zh-CN` and `zh-SG` use Simplified Chinese. `zh-HK`, `zh-TW`, and `zh-MO` use
+Traditional Chinese. Unsupported locales fall back to English. Once an
+official generator starts, that CLI owns its prompts and locale detection.
 
-Official technology stack colors are built into the CLI. Custom technology
-stacks come from the private preset configuration. Private presets appear before
-official generators.
+Official technology stack colors are built into the CLI. Custom stacks and
+private entries come from the private preset configuration. Private entries
+appear before official generators in the same stack.
 
-## Direct Generator Tests
+## Direct generator tests
 
-The `--from` value can select an official generator directly. Use
-`--package-manager` to make global CLI tests deterministic:
+The `--from` value can select an official generator directly. Set the package
+manager explicitly to make the command reproducible:
 
 ```bash
 "$PRESET_BIN" init test-vue --from vue --package-manager pnpm
@@ -94,7 +109,7 @@ The `--from` value can select an official generator directly. Use
 "$PRESET_BIN" init test-svelte --from svelte --package-manager pnpm
 ```
 
-The selected official CLI owns all following prompts and output. Remove test
+The selected official CLI owns all following prompts and output. Remove the
 projects after checking them:
 
 ```bash
@@ -107,28 +122,27 @@ rm -rf /tmp/create-preset-e2e/test-expo
 rm -rf /tmp/create-preset-e2e/test-svelte
 ```
 
-## Preset Config Test
+## Preset config test
 
-Preset authors can bypass the catalog while developing a local JSON file:
+Develop a local config without using the catalog:
 
 ```bash
 "$PRESET_BIN" init test-preset \
   --from ../another-project/presets/docs-starter.json
 ```
 
-The config declares a creation plan. Create Preset performs the repository
-checkout, selects any monorepo subdirectory, filters and writes files, applies
-text and JSON transformations, resolves `workspace:*` package versions, and
-resets the package name.
-
-Test the public delivery path with the project's HTTPS URL:
+The config can select a monorepo subdirectory, exclude files, write files,
+apply text and JSON transformations, resolve `workspace:*` dependencies, and
+reset the package name. Test the public delivery path with an HTTPS URL:
 
 ```bash
 "$PRESET_BIN" init test-preset \
   --from https://example.com/preset.json
 ```
 
-## Private Preset Test
+See [Preset configs](preset-configs.md) for the contract and limits.
+
+## Private preset test
 
 Create a local JSON file outside the repository, for example
 `/tmp/private-presets.json`:
@@ -151,32 +165,31 @@ Bind and inspect the local configuration:
 "$PRESET_BIN" config get
 ```
 
-Run the interactive flow and select Vue. `my-private-vue` should appear before
-`Official Vue Starter` and `Nuxt`:
+Run the interactive flow and select Vue. `my-private-vue` appears before the
+built-in Vue entries:
 
 ```bash
 "$PRESET_BIN" init private-demo
 ```
 
-Change `tech` to an arbitrary value such as `python` to verify that custom
-technology stacks appear without a separate `config --tech` file.
-
-Remove the local binding when finished:
+Change `tech` to a custom value such as `python` to verify that a new
+technology stack appears without a separate tech config. Remove the binding
+when finished:
 
 ```bash
 "$PRESET_BIN" config remove
 ```
 
-## Legacy Template Message
+## Legacy template message
+
+The legacy option prints a migration notice and resolves the same IDs as
+`--from`. Old IDs that are no longer registered now fail with an error:
 
 ```bash
 "$PRESET_BIN" init old-demo --template vue3-ts-vite
 ```
 
-The CLI should print the `--template` deprecation notice and then show the
-current official/private choices instead of silently switching.
-
-## npm Wrapper Test
+## npm wrapper test
 
 From the repository root:
 
@@ -185,17 +198,30 @@ npm run build
 node bin/preset.js --version
 node bin/preset.js --help
 npm pack --dry-run --json --ignore-scripts
+npm run test:package
 ```
 
 The package dry run should include `bin/preset.js`, the platform binary,
 `package.json`, `README.md`, and `LICENSE`.
 
-## Automated Checks
+The package smoke check simulates downloaded artifacts with `644` permissions,
+prepares the release layout, creates and installs a real tarball in a temporary
+consumer, and runs both installed commands. It verifies the host binary only;
+the other artifact names are fixtures for checking package completeness.
+
+## Automated checks
 
 ```bash
 cargo fmt -- --check
-cargo test
+cargo test --all-targets
 cargo clippy --all-targets -- -D warnings
 cargo build --release
 git diff --check
 ```
+
+CLI regressions use local Git fixtures and package-manager shims, including
+`.cmd` shims on Windows. They cover current-directory creation, original-file
+restoration, failed transformations, all four package managers, workspace
+resolution, catalog listing, and preview without side effects. CI runs these
+checks and the npm package smoke on Linux, macOS, and Windows. Live upstream
+generator prompts and cross-compiled binaries still need separate acceptance.
