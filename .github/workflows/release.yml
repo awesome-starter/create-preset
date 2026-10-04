@@ -5,6 +5,15 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Serialize main releases so two merges cannot choose the same version.
+concurrency:
+  group: rust-ci-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   test:
@@ -26,7 +35,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
+
+      - name: Verify release automation
+        run: |
+          npm ci --ignore-scripts
+          npm run test:release
+          node scripts/release.mjs check
 
       - name: Check formatting
         run: cargo fmt -- --check
@@ -42,3 +57,74 @@ jobs:
 
       - name: Verify packed package and installed commands
         run: npm run test:package
+
+  prepare-release:
+    name: Plan automatic version
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      should_release: ${{ steps.plan.outputs.should_release }}
+      version: ${{ steps.plan.outputs.version }}
+      ref: ${{ steps.commit.outputs.ref }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci --ignore-scripts
+      - name: Ignore superseded main runs
+        id: current
+        shell: bash
+        run: |
+          git fetch origin main
+          if [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Analyze commits and synchronize release manifests
+        id: plan
+        if: steps.current.outputs.current == 'true'
+        run: node scripts/release.mjs prepare
+      - name: Check npm publishing credentials
+        if: steps.plan.outputs.should_release == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          test -n "$NODE_AUTH_TOKEN" || { echo 'Set NPM_TOKEN to a current granular npm token with publish permission'; exit 1; }
+          npm whoami
+      - name: Commit synchronized release metadata
+        id: commit
+        if: steps.plan.outputs.should_release == 'true'
+        env:
+          RELEASE_VERSION: ${{ steps.plan.outputs.version }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add package.json package-lock.json Cargo.toml Cargo.lock CHANGELOG.md
+          git diff --cached --quiet || git commit -m "release: v$RELEASE_VERSION [skip ci]"
+          git push origin HEAD:main
+          echo "ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Save release notes
+        if: steps.plan.outputs.should_release == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: release-notes.md
+
+  publish:
+    name: Build and publish automatic release
+    needs: prepare-release
+    if: needs.prepare-release.outputs.should_release == 'true'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/build-binaries.yml
+    with:
+      source-ref: ${{ needs.prepare-release.outputs.ref }}
+      release-version: ${{ needs.prepare-release.outputs.version }}
+      publish: true
+    secrets: inherit
