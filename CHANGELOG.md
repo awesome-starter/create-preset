@@ -1,5 +1,7 @@
 ## Unreleased
 
+## [1.0.0](https://github.com/awesome-starter/create-preset/releases/tag/v1.0.0) (2026-10-04)
+
 - Breaking: delegate project creation to official CLI generators and prioritize private presets.
 - Breaking: remove the `proxy` command and private preset `mirror` field; package manager registry and repository access are now user-managed.
 - Breaking: remove the `i`, `c`, and `u` command aliases; use `init`, `config`, and `upgrade` explicitly.
@@ -18,6 +20,26 @@
 - Add the official SvelteKit generator through the `sv` CLI.
 - Add a published JSON Schema and strict runtime validation without executing third-party configuration code.
 - Add the Blackwork docs starter as the first showcase without a central URL registry or standalone project CLI.
+
+<!-- release-notes:commits -->
+
+### Features
+
+* add declarative JSON presets ([33e068c](https://github.com/awesome-starter/create-preset/commit/33e068c015193561b989b22832ec9c81a29bb3cb))
+* add recoverable preset creation and preview ([2894da1](https://github.com/awesome-starter/create-preset/commit/2894da1f41cb0962e18b6a2b62b3aa5e4f849325))
+* delegate project creation to official generators ([5f71584](https://github.com/awesome-starter/create-preset/commit/5f715844d695d443cf3d2abfa42e6233df8ef3c0))
+* expand official generator catalog ([254ed56](https://github.com/awesome-starter/create-preset/commit/254ed5611c73bbf3a374c111a0222eda2b09fa84))
+* group official generators by framework ([6144666](https://github.com/awesome-starter/create-preset/commit/6144666de0bb1c115a12bc04afeb241f5994dc69))
+* localize the interactive CLI ([622029b](https://github.com/awesome-starter/create-preset/commit/622029ba8e4ee3e698cab4ded733ba9e029a1c34))
+* migrate create-preset to Rust CLI ([498c9dd](https://github.com/awesome-starter/create-preset/commit/498c9ddf60e3debac7ad40f4e3d2cc5cac189f66))
+* support pinned workspace versions ([197b0a8](https://github.com/awesome-starter/create-preset/commit/197b0a83176bda8101bac80030505f2a46071b48))
+
+### Bug Fixes
+
+* preserve release permissions and validate npm packages ([d4dda9a](https://github.com/awesome-starter/create-preset/commit/d4dda9aca5698295c09bbe954e11ed1d0687022a))
+* publish npm packages with trusted GitHub Actions ([4124928](https://github.com/awesome-starter/create-preset/commit/412492811bdc1038408bb51b9925ae17b5f963e0))
+* resolve Windows package manager shims ([09392ee](https://github.com/awesome-starter/create-preset/commit/09392ee52de8497dcd96f127fb553eefe9f49482))
+* restore automatic versioning and releases ([55e70a7](https://github.com/awesome-starter/create-preset/commit/55e70a77e76232c71d6bb688b03d567ad9a35baf))
 
 ## [0.13.1](https://github.com/awesome-starter/create-preset/compare/v0.13.0...v0.13.1) (2023-03-14)
 
