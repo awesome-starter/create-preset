@@ -21,14 +21,32 @@ publishes one npm package and a GitHub Release tagged at that commit. The
 workflow calls the build directly: a tag created with `GITHUB_TOKEN` does not
 start another Actions run.
 
-## Credentials
+## Trusted publishing
 
-Set the repository Actions secret `NPM_TOKEN` to a current granular npm access
-token with write access to `create-preset` and permission to bypass 2FA for
-noninteractive publishing. CI checks authentication before committing release
-metadata or building release artifacts. Tokens expire; replace this secret when
-necessary. The old token from 2022 cannot be reused after npm's classic-token
-revocation.
+Publishing uses npm's [trusted publishing](https://docs.npmjs.com/trusted-publishers/)
+with GitHub Actions OIDC. No `NPM_TOKEN` or 2FA-bypass access token is needed.
+In the `create-preset` package's npm Settings, add a GitHub Actions trusted
+publisher with these values:
+
+| Field | Value |
+| --- | --- |
+| Organization or user | `awesome-starter` |
+| Repository | `create-preset` |
+| Workflow filename | `release.yml` |
+| Environment name | Leave empty |
+| Allowed actions | Enable direct publishing with `npm publish` |
+
+Use `release.yml` for automatic releases: npm validates the calling workflow
+when a reusable workflow performs the publish. To also publish manually pushed
+tags, add a second trusted publisher with the same values but the workflow
+filename `build-binaries.yml`. Only enter the filename, without the directory.
+
+The calling publish job and the reusable release job both grant `id-token:
+write`. Publishing runs on a GitHub-hosted Ubuntu runner using Node.js 22 and
+npm 11, meeting npm's minimum requirements of Node.js 22.14.0 and npm 11.5.1.
+OIDC authentication happens during `npm publish`; `npm whoami` cannot validate
+trusted publishing permissions. Configuration can only be fully verified by a
+real CI publish.
 
 `GITHUB_TOKEN` handles release commits, tags, and GitHub Releases with
 `contents: write`; a separate `ACCESS_TOKEN` is not required. If branch
@@ -41,8 +59,8 @@ If a release fails after version preparation, use **Re-run failed jobs** on the
 original Rust CI run. This keeps the prepared commit and version. A retry skips
 npm publishing only when that version already belongs to the exact same commit,
 then completes the GitHub Release. A conflicting published version or registry
-error stops the run. If you fix npm credentials before preparation succeeds,
-dispatch **Rust CI** on `main` to retry.
+error stops the run. If authentication fails, correct the npm trusted publisher
+configuration and rerun the failed jobs on the original Rust CI run.
 
 Dispatching **Build Binaries** builds and validates without publishing.
 An explicitly pushed `v*` tag also publishes; its version must match all
