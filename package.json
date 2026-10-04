@@ -36,7 +36,13 @@
     "build": "node scripts/build.js",
     "build:rust": "cargo build --release",
     "test": "cargo test",
-    "test:package": "node scripts/test-package.js"
+    "test:package": "node scripts/test-package.js",
+    "test:release": "node --test scripts/release.test.mjs"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@semantic-release/commit-analyzer": "13.0.1",
+    "@semantic-release/release-notes-generator": "14.1.1",
+    "conventional-changelog-conventionalcommits": "8.0.0",
+    "semver": "7.8.5"
+  }
 }
