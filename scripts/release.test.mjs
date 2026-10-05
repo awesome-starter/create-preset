@@ -28,6 +28,17 @@ test('first Rust release uses 1.0.0 and retries do not bump an unfinished releas
   await assert.rejects(nextVersion('1.0.0-beta.1', '1.0.0', []), /stable/);
 });
 
+test('website-scoped fixes, features and breaking changes do not release the CLI', async () => {
+  const website = commits(
+    'fix(website): repair navigation',
+    'perf(website): speed up search',
+    'feat(website)!: replace the site',
+    'feat(website): add a guide\n\nBREAKING CHANGE: new documentation routes',
+  );
+  assert.equal(await nextVersion('1.0.0', '1.0.0', website), null);
+  assert.equal(await nextVersion('1.0.0', '1.0.0', [...website, ...commits('fix: repair CLI generation')]), '1.0.1');
+});
+
 function fixture(t) {
   // Keep the fixture under the repo so the preset loader resolves node_modules.
   const root = fs.mkdtempSync(path.join(repository, '.release-test-'));
@@ -124,6 +135,46 @@ test('real Git release planning preserves curated migration notes, retries, and 
   assert.doesNotMatch(newer, /## \[1.0.1\]/);
   assert.match(newer, /Pending patch details/);
   assert.match(newer, /## \[1.0.0\]/);
+});
+
+test('Git release planning excludes website files and preserves mixed CLI changes', async (t) => {
+  const root = fixture(t);
+  const git = (...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', env: { ...process.env, GIT_CONFIG_NOSYSTEM: '1' } }).trim();
+  git('init', '-b', 'main');
+  git('config', 'user.email', 'release-test@example.com');
+  git('config', 'user.name', 'Release Test');
+  git('add', '.');
+  git('commit', '-m', 'release: v1.0.0');
+  git('tag', 'v1.0.0');
+  const originalOutput = process.env.GITHUB_OUTPUT;
+  delete process.env.GITHUB_OUTPUT;
+  t.after(() => { if (originalOutput !== undefined) process.env.GITHUB_OUTPUT = originalOutput; });
+
+  fs.mkdirSync(path.join(root, 'docs'));
+  fs.writeFileSync(path.join(root, 'docs', 'README.md'), '# Website\n');
+  fs.writeFileSync(path.join(root, 'docs', '文档.md'), '# Documentation\n');
+  git('add', 'docs');
+  git('commit', '-m', 'feat!: redesign website');
+  fs.mkdirSync(path.join(root, '.github', 'workflows'), { recursive: true });
+  fs.writeFileSync(path.join(root, '.github', 'workflows', 'website.yml'), 'name: Website\n');
+  fs.writeFileSync(path.join(root, 'docs', 'content.config.ts'), 'export const content = {};\n');
+  git('add', '.github', 'docs');
+  git('commit', '-m', 'fix: repair website deployment');
+  assert.equal(await prepare(root), null);
+  assert(!fs.existsSync(path.join(root, 'release-notes.md')));
+
+  git('checkout', '-b', 'mixed-changes');
+  fs.writeFileSync(path.join(root, 'docs', 'README.md'), '# Updated Website\n');
+  fs.writeFileSync(path.join(root, 'cli.txt'), 'CLI change\n');
+  git('add', 'docs', 'cli.txt');
+  git('commit', '-m', 'fix: repair CLI source and website');
+  git('checkout', 'main');
+  git('merge', '--no-ff', 'mixed-changes', '-m', 'Merge mixed changes');
+  assert.equal(await prepare(root), '1.0.1');
+  const notes = fs.readFileSync(path.join(root, 'release-notes.md'), 'utf8');
+  assert.match(notes, /repair CLI source/);
+  assert.doesNotMatch(notes, /redesign website|repair website deployment/);
+  assert.match(fs.readFileSync(path.join(root, 'CHANGELOG.md'), 'utf8'), /preset-cli\/create-preset\/releases\/tag\/v1.0.1/);
 });
 
 test('publishing retries only accept the same immutable version and commit', (t) => {

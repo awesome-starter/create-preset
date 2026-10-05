@@ -3,8 +3,14 @@ name: Rust CI
 on:
   push:
     branches: [main, develop]
+    paths-ignore:
+      - 'docs/**'
+      - '.github/workflows/website.yml'
   pull_request:
     branches: [main, develop]
+    paths-ignore:
+      - 'docs/**'
+      - '.github/workflows/website.yml'
   workflow_dispatch:
 
 permissions:
