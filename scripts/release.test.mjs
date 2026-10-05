@@ -10,6 +10,7 @@ import { publishRelease } from './publish-release.js';
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const commits = (...messages) => messages.map((message, index) => ({ message, hash: String(index).repeat(40) }));
+const readText = (file) => fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
 
 test('Conventional Commits determine patch, minor and breaking releases', async () => {
   assert.equal(await nextVersion('1.0.0', '1.0.0', commits('fix: restore executable permissions')), '1.0.1');
@@ -31,8 +32,22 @@ function fixture(t) {
   // Keep the fixture under the repo so the preset loader resolves node_modules.
   const root = fs.mkdtempSync(path.join(repository, '.release-test-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const currentVersion = JSON.parse(readText(path.join(repository, 'package.json'))).version;
   for (const file of ['package.json', 'package-lock.json', 'Cargo.toml', 'Cargo.lock']) {
-    fs.copyFileSync(path.join(repository, file), path.join(root, file));
+    // Git may check out CRLF on Windows. Seed an LF fixture at a fixed version
+    // so its expected release sequence also survives future repository bumps.
+    let contents = readText(path.join(repository, file));
+    if (file.endsWith('.json')) {
+      const manifest = JSON.parse(contents);
+      manifest.version = '1.0.0';
+      if (file === 'package-lock.json') manifest.packages[''].version = '1.0.0';
+      contents = `${JSON.stringify(manifest, null, 2)}\n`;
+    } else if (file === 'Cargo.toml') {
+      contents = contents.replace(`version = "${currentVersion}"`, 'version = "1.0.0"');
+    } else {
+      contents = contents.replace(`name = "create-preset"\nversion = "${currentVersion}"`, 'name = "create-preset"\nversion = "1.0.0"');
+    }
+    fs.writeFileSync(path.join(root, file), contents);
   }
   fs.writeFileSync(path.join(root, 'CHANGELOG.md'), '## Unreleased\n\n- Rust migration details.\n\n## [0.13.1](old)\n\nOld fixes.\n');
   return root;
@@ -41,7 +56,7 @@ function fixture(t) {
 test('version updates preserve dependency lock entries and move curated notes into the changelog', (t) => {
   const root = fixture(t);
   const before = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json')));
-  const cargoLock = fs.readFileSync(path.join(root, 'Cargo.lock'), 'utf8');
+  const cargoLock = readText(path.join(root, 'Cargo.lock'));
   applyVersion(root, '1.0.1', '- New fixes.', '2026-10-03');
   assert.equal(manifestVersion(root), '1.0.1');
   const after = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json')));
@@ -62,7 +77,7 @@ test('Windows CRLF manifests keep all versions synchronized', (t) => {
   const root = fixture(t);
   for (const name of ['Cargo.toml', 'Cargo.lock', 'CHANGELOG.md']) {
     const file = path.join(root, name);
-    fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replaceAll('\n', '\r\n'));
+    fs.writeFileSync(file, readText(file).replaceAll('\n', '\r\n'));
   }
   assert.equal(manifestVersion(root), '1.0.0');
   applyVersion(root, '2.0.0', '- Breaking changes.');
