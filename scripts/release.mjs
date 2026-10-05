@@ -7,8 +7,14 @@ import { generateNotes } from '@semantic-release/release-notes-generator';
 import semver from 'semver';
 
 const logger = { log() {} };
-const pluginOptions = { preset: 'conventionalcommits' };
+const pluginOptions = {
+  preset: 'conventionalcommits',
+  releaseRules: [{ scope: 'website', release: false }],
+};
 const readText = (file) => fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+
+const isDocumentationPath = (file) => file.startsWith('docs/')
+  || file === '.github/workflows/website.yml';
 
 export async function nextVersion(current, previous, commits) {
   for (const version of [current, previous].filter(Boolean)) {
@@ -78,7 +84,13 @@ export async function prepare(root) {
   const records = git('log', '--format=%H%x00%B%x00', tag ? `${tag}..HEAD` : 'HEAD').split('\0');
   const commits = [];
   for (let index = 0; index + 1 < records.length; index += 2) {
-    commits.push({ hash: records[index].trim(), message: records[index + 1].trim() });
+    const hash = records[index].trim();
+    const files = git('show', '--format=', '--name-only', '-z', '--first-parent', '--diff-merges=first-parent', hash)
+      .split('\0').filter(Boolean);
+    // Analyze only CLI changes, including when a later release sees website
+    // commits that did not start Rust CI. Keep empty commits for release tooling.
+    if (files.length && files.every(isDocumentationPath)) continue;
+    commits.push({ hash, message: records[index + 1].trim() });
   }
   const current = manifestVersion(root);
   const version = await nextVersion(current, tag?.slice(1), commits);
