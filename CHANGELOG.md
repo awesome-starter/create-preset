@@ -36,6 +36,7 @@
 
 ### Bug Fixes
 
+* make release tests independent of checkout line endings ([f3c5ffa](https://github.com/awesome-starter/create-preset/commit/f3c5ffa926041f53c572bcc2c073127cd7c6e2ef))
 * preserve release permissions and validate npm packages ([d4dda9a](https://github.com/awesome-starter/create-preset/commit/d4dda9aca5698295c09bbe954e11ed1d0687022a))
 * publish npm packages with trusted GitHub Actions ([4124928](https://github.com/awesome-starter/create-preset/commit/412492811bdc1038408bb51b9925ae17b5f963e0))
 * resolve Windows package manager shims ([09392ee](https://github.com/awesome-starter/create-preset/commit/09392ee52de8497dcd96f127fb553eefe9f49482))
