@@ -1,7 +1,7 @@
 <p align="center">
   <img
     width="400"
-    src="https://cdn.jsdelivr.net/gh/awesome-starter/assets/create-preset/create-preset.svg"
+    src="https://cdn.jsdelivr.net/gh/preset-cli/assets/create-preset/create-preset.svg"
     alt="create-preset"
   />
 </p>
@@ -22,8 +22,8 @@
   <a href="https://preset.js.org/guide/getting-started" target="__blank">
     <img src="https://img.shields.io/static/v1?label=&message=docs%20%26%20demos&color=10b981" alt="documentation" />
   </a>
-  <a href="https://github.com/awesome-starter/create-preset" target="__blank">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/awesome-starter/create-preset?style=social" />
+  <a href="https://github.com/preset-cli/create-preset" target="__blank">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/preset-cli/create-preset?style=social" />
   </a>
 </p>
 

@@ -7,10 +7,10 @@
   "homepage": "https://preset.js.org",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/awesome-starter/create-preset.git"
+    "url": "git+https://github.com/preset-cli/create-preset.git"
   },
   "bugs": {
-    "url": "https://github.com/awesome-starter/create-preset/issues"
+    "url": "https://github.com/preset-cli/create-preset/issues"
   },
   "keywords": [
     "create-preset",

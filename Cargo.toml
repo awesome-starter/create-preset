@@ -6,7 +6,7 @@ authors = ["chengpeiquan <chengpeiquan@chengpeiquan.com>"]
 description = "Provides the ability to quickly create preset projects"
 license = "MIT"
 homepage = "https://preset.js.org"
-repository = "https://github.com/awesome-starter/create-preset"
+repository = "https://github.com/preset-cli/create-preset"
 
 [[bin]]
 name = "preset"

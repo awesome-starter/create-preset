@@ -65,7 +65,7 @@ export function applyVersion(root, version, notes, date = new Date().toISOString
   // Replace an unfinished release when retrying, preserving older releases.
   const escaped = pendingVersion.replaceAll('.', '\\.');
   previous = previous.replace(new RegExp(`^## \\[${escaped}\\][^\\n]*\\n[\\s\\S]*?(?=\\n#{1,2} \\[|$)`), '').trimStart();
-  fs.writeFileSync(changelog, `## Unreleased\n\n## [${version}](https://github.com/awesome-starter/create-preset/releases/tag/v${version}) (${date})\n\n${notes.trim()}\n\n${previous}`);
+  fs.writeFileSync(changelog, `## Unreleased\n\n## [${version}](https://github.com/preset-cli/create-preset/releases/tag/v${version}) (${date})\n\n${notes.trim()}\n\n${previous}`);
   manifestVersion(root);
 }
 
@@ -86,7 +86,7 @@ export async function prepare(root) {
   if (!version) return null;
   const generated = await generateNotes(pluginOptions, {
     cwd: root, env: process.env, commits, logger,
-    options: { repositoryUrl: 'https://github.com/awesome-starter/create-preset' },
+    options: { repositoryUrl: 'https://github.com/preset-cli/create-preset' },
     lastRelease: tag ? { version: tag.slice(1), gitTag: tag, gitHead: git('rev-list', '-n', '1', tag) } : {},
     nextRelease: { version, gitTag: `v${version}`, gitHead: git('rev-parse', 'HEAD') },
   });

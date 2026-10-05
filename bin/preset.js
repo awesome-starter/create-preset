@@ -61,7 +61,7 @@ function main() {
     console.error('  - Windows (x64): win32-x64');
     console.error('');
     console.error('Please report this issue at:');
-    console.error('https://github.com/awesome-starter/create-preset/issues');
+    console.error('https://github.com/preset-cli/create-preset/issues');
     process.exit(1);
   }
 
