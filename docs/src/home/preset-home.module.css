@@ -1,0 +1,70 @@
+/* Preserve the mint banner and toolbox identity from the VitePress homepage. */
+.hero {
+  background-color: #d1fae5;
+}
+
+:global(.dark) .hero {
+  background-color: #a7f3d0;
+}
+
+.title {
+  color: #047857;
+  background-image: linear-gradient(120deg, #34d399 30%, #047857);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.startButton {
+  border: 2px solid #34d399;
+  background-color: #047857;
+  color: white;
+  transition:
+    background-color 150ms ease-out,
+    border-color 150ms ease-out;
+}
+
+.startButton:hover {
+  border-color: #6ee7b7;
+  background-color: #065f46;
+  color: white;
+}
+
+.startButton:focus-visible,
+.badgeLink:focus-visible {
+  outline: 2px solid #065f46;
+  outline-offset: 4px;
+}
+
+.badgeLink {
+  display: inline-flex;
+  border-radius: 2px;
+}
+
+/* Keep the shared header's search and language controls reachable on phones.
+   The GitHub badge in the hero remains available at these widths. */
+@media (width < 40rem) {
+  .page :global([data-docs-region='header']) > div {
+    gap: 0.5rem;
+    padding-inline: 1rem;
+  }
+
+  .page :global([data-docs-region='header-brand']) {
+    font-size: 1rem;
+  }
+
+  .page :global([data-docs-region='header-actions']) {
+    padding-left: 0;
+  }
+
+  .page :global([data-docs-region='header']) a[target='_blank'],
+  .page :global([data-docs-region='header']) [role='separator'] {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .startButton {
+    transition: none;
+  }
+}

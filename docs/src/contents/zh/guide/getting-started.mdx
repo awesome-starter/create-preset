@@ -1,0 +1,86 @@
+---
+title: 快速开始
+description: 安装 Create Preset 并创建项目。
+order: 1
+---
+
+# 快速开始
+
+使用包管理器运行 Create Preset：
+
+<PackageManagerCommands locale="zh" />
+
+然后按提示输入项目名称，选择技术栈和模板。
+
+同一技术栈下，已配置的私有 Preset 会排在官方脚手架前面。选择官方脚手架后，继续按对应 CLI 的提示操作。
+
+## 环境要求
+
+- npm 启动器需要 Node.js 14 或更新版本。包内包含预编译的 Rust CLI，无需安装 Rust 编译器；官方脚手架的 Node.js 版本要求以对应框架文档为准。
+- 调用官方脚手架需要可用的包管理器，支持 npm、Yarn、pnpm 和 Bun。
+- 从 Git 仓库创建项目需要安装 Git，并确保当前环境能够访问该仓库。
+
+## 全局安装
+
+经常使用时，可以全局安装：
+
+<PackageManagerCommands mode="install" locale="zh" />
+
+安装后，用 `preset -v` 检查版本。下文使用全局安装后的 `preset` 命令。Yarn 的全局安装命令适用于 Yarn Classic。
+
+更新全局安装的版本时，运行 `preset upgrade`，再用 `preset -v` 检查版本号。
+
+## 直接创建
+
+用 `--from` 指定来源，可以跳过技术栈和模板选择。例如，使用 pnpm 调用 Vue 官方脚手架：
+
+```bash
+preset init my-vue-app --from vue --package-manager pnpm
+```
+
+后续配置和安装提示由 Vue 官方脚手架提供。
+
+查看可用的官方脚手架 ID 和已配置的私有 Preset：
+
+```bash
+preset --list
+```
+
+将列表中的 ID 传给 `--from`。指定的来源不存在时，命令会报错退出。
+
+`--from` 也接受已配置的私有 Preset 名称、本地 JSON 文件路径或远程配置地址：
+
+```bash
+preset init my-docs --from https://example.com/preset.json
+```
+
+将示例地址换成实际配置地址。Create Preset 会读取配置、下载模板，再处理文件和依赖。配置格式见 [Preset 配置](/zh/guide/preset-configs)。
+
+## 预览创建计划
+
+添加 `--dry-run` 查看 JSON 格式的创建计划：
+
+```bash
+preset init my-vue-app --from vue --package-manager pnpm --dry-run
+preset init my-docs --from ./preset.json --dry-run
+```
+
+预览会显示目标目录和项目来源，不会克隆仓库、运行脚手架、查询 npm 版本或修改项目文件。远程配置仍会被下载并校验。
+
+目标目录中已有文件时，CLI 会先询问是否替换。在脚本中可以添加 `--yes`，明确允许替换：
+
+```bash
+preset init my-docs --from ./preset.json --yes
+```
+
+`--yes` 只跳过 Create Preset 的替换确认，官方脚手架仍保留自己的提问。
+
+## 切换语言
+
+Create Preset 默认跟随系统语言，支持英文、简体中文、繁体中文和日文。用 `PRESET_LANG` 指定语言，例如在 macOS 或 Linux 中切换为日文：
+
+```bash
+PRESET_LANG=ja-JP preset init
+```
+
+官方脚手架的语言由对应 CLI 决定。
