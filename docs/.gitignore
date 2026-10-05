@@ -1,0 +1,8 @@
+.next/
+.next-build/
+.next-static/
+.blackwork/
+node_modules/
+out/
+tsconfig.tsbuildinfo
+/public/schema/preset.schema.json

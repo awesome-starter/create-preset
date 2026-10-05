@@ -37,7 +37,11 @@
     "build:rust": "cargo build --release",
     "test": "cargo test",
     "test:package": "node scripts/test-package.js",
-    "test:release": "node --test scripts/release.test.mjs"
+    "test:release": "node --test scripts/release.test.mjs",
+    "dev:docs": "pnpm --dir docs dev",
+    "build:docs": "pnpm --dir docs build",
+    "test:docs": "pnpm --dir docs test",
+    "lint:docs": "pnpm --dir docs lint"
   },
   "devDependencies": {
     "@semantic-release/commit-analyzer": "13.0.1",

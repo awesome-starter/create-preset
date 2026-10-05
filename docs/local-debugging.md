@@ -226,5 +226,5 @@ resolution, catalog listing, and preview without side effects. CI runs these
 checks and the npm package smoke on Linux, macOS, and Windows. Live upstream
 generator prompts and cross-compiled binaries still need separate acceptance.
 
-The automatic versioning and publishing workflow is described in
-[Releasing](./releasing.md).
+The automatic versioning and publishing workflow is defined in
+[Rust CI](../.github/workflows/release.yml).

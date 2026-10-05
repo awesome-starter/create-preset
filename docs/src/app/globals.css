@@ -1,0 +1,122 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'blackwork/tailwind.css';
+@import '@blackwork/docs/tailwind.css';
+@plugin '@tailwindcss/typography';
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --blackwork-font-sans:
+      'Space Grotesk', 'Avenir Next', 'Segoe UI', 'Helvetica Neue', sans-serif;
+    --font-mono:
+      'IBM Plex Mono', 'SFMono-Regular', 'SF Mono', 'Cascadia Code', monospace;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-height: 100dvh;
+    @apply bg-background text-foreground antialiased;
+  }
+
+  html body[data-scroll-locked] {
+    overflow: unset !important;
+  }
+
+  article
+    :where(h1, h2, h3, h4, h5, h6)[id]:not(:where(.not-prose, .not-prose *)) {
+    scroll-margin-top: 6rem;
+  }
+
+  article :where(h2, h3, h4):not(:where(.not-prose, .not-prose *)) {
+    letter-spacing: -0.02em;
+  }
+
+  article > :first-child:is(h1) {
+    display: none;
+  }
+
+  article :where(h2):not(:where(.not-prose, .not-prose *)) {
+    margin-top: 2.75em;
+  }
+
+  article :where(h3):not(:where(.not-prose, .not-prose *)) {
+    margin-top: 2em;
+  }
+
+  article :where(p, li):not(:where(.not-prose, .not-prose *)) {
+    @apply text-pretty;
+  }
+
+  article :where(p):not(:where(.not-prose, .not-prose *)) {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+  article :where(blockquote):not(:where(.not-prose, .not-prose *)) {
+    @apply border-l border-border pl-6 text-muted-foreground;
+    margin-top: 2em;
+    margin-bottom: 2em;
+  }
+
+  article :where(pre):not(:where(.not-prose, .not-prose *)) {
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+  }
+
+  article :where(pre.shiki):not(:where(.not-prose, .not-prose *)) {
+    @apply overflow-x-auto rounded-xl border border-border/60;
+  }
+
+  article :where(code:not(pre code)):not(:where(.not-prose, .not-prose *)) {
+    @apply break-all whitespace-normal rounded-md bg-muted px-1.5 py-0.5 text-[0.9em];
+  }
+
+  .dark article :where(pre.shiki):not(:where(.not-prose, .not-prose *)) {
+    background-color: var(--shiki-dark-bg) !important;
+    color: var(--shiki-dark) !important;
+  }
+
+  .dark article .not-prose :where(pre.shiki) {
+    background-color: var(--shiki-dark-bg) !important;
+    color: var(--shiki-dark) !important;
+  }
+
+  .dark article :where(pre.shiki code):not(:where(.not-prose, .not-prose *)) {
+    color: var(--shiki-dark) !important;
+  }
+
+  .dark article .not-prose :where(pre.shiki code) {
+    color: var(--shiki-dark) !important;
+  }
+
+  .dark article :where(pre.shiki span):not(:where(.not-prose, .not-prose *)) {
+    color: var(--shiki-dark) !important;
+  }
+
+  .dark article .not-prose :where(pre.shiki span) {
+    color: var(--shiki-dark) !important;
+  }
+
+  article :where(pre code):not(:where(.not-prose, .not-prose *)) {
+    white-space: pre;
+  }
+
+  article :where(table):not(:where(.not-prose, .not-prose *)) {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  article :where(tbody td, tfoot td):not(:where(.not-prose, .not-prose *)) {
+    min-width: 80px;
+  }
+
+  ::selection {
+    @apply bg-foreground text-background;
+  }
+}
