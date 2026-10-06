@@ -5,6 +5,45 @@
 @plugin '@tailwindcss/typography';
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Keep navigation legible as bright hero artwork passes behind the glass. */
+[data-docs-region='header'].bw-glass-header > .bw-glass-material {
+  --bw-glass-fill: hsl(var(--background) / 0.55);
+}
+
+[data-docs-region='header-nav'] a {
+  color: hsl(var(--foreground) / 0.9);
+}
+
+[data-docs-region='header-nav'] a:hover,
+[data-docs-region='header-nav'] a[aria-current='page'] {
+  color: hsl(var(--foreground));
+}
+
+[data-docs-region='header'].bw-glass-header [role='separator'] {
+  background-color: hsl(var(--foreground) / 0.35);
+}
+
+/* Keep shared header controls reachable on phones, including docs pages. */
+@media (width < 40rem) {
+  [data-docs-region='header'] > div {
+    gap: 0.5rem;
+    padding-inline: 1rem;
+  }
+
+  [data-docs-region='header-brand'] {
+    font-size: 1rem;
+  }
+
+  [data-docs-region='header-actions'] {
+    padding-left: 0;
+  }
+
+  [data-docs-region='header'] a[target='_blank'],
+  [data-docs-region='header'] [role='separator'] {
+    display: none;
+  }
+}
+
 @layer base {
   :root {
     --blackwork-font-sans:

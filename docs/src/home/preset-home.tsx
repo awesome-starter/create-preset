@@ -42,9 +42,9 @@ export function PresetHome({
   const startLink = (large = false) => (
     <Button
       asChild
+      variant={config.theme.appearance === 'glass' ? 'glass-primary' : 'default'}
       size="lg"
       className={cn(
-        styles.startButton,
         'rounded-full',
         large ? 'h-12 w-60 text-xl' : 'h-10 w-30',
       )}
@@ -54,8 +54,9 @@ export function PresetHome({
   )
 
   return (
-    <div className={cn(styles.page, 'flex min-w-0 flex-1 flex-col')}>
+    <div className="flex min-w-0 flex-1 flex-col">
       <DefaultDocsHeader
+        appearance={config.theme.appearance}
         homeHref={home.homeHref}
         siteTitle={home.title}
         siteDescription={home.description}

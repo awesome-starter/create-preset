@@ -3,6 +3,7 @@
 import {
   Button,
   QuickSearchDialog,
+  QuickSearchInput,
   QuickSearchTrigger,
   useQuickSearchState,
 } from 'blackwork'
@@ -16,6 +17,7 @@ import type { DocsThemeHeaderActionsProps } from '@blackwork/docs/theme'
 const SEARCH_COPY = {
   en: {
     ariaLabel: 'Search docs',
+    closeLabel: 'Close search',
     emptyNoMatch: 'No matching pages found in this locale.',
     inputPlaceholder: 'Search docs...',
     loading: 'Searching docs...',
@@ -25,6 +27,7 @@ const SEARCH_COPY = {
   },
   zh: {
     ariaLabel: '搜索文档',
+    closeLabel: '关闭搜索',
     emptyNoMatch: '当前语言下没有匹配结果。',
     inputPlaceholder: '搜索文档...',
     loading: '正在搜索文档...',
@@ -95,9 +98,10 @@ export const DocsHeaderSearchAction: React.FC<DocsThemeHeaderActionsProps> = ({
       <div className="flex items-center gap-2">
         <Button
           type="button"
-          variant="ghost"
+          variant="glass"
           size="icon"
           aria-label={copy.ariaLabel}
+          title={copy.ariaLabel}
           className="md:hidden"
           onClick={() => setOpen(true)}
         >
@@ -105,6 +109,7 @@ export const DocsHeaderSearchAction: React.FC<DocsThemeHeaderActionsProps> = ({
         </Button>
 
         <QuickSearchTrigger
+          appearance="glass"
           className="hidden md:flex md:w-48 lg:w-64"
           label={copy.triggerLabel}
           shortLabel={copy.shortLabel}
@@ -113,32 +118,21 @@ export const DocsHeaderSearchAction: React.FC<DocsThemeHeaderActionsProps> = ({
       </div>
 
       <QuickSearchDialog
+        appearance="glass"
+        closeLabel={copy.closeLabel}
         open={open}
         onOpenChange={setOpen}
         ariaLabel={copy.ariaLabel}
         contentProps={{
-          className:
-            'max-w-2xl overflow-hidden border border-border/60 bg-background/95 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-background/90 [&>button]:hidden',
+          className: 'max-w-2xl',
         }}
       >
-        <div className="border-b border-border/60 px-4 py-3">
-          <div className="flex items-center gap-3 rounded-lg border border-border/70 bg-background/70 px-3 shadow-sm">
-            <Search className="size-4 shrink-0 text-muted-foreground" />
-            <input
-              aria-label={copy.ariaLabel}
-              placeholder={copy.inputPlaceholder}
-              className={cn(
-                'h-10 w-full bg-transparent text-sm text-foreground outline-none',
-                'placeholder:text-muted-foreground',
-              )}
-              value={query}
-              onChange={(event) => setQuery(event.currentTarget.value)}
-            />
-            <kbd className="hidden rounded border border-border/70 bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground md:inline-flex">
-              ESC
-            </kbd>
-          </div>
-        </div>
+        <QuickSearchInput
+          aria-label={copy.ariaLabel}
+          placeholder={copy.inputPlaceholder}
+          value={query}
+          onChange={(event) => setQuery(event.currentTarget.value)}
+        />
 
         <div
           aria-busy={loading ? 'true' : undefined}

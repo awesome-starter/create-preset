@@ -39,6 +39,7 @@ export const docsConfig = defineDocsConfig({
     },
   },
   theme: {
+    appearance: 'glass',
     defaultTheme: 'dark',
     labels: {
       changeLanguage: { en: 'Change language', zh: '切换语言' },
