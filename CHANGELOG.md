@@ -1,5 +1,13 @@
 ## Unreleased
 
+## [1.0.1](https://github.com/preset-cli/create-preset/releases/tag/v1.0.1) (2026-10-06)
+
+<!-- release-notes:commits -->
+
+### Bug Fixes
+
+* **deps:** update Rust HTTP and TLS security dependencies ([3fc80a1](https://github.com/preset-cli/create-preset/commit/3fc80a1f0f584450757208d02d0ea5a42b9c280d))
+
 ## [1.0.0](https://github.com/preset-cli/create-preset/releases/tag/v1.0.0) (2026-10-04)
 
 - Breaking: delegate project creation to official CLI generators and prioritize private presets.

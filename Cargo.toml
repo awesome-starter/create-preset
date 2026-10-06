@@ -1,7 +1,7 @@
 [package]
 edition = "2021"
 name = "create-preset"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["chengpeiquan <chengpeiquan@chengpeiquan.com>"]
 description = "Provides the ability to quickly create preset projects"
 license = "MIT"
