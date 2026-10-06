@@ -14,6 +14,7 @@ import Link from 'next/link'
 import { DocsHeaderSearchAction } from '@/search/docs-search'
 import { PackageManagerCommands } from '@/mdx/components/package-manager-commands'
 import { PresetFooter } from '@/site/footer'
+import { DocsSiteLink } from '@/site/docs-link'
 import { cn } from '@/utils/class-name'
 import { homeCopy } from './copy'
 import styles from './preset-home.module.css'
@@ -63,7 +64,7 @@ export function PresetHome({
         navigation={navigation}
         localeLinks={localeLinks}
         labels={copy.labels}
-        LinkComponent={Link}
+        LinkComponent={DocsSiteLink}
         socialLinks={[
           {
             type: 'github',

@@ -5,6 +5,8 @@ import { DocsFadePreview } from './src/mdx/components/fade-preview'
 import { DocsHeaderSearchAction } from './src/search/docs-search'
 import { PackageManagerCommands } from './src/mdx/components/package-manager-commands'
 import { PresetFooter } from './src/site/footer'
+import { DocsSiteLink } from './src/site/docs-link'
+import { headerNavigation } from './src/site/navigation'
 
 export const docsConfig = defineDocsConfig({
   content: docsContentConfig,
@@ -68,24 +70,10 @@ export const docsConfig = defineDocsConfig({
         },
       },
     ],
-    nav: [
-      {
-        href: '/guide/getting-started',
-        label: {
-          en: 'Guide',
-          zh: '指南',
-        },
-      },
-      {
-        href: '/guide/preset-configs',
-        label: {
-          en: 'Preset configs',
-          zh: 'Preset 配置',
-        },
-      },
-    ],
+    nav: headerNavigation,
   },
   slots: {
+    link: DocsSiteLink,
     headerActions: DocsHeaderSearchAction,
     footer: PresetFooter,
   },
