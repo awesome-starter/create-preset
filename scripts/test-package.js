@@ -18,10 +18,15 @@ const binaryMap = {
 const binaryName = binaryMap[`${process.platform}-${process.arch}`];
 assert(binaryName, 'Unsupported smoke-test platform');
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'preset-package-'));
-// Invoke npm through Node to avoid shell-specific quoting and Windows .cmd
-// resolution. npm run supplies the path to the actual npm CLI entry point.
-const npmCli = process.env.npm_execpath;
-assert(npmCli && path.basename(npmCli).startsWith('npm'), 'Run this check with npm run test:package');
+// Test the npm distribution even when pnpm runs this script. Invoke npm through
+// Node to avoid shell-specific quoting and Windows .cmd resolution.
+const nodeDirectory = path.dirname(process.execPath);
+const npmCli = [
+  process.env.npm_execpath,
+  path.join(nodeDirectory, 'node_modules/npm/bin/npm-cli.js'),
+  path.resolve(nodeDirectory, '../lib/node_modules/npm/bin/npm-cli.js'),
+].find((file) => file && /^npm(?:-cli)?\.(?:c?js|mjs)$/.test(path.basename(file)) && fs.existsSync(file));
+assert(npmCli, 'The npm CLI bundled with Node.js is required for package verification');
 
 function run(program, args, cwd) {
   const result = spawnSync(program, args, {
@@ -61,6 +66,9 @@ try {
   const packed = JSON.parse(run(process.execPath, [npmCli, 'pack', '--json', '--ignore-scripts'], distribution))[0];
   for (const required of ['bin/preset.js', 'schema/preset.schema.json', ...binaryNames.map((name) => `binaries/${name}`)]) {
     assert(packed.files.some((file) => file.path === required), `Package is missing ${required}`);
+  }
+  for (const config of ['pnpm-lock.yaml', 'pnpm-workspace.yaml', '.npmrc']) {
+    assert(!packed.files.some((file) => file.path === config), `Package includes development config ${config}`);
   }
   const consumer = path.join(temporary, 'consumer');
   fs.mkdirSync(consumer);

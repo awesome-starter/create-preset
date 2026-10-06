@@ -4,6 +4,7 @@
   "description": "A unified CLI for creating and applying development presets.",
   "author": "chengpeiquan <chengpeiquan@chengpeiquan.com>",
   "license": "MIT",
+  "packageManager": "pnpm@12.4.2",
   "homepage": "https://preset.js.org",
   "repository": {
     "type": "git",

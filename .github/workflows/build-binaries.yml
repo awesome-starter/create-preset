@@ -44,17 +44,21 @@ jobs:
           components: rustfmt, clippy
       - name: Check formatting
         run: cargo fmt -- --check
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
       - name: Setup Node.js for CLI regressions
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
       - name: Verify release manifests
         env:
           RELEASE_VERSION: ${{ inputs.release-version }}
         shell: bash
         run: |
-          npm ci --ignore-scripts
-          npm run test:release
+          pnpm install --frozen-lockfile --ignore-scripts
+          pnpm run test:release
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then RELEASE_VERSION="${GITHUB_REF_NAME#v}"; fi
           node scripts/release.mjs check "$RELEASE_VERSION"
       - name: Run Clippy
@@ -62,9 +66,9 @@ jobs:
       - name: Run tests
         run: cargo test --all-targets
       - name: Build npm host package
-        run: npm run build
+        run: pnpm run build
       - name: Verify packed package and installed commands
-        run: npm run test:package
+        run: pnpm run test:package
 
   build:
     name: Build ${{ matrix.os }}-${{ matrix.arch }}

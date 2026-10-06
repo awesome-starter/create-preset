@@ -1,0 +1,5 @@
+overrides:
+  # These plugins run as standalone libraries in scripts/release.mjs.
+  # Their host peer would install an unused publisher and bundled npm tree.
+  '@semantic-release/commit-analyzer>semantic-release': '-'
+  '@semantic-release/release-notes-generator>semantic-release': '-'

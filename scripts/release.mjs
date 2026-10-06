@@ -41,9 +41,8 @@ export function manifestVersion(root) {
     .match(/\[package\]([\s\S]*?)(?=\n\[|$)/)?.[1].match(/^version = "([^"]+)"$/m)?.[1];
   const lock = readText(path.join(root, 'Cargo.lock'))
     .match(/\[\[package\]\]\nname = "create-preset"\nversion = "([^"]+)"/)?.[1];
-  const npmLock = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json'), 'utf8'));
-  if (!semver.valid(npm) || cargo !== npm || lock !== npm || npmLock.version !== npm || npmLock.packages[''].version !== npm) {
-    throw new Error('package.json, package-lock.json, Cargo.toml and Cargo.lock versions must match');
+  if (!semver.valid(npm) || cargo !== npm || lock !== npm) {
+    throw new Error('package.json, Cargo.toml and Cargo.lock versions must match');
   }
   return npm;
 }
@@ -51,13 +50,11 @@ export function manifestVersion(root) {
 export function applyVersion(root, version, notes, date = new Date().toISOString().slice(0, 10), pendingVersion = version) {
   manifestVersion(root);
   if (!semver.valid(version) || semver.prerelease(version)) throw new Error(`Invalid version ${version}`);
-  for (const name of ['package.json', 'package-lock.json']) {
-    const file = path.join(root, name);
-    const json = JSON.parse(fs.readFileSync(file, 'utf8'));
-    json.version = version;
-    if (name === 'package-lock.json') json.packages[''].version = version;
-    fs.writeFileSync(file, `${JSON.stringify(json, null, 2)}\n`);
-  }
+  // pnpm's lockfile stores dependency resolutions, not the root package version.
+  const manifest = path.join(root, 'package.json');
+  const json = JSON.parse(fs.readFileSync(manifest, 'utf8'));
+  json.version = version;
+  fs.writeFileSync(manifest, `${JSON.stringify(json, null, 2)}\n`);
   const cargo = path.join(root, 'Cargo.toml');
   fs.writeFileSync(cargo, readText(cargo).replace(
     /(\[package\][\s\S]*?\nversion = ")[^"]+(")/, (_, before, after) => `${before}${version}${after}`,
