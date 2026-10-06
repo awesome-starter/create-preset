@@ -11,9 +11,9 @@ const packageJson = JSON.parse(
 describe('Create Preset website contract', () => {
   test('uses the published Blackwork docs packages', () => {
     expect(packageJson.dependencies).toMatchObject({
-      '@blackwork/docs': '^0.5.0',
+      '@blackwork/docs': '^0.6.0',
       '@blackwork/search': '^0.1.1',
-      blackwork: '^0.12.2',
+      blackwork: '^0.14.0',
     })
     expect(Object.values(packageJson.dependencies ?? {})).not.toContain(
       'workspace:*',
