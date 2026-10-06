@@ -38,15 +38,20 @@ jobs:
           toolchain: stable
           components: rustfmt, clippy
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Verify release automation
         run: |
-          npm ci --ignore-scripts
-          npm run test:release
+          pnpm install --frozen-lockfile --ignore-scripts
+          pnpm run test:release
           node scripts/release.mjs check
 
       - name: Check formatting
@@ -59,10 +64,10 @@ jobs:
         run: cargo test --all-targets
 
       - name: Build npm host package
-        run: npm run build
+        run: pnpm run build
 
       - name: Verify packed package and installed commands
-        run: npm run test:package
+        run: pnpm run test:package
 
   prepare-release:
     name: Plan automatic version
@@ -79,11 +84,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci --ignore-scripts
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Ignore superseded main runs
         id: current
         shell: bash
@@ -104,7 +112,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add package.json package-lock.json Cargo.toml Cargo.lock CHANGELOG.md
+          git add package.json Cargo.toml Cargo.lock CHANGELOG.md
           git diff --cached --quiet || git commit -m "release: v$RELEASE_VERSION [skip ci]"
           git push origin HEAD:main
           echo "ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"

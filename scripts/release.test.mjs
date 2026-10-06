@@ -44,18 +44,17 @@ function fixture(t) {
   const root = fs.mkdtempSync(path.join(repository, '.release-test-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const currentVersion = JSON.parse(readText(path.join(repository, 'package.json'))).version;
-  for (const file of ['package.json', 'package-lock.json', 'Cargo.toml', 'Cargo.lock']) {
+  for (const file of ['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'Cargo.toml', 'Cargo.lock']) {
     // Git may check out CRLF on Windows. Seed an LF fixture at a fixed version
     // so its expected release sequence also survives future repository bumps.
     let contents = readText(path.join(repository, file));
     if (file.endsWith('.json')) {
       const manifest = JSON.parse(contents);
       manifest.version = '1.0.0';
-      if (file === 'package-lock.json') manifest.packages[''].version = '1.0.0';
       contents = `${JSON.stringify(manifest, null, 2)}\n`;
     } else if (file === 'Cargo.toml') {
       contents = contents.replace(`version = "${currentVersion}"`, 'version = "1.0.0"');
-    } else {
+    } else if (file === 'Cargo.lock') {
       contents = contents.replace(`name = "create-preset"\nversion = "${currentVersion}"`, 'name = "create-preset"\nversion = "1.0.0"');
     }
     fs.writeFileSync(path.join(root, file), contents);
@@ -66,14 +65,12 @@ function fixture(t) {
 
 test('version updates preserve dependency lock entries and move curated notes into the changelog', (t) => {
   const root = fixture(t);
-  const before = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json')));
+  const pnpmLock = fs.readFileSync(path.join(root, 'pnpm-lock.yaml'), 'utf8');
   const cargoLock = readText(path.join(root, 'Cargo.lock'));
   applyVersion(root, '1.0.1', '- New fixes.', '2026-10-03');
   assert.equal(manifestVersion(root), '1.0.1');
-  const after = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json')));
-  for (const [name, value] of Object.entries(before.packages).filter(([name]) => name)) {
-    assert.deepEqual(after.packages[name], value);
-  }
+  assert.equal(fs.readFileSync(path.join(root, 'pnpm-lock.yaml'), 'utf8'), pnpmLock);
+  assert(!fs.existsSync(path.join(root, 'package-lock.json')));
   assert.equal(fs.readFileSync(path.join(root, 'Cargo.lock'), 'utf8'), cargoLock.replace(/(name = "create-preset"\nversion = ")1.0.0/, '$11.0.1'));
   applyVersion(root, '1.0.1', '- New fixes.', '2026-10-03');
   const changelog = fs.readFileSync(path.join(root, 'CHANGELOG.md'), 'utf8');
@@ -86,13 +83,15 @@ test('version updates preserve dependency lock entries and move curated notes in
 
 test('Windows CRLF manifests keep all versions synchronized', (t) => {
   const root = fixture(t);
-  for (const name of ['Cargo.toml', 'Cargo.lock', 'CHANGELOG.md']) {
+  for (const name of ['Cargo.toml', 'Cargo.lock', 'pnpm-lock.yaml', 'CHANGELOG.md']) {
     const file = path.join(root, name);
     fs.writeFileSync(file, readText(file).replaceAll('\n', '\r\n'));
   }
   assert.equal(manifestVersion(root), '1.0.0');
+  const pnpmLock = fs.readFileSync(path.join(root, 'pnpm-lock.yaml'), 'utf8');
   applyVersion(root, '2.0.0', '- Breaking changes.');
   assert.equal(manifestVersion(root), '2.0.0');
+  assert.equal(fs.readFileSync(path.join(root, 'pnpm-lock.yaml'), 'utf8'), pnpmLock);
 });
 
 test('real Git release planning preserves curated migration notes, retries, and ignores released commits', async (t) => {

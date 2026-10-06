@@ -19,11 +19,11 @@ Create Preset detects the package manager from `npm_config_user_agent`. Pass
 `--package-manager npm|yarn|pnpm|bun` when a test must use a specific manager.
 Check the selected manager separately when needed, for example
 `pnpm --version`.
-For a reproducible pnpm 11 run, invoke Corepack explicitly:
+For a reproducible pnpm 12 run, invoke Corepack explicitly:
 
 ```bash
-corepack pnpm@11 --version
-corepack pnpm@11 create vite
+corepack pnpm@12.4.2 --version
+corepack pnpm@12.4.2 create vite
 ```
 
 ## Build the binary
@@ -191,14 +191,20 @@ The legacy option prints a migration notice and resolves the same IDs as
 
 ## npm wrapper test
 
+For repository development, use Node.js 22.13 or later and the pnpm version
+pinned in `package.json`. The root package and website have separate pnpm
+lockfiles and configurations; install website dependencies with
+`pnpm --dir docs install --frozen-lockfile`.
+
 From the repository root:
 
 ```bash
-npm run build
+pnpm install --frozen-lockfile
+pnpm run build
 node bin/preset.js --version
 node bin/preset.js --help
 npm pack --dry-run --json --ignore-scripts
-npm run test:package
+pnpm run test:package
 ```
 
 The package dry run should include `bin/preset.js`, the platform binary,
@@ -208,10 +214,14 @@ The package smoke check simulates downloaded artifacts with `644` permissions,
 prepares the release layout, creates and installs a real tarball in a temporary
 consumer, and runs both installed commands. It verifies the host binary only;
 the other artifact names are fixtures for checking package completeness.
+It uses Node.js's bundled npm to verify the tarball and consumer installation;
+repository dependency installation uses pnpm.
 
 ## Automated checks
 
 ```bash
+pnpm run test:release
+node scripts/release.mjs check
 cargo fmt -- --check
 cargo test --all-targets
 cargo clippy --all-targets -- -D warnings
