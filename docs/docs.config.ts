@@ -7,6 +7,7 @@ import { PackageManagerCommands } from './src/mdx/components/package-manager-com
 import { PresetFooter } from './src/site/footer'
 import { DocsSiteLink } from './src/site/docs-link'
 import { headerNavigation } from './src/site/navigation'
+import { ShowcaseProject } from './src/showcase/showcase-project'
 
 export const docsConfig = defineDocsConfig({
   content: docsContentConfig,
@@ -38,6 +39,7 @@ export const docsConfig = defineDocsConfig({
       Callout,
       FadePreview: DocsFadePreview,
       PackageManagerCommands,
+      ShowcaseProject,
     },
   },
   theme: {

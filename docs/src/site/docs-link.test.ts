@@ -16,6 +16,8 @@ describe('header navigation', () => {
     ['/zh/guide/private-presets', '/guide/getting-started'],
     ['/en/guide/official-generators/', '/guide/getting-started'],
     ['/zh/guide/preset-configs-other', '/guide/getting-started'],
+    ['/zh/showcase', '/showcase'],
+    ['/en/showcase/', '/showcase'],
     ['/zh', undefined],
   ])('selects one header destination for %s', (pathname, expected) => {
     expect(getCurrentHeaderHref(pathname)).toBe(expected)

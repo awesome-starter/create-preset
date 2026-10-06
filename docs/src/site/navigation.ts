@@ -10,6 +10,10 @@ export const headerNavigation = [
     label: { en: 'Preset configs', zh: 'Preset 配置' },
   },
   {
+    href: '/showcase',
+    label: { en: 'Showcase', zh: '案例展示' },
+  },
+  {
     href: 'https://github.com/preset-cli/create-preset/releases',
     label: { en: 'Changelog', zh: '更新日志' },
   },

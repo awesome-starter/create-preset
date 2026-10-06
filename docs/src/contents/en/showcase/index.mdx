@@ -1,0 +1,29 @@
+---
+title: Showcase
+description: Explore maintained project starters you can create with Create Preset.
+---
+
+Explore project starters maintained by their authors and available through
+Create Preset. Each example includes its public preset and a creation command.
+
+<ShowcaseProject locale="en" />
+
+## Create this project
+
+With Node.js, Git, and pnpm installed, run:
+
+```bash
+pnpm dlx create-preset init my-docs --from https://raw.githubusercontent.com/chengpeiquan/blackwork/main/presets/docs-starter.json
+cd my-docs
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:3300`. Run `pnpm build` and `pnpm start`
+to preview the static export and its search index at `http://localhost:4300`.
+The screenshot above shows the generated starter; the Blackwork website is the
+project's official documentation.
+
+Have a starter others can use? [Submit a showcase suggestion](https://github.com/preset-cli/create-preset/issues/new?title=Showcase%20suggestion)
+with a public preset URL, project link, screenshot, and a tested creation command.
+Learn how to [write a preset config](/guide/preset-configs).

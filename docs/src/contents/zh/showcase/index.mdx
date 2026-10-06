@@ -1,0 +1,28 @@
+---
+title: 案例展示
+description: 探索由项目作者维护、可通过 Create Preset 创建的项目模板。
+---
+
+探索由项目作者维护、可通过 Create Preset 创建的项目模板。
+每个案例都提供公开 Preset 和创建命令，方便你直接开始使用。
+
+<ShowcaseProject locale="zh" />
+
+## 创建这个项目
+
+安装 Node.js、Git 和 pnpm 后运行：
+
+```bash
+pnpm dlx create-preset init my-docs --from https://raw.githubusercontent.com/chengpeiquan/blackwork/main/presets/docs-starter.json
+cd my-docs
+pnpm install
+pnpm dev
+```
+
+打开 `http://localhost:3300`。运行 `pnpm build` 和 `pnpm start`，
+即可在 `http://localhost:4300` 预览静态站点和搜索索引。
+上方截图来自实际生成的模板；Blackwork 官网链接指向项目的官方文档。
+
+如果你维护了可供他人使用的模板，欢迎[提交案例建议](https://github.com/preset-cli/create-preset/issues/new?title=Showcase%20suggestion)，
+附上公开 Preset 地址、项目链接、截图和已验证的创建命令。
+了解如何[编写 Preset 配置](/zh/guide/preset-configs)。
