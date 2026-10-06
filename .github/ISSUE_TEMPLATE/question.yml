@@ -1,0 +1,28 @@
+name: Usage question / 使用问题
+description: Ask how to use Create Preset or configure a preset. / 咨询 CLI 用法或 Preset 配置。
+title: '[Question]: '
+labels: ['question']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check the [documentation](https://preset.js.org) and [existing issues](https://github.com/preset-cli/create-preset/issues) first.
+        English and Chinese questions are welcome. / 支持中文或英文填写。
+        Use the Bug report form for failures with clear reproduction steps. / 可明确复现的故障请使用 Bug 表单。
+  - type: textarea
+    id: question
+    attributes:
+      label: Question and goal / 问题与目标
+      description: Explain what you want to accomplish and where you are stuck. / 说明你想完成的事情，以及遇到的疑问。
+    validations:
+      required: true
+  - type: textarea
+    id: attempted
+    attributes:
+      label: What have you tried? / 已尝试的方式
+      description: Include relevant commands, configuration, or documentation links. / 可提供相关命令、配置或已阅读的文档。
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment / 运行环境
+      description: Include CLI, Node.js, and package manager versions if relevant. / 如果与问题有关，请提供 CLI、Node.js 和包管理器版本。

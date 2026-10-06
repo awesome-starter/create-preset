@@ -1,0 +1,71 @@
+name: Bug report / BUG 反馈
+description: Report a problem with the CLI, preset handling, or website. / 反馈 CLI、Preset 或官网问题。
+title: '[Bug]: '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please [check existing issues](https://github.com/preset-cli/create-preset/issues) before reporting a bug.
+        English and Chinese reports are welcome. / 支持中文或英文填写。
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area / 问题范围
+      options:
+        - CLI installation or startup / CLI 安装或启动
+        - Official generators / 官方脚手架
+        - Preset configs or private presets / Preset 配置或私有 Preset
+        - Website / 官网
+        - Other / 其他
+    validations:
+      required: true
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: What happened? / 实际情况
+      description: Describe the problem. You can attach screenshots here. / 描述遇到的问题，可附上截图。
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce / 复现步骤
+      description: Include the exact command or page URL and the steps that trigger the problem. / 提供完整命令或页面地址，以及触发问题的步骤。
+      placeholder: |
+        1. Run / 运行 ...
+        2. Select / 选择 ...
+        3. See / 出现 ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior / 预期结果
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Create Preset version / CLI 版本
+      description: For CLI issues, paste the output of preset --version. / CLI 问题请填写 preset --version 的输出。
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment / 运行环境
+      placeholder: |
+        OS and architecture:
+        Node.js version:
+        Package manager and version:
+        Browser and version (website issues):
+  - type: textarea
+    id: preset-config
+    attributes:
+      label: Reproduction repository or preset config / 复现仓库或 Preset 配置
+      description: Link a minimal reproduction or paste the relevant JSON. Remove private URLs and credentials. / 提供最小复现仓库或相关 JSON，请去除私有地址和凭据。
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error output / 错误日志
+      description: Paste relevant output without Markdown fences. Remove credentials. / 直接粘贴相关输出，无需代码块标记，请去除凭据。
+      render: shell

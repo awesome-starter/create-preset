@@ -188,6 +188,12 @@ source that is reachable from the execution environment.
 - [Local verification](docs/local-debugging.md)
 - [Website development and deployment](docs/README.md)
 
+## Feedback and contributions
+
+Choose an [issue form](https://github.com/preset-cli/create-preset/issues/new/choose)
+to report a bug, submit a showcase, suggest a feature, improve documentation,
+or ask a usage question. English and Chinese submissions are welcome.
+
 ## License
 
 MIT License © 2022 [chengpeiquan](https://github.com/chengpeiquan)

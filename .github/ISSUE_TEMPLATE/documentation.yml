@@ -1,0 +1,30 @@
+name: Documentation feedback / 文档反馈
+description: Report unclear, missing, or incorrect documentation. / 反馈文档错误、缺失或不清楚的说明。
+title: '[Docs]: '
+labels: ['documentation']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        English and Chinese feedback is welcome. / 支持中文或英文填写。
+        If a documented command fails, use the Bug report form and include reproduction steps.
+        如果命令执行失败，请使用 Bug 表单并提供复现步骤。
+  - type: input
+    id: page
+    attributes:
+      label: Page URL or file path / 页面地址或文件路径
+      placeholder: https://preset.js.org/guide/getting-started
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What needs improvement? / 需要改进的地方
+      description: Quote the relevant section or describe what is missing. / 引用相关说明，或描述缺少的内容。
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested correction / 建议修改
+      description: Share a correction or an example that would make the explanation clearer. / 可提供修改建议或更容易理解的示例。

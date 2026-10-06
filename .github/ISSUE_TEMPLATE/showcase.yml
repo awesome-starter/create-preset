@@ -1,0 +1,69 @@
+name: Showcase submission / 提交案例
+description: Share a maintained starter that others can create with Create Preset. / 分享可通过 Create Preset 创建的项目模板。
+title: '[Showcase]: '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share a project starter with a public preset and a creation command you have tested.
+        See the [preset config guide](https://preset.js.org/guide/preset-configs) for the config format.
+        English and Chinese submissions are welcome. / 支持中文或英文填写。
+  - type: input
+    id: project-name
+    attributes:
+      label: Project name / 项目名称
+      placeholder: Blackwork Docs Starter
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What does this starter do? / 模板用途
+      description: Explain who it is for and its main features. / 简单介绍适用人群、使用场景和主要功能。
+    validations:
+      required: true
+  - type: input
+    id: repository
+    attributes:
+      label: Source repository / 源码仓库
+      placeholder: https://github.com/owner/project
+    validations:
+      required: true
+  - type: input
+    id: website
+    attributes:
+      label: Website or live demo / 官网或在线演示
+      description: Optional. If the link shows documentation, say so. / 选填；如果链接指向文档而非模板演示，请注明。
+  - type: input
+    id: preset-url
+    attributes:
+      label: Public preset URL / 公开 Preset 地址
+      description: A directly accessible JSON URL, such as a raw.githubusercontent.com link. / 提供可直接读取 JSON 的公开地址，例如 GitHub Raw 链接。
+      placeholder: https://raw.githubusercontent.com/owner/project/main/presets/starter.json
+    validations:
+      required: true
+  - type: textarea
+    id: creation-command
+    attributes:
+      label: Tested creation command / 已验证的创建命令
+      description: Include any install and startup steps needed to preview the result. / 附上预览项目所需的安装和启动步骤。
+      placeholder: |
+        pnpm create preset init my-app --from https://example.com/preset.json
+        cd my-app
+        pnpm install
+        pnpm dev
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshot of the generated project / 生成项目的截图
+      description: Attach a screenshot or provide an image URL showing the project created by the command above. / 上传截图或提供图片地址，展示使用上方命令实际创建的项目。
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Requirements and additional context / 环境要求与补充信息
+      description: Mention tested versions, supported platforms, or anything readers should know before creating the project. / 可补充验证过的版本、支持的平台和使用前需要了解的信息。

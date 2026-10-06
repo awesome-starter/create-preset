@@ -1,0 +1,35 @@
+name: Feature request / 功能建议
+description: Suggest a CLI capability, generator integration, or website improvement. / 建议新功能、脚手架接入或官网改进。
+title: '[Feature]: '
+labels: ['enhancement']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please [check existing suggestions](https://github.com/preset-cli/create-preset/issues) first.
+        For a project you want listed on the website, use the Showcase submission form.
+        English and Chinese suggestions are welcome. / 支持中文或英文填写；提交官网案例请使用 Showcase 表单。
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case / 问题或使用场景
+      description: Describe what you are trying to do and what is missing. / 描述你想完成的事情，以及目前缺少的能力。
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution / 建议方案
+      description: Explain the behavior you would like. Command examples are welcome. / 说明期望的行为，可以提供命令示例。
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives / 替代方案
+      description: Describe any workaround or other approach you have considered. / 可补充现有的绕过方式或考虑过的其他方案。
+  - type: textarea
+    id: references
+    attributes:
+      label: References / 参考资料
+      description: For a generator integration, link its official documentation and command. / 如果建议接入脚手架，请提供官方文档和命令。

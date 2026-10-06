@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation / 使用文档
+    url: https://preset.js.org
+    about: Read the CLI and preset configuration guides. / 查看 CLI 用法和 Preset 配置指南。
