@@ -8,7 +8,8 @@ const copy = {
       'The MDX Playground in a project generated from the Blackwork Docs Starter preset.',
     caption: 'Actual generated starter · MDX Playground',
     source: 'View preset',
-    website: 'Blackwork website',
+    website: 'Docs Starter guide',
+    websiteHref: 'https://ui.chengpeiquan.com/docs-starter/',
     category: 'Documentation',
     create: 'Create this project',
     createHref: '#create-this-project',
@@ -20,7 +21,8 @@ const copy = {
       '通过 Blackwork Docs Starter Preset 实际生成的项目中的 MDX 示例页面。',
     caption: '实际生成的模板 · MDX 示例页面',
     source: '查看 Preset',
-    website: 'Blackwork 官网',
+    website: '文档站指南',
+    websiteHref: 'https://ui.chengpeiquan.com/zh/docs-starter/',
     category: '文档站',
     create: '创建这个项目',
     createHref: '#创建这个项目',
@@ -86,7 +88,7 @@ export function ShowcaseProject({ locale = 'en' }: { locale?: 'en' | 'zh' }) {
             </Button>
             <Button asChild variant="ghost">
               <a
-                href="https://ui.chengpeiquan.com/"
+                href={text.websiteHref}
                 target="_blank"
                 rel="noopener noreferrer"
               >
