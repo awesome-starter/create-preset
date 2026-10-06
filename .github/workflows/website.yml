@@ -49,24 +49,72 @@ jobs:
         run: pnpm lint
       - name: Build static website
         run: pnpm build
-      - name: Upload Pages artifact
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        uses: actions/upload-pages-artifact@v3
+      - name: Verify static website
+        run: |
+          for file in index.html zh/index.html en/index.html zh/guide/getting-started/index.html pagefind/pagefind.js pagefind/pagefind-entry.json schema/preset.schema.json CNAME; do
+            test -s ".next-static/$file"
+          done
+          test -d .next-static/_next/static
+          touch .next-static/.nojekyll
+          {
+            echo '## Website build'
+            echo
+            echo "Source commit: $GITHUB_SHA"
+            echo
+            echo 'Static website verified: homepages, guide, search index, schema and CNAME.'
+            echo 'Download the `website-static` artifact to inspect the build output.'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload static website
+        uses: actions/upload-artifact@v4
         with:
+          name: website-static
           path: docs/.next-static
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
 
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
+      url: https://preset.js.org/
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download static website
+        uses: actions/download-artifact@v4
+        with:
+          name: website-static
+          path: public
+      - name: Check deployment token
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: |
+          if [ -z "$ACCESS_TOKEN" ]; then
+            echo '::error::Set the ACCESS_TOKEN repository secret to a token with write access to this repository.'
+            exit 1
+          fi
+      - name: Publish static website to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.ACCESS_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: public
+          cname: preset.js.org
+          enable_jekyll: false
+          keep_files: false
+          force_orphan: false
+          commit_message: 'docs: publish website'
+      - name: Show published branch
+        run: |
+          {
+            echo '## Website published to gh-pages'
+            echo
+            echo "[Inspect the published files](https://github.com/$GITHUB_REPOSITORY/tree/gh-pages)."
+            echo
+            echo 'GitHub Pages publishes this branch. Check its deployment status and https://preset.js.org/ after publication.'
+          } >> "$GITHUB_STEP_SUMMARY"

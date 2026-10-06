@@ -33,8 +33,20 @@ public site, so the CLI and website share one schema source.
 ## Deployment
 
 The [Pages workflow](../.github/workflows/website.yml) validates pull requests and
-deploys documentation changes merged into `main`. Set the repository's
-**Settings → Pages → Source** to **GitHub Actions**.
+builds documentation changes merged into `main`. It publishes the static files
+to `gh-pages`, retaining the branch's commit history and replacing old files.
+Set **Settings → Pages → Source** to **Deploy from a branch**, then select
+**gh-pages** and **/(root)**. GitHub Pages deploys the published branch.
+
+The workflow uses the repository's `ACCESS_TOKEN` secret to push the generated
+files and trigger the Pages deployment. The token needs write access to this
+repository. Pull requests only build and verify the website.
+
+Each build checks the homepages, guide, search index, schema and `CNAME`, and
+keeps a `website-static` download artifact for seven days. After publication,
+inspect `gh-pages` for `index.html`, `zh/`, `_next/`, `pagefind/`, `schema/`,
+`CNAME` and `.nojekyll`. The deployment commit includes the source commit SHA.
+Use **Actions → Deploy website → Run workflow → main** to publish manually.
 
 For the move from `preset-cli/website` to `preset-cli/create-preset`, update the
 existing `preset` entry in js.org's `cnames_active.js`:
