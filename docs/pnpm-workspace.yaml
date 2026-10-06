@@ -1,0 +1,9 @@
+overrides:
+  sharp: ^0.35.5
+  source-map-js: ^1.2.2
+  # Typography pins v6; v7 contains the selector parsing DoS fix.
+  '@tailwindcss/typography>postcss-selector-parser': ^7.1.6
+  # Gray-matter uses js-yaml's library API, which does not load argparse.
+  # Drop the unused YAML CLI dependency and its unpatched sprintf-js package.
+  # The js-yaml CLI is intentionally unavailable in this website project.
+  'js-yaml@3>argparse': '-'
