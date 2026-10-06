@@ -2,7 +2,7 @@
   "name": "preset-website",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.9.0",
+  "packageManager": "pnpm@12.4.2",
   "scripts": {
     "dev": "node scripts/sync-schema.mjs && next dev --port 3300",
     "build": "node scripts/sync-schema.mjs && NEXT_OUTPUT=export NEXT_DIST_DIR=.next-static next build && pnpm run build:search",
@@ -20,7 +20,7 @@
     "blackwork": "^0.14.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.31.0",
-    "next": "^16.3.1",
+    "next": "^16.3.8",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "tailwind-merge": "^3.6.0"
