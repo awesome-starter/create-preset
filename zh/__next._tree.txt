@@ -3,4 +3,4 @@
 :HL["/logo-compact.svg","image",{"fetchPriority":"high"}]
 :HL["https://img.shields.io/npm/v/create-preset?color=10b981&label=npm","image"]
 :HL["https://img.shields.io/github/stars/preset-cli/create-preset?style=social","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"slug","param":{"type":"oc","key":"zh","siblings":[]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"Ij1ggbWXUHlIQAtsjETSr"}
+0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"slug","param":{"type":"oc","key":"zh","siblings":["og"]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"04shToJaB9dOKZys_c51l"}

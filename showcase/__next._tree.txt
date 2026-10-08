@@ -2,4 +2,4 @@
 :HL["/_next/static/chunks/3tcskez5ghsn4.css","style"]
 :HL["/showcase/blackwork-docs-starter-light.jpg","image"]
 :HL["/showcase/blackwork-docs-starter-dark.jpg","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"slug","param":{"type":"oc","key":"showcase","siblings":[]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"Ij1ggbWXUHlIQAtsjETSr"}
+0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"slug","param":{"type":"oc","key":"showcase","siblings":["og"]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"04shToJaB9dOKZys_c51l"}
