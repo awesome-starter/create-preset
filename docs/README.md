@@ -30,6 +30,16 @@ pnpm start
 Development and production builds copy `../schema/preset.schema.json` into the
 public site, so the CLI and website share one schema source.
 
+## Social previews
+
+Every canonical page gets Open Graph and X Card metadata from its existing
+frontmatter title and description. The build generates a matching 1200 × 630
+PNG under `/og/` using a shared text layout and the bundled Noto Sans SC font.
+English and Chinese pages have separate previews; `/en/` aliases share the
+canonical English preview. No per-page image configuration or image server is
+required. Run `pnpm dev` to preview images locally, or inspect the PNG files in
+`.next-static/og/` after `pnpm build`.
+
 ## Deployment
 
 The [Pages workflow](../.github/workflows/website.yml) validates pull requests and

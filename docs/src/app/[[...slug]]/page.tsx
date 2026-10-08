@@ -2,13 +2,13 @@ import {
   DocsPage,
   createDocsSource,
   resolveDocsRoute,
-  generateMetadata as generateDocsMetadata,
   generateStaticParams as generateDocsStaticParams,
 } from '@blackwork/docs'
 import { notFound, redirect } from 'next/navigation'
 import { docsConfig } from '../../../docs.config'
 import { LegacyRedirectPage } from './redirects/legacy-redirect-page'
 import { PresetHome } from '@/home/preset-home'
+import { createSocialMetadata } from '@/site/social-metadata'
 
 export const dynamicParams = false
 
@@ -31,10 +31,17 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug?: string[] }>
 }): Promise<import('next').Metadata> {
-  return generateDocsMetadata({
+  const source = createDocsSource({ config: docsConfig, rootDir })
+  const routeParams = await params
+  const resolution = resolveDocsRoute({ source, params: routeParams })
+
+  if (resolution.kind === 'notFound') return {}
+
+  return createSocialMetadata({
     config: docsConfig,
-    params,
-    rootDir,
+    entry: resolution.entry,
+    pathname: `/${(routeParams.slug ?? []).join('/')}`,
+    source,
   })
 }
 
